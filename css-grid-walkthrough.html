@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSS Grid, from first line to last</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #E9EEF2;
+  --surface: #F8FAFC;
+  --ink: #17223B;
+  --muted: #56637B;
+  --line: #C8D2DC;
+  --gridline: rgba(23, 34, 59, 0.05);
+  --teal: #11836F;
+  --teal-soft: #D2EDE7;
+  --cobalt: #2F5BEA;
+  --cobalt-soft: #DCE4FD;
+  --marigold: #E3A012;
+  --marigold-soft: #FAEBC6;
+  --code-bg: #1C2640;
+  --code-ink: #E3E9F5;
+  --good: #11836F;
+  --bad: #C2413A;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #111726;
+    --surface: #182033;
+    --ink: #E4EAF4;
+    --muted: #9AA6BC;
+    --line: #2B3650;
+    --gridline: rgba(228, 234, 244, 0.04);
+    --teal: #37BFA3;
+    --teal-soft: #163A35;
+    --cobalt: #7090FF;
+    --cobalt-soft: #1F2B55;
+    --marigold: #F2B84B;
+    --marigold-soft: #3B3019;
+    --code-bg: #0C1220;
+    --code-ink: #DCE3F0;
+    --good: #37BFA3;
+    --bad: #F0776F;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #111726;
+  --surface: #182033;
+  --ink: #E4EAF4;
+  --muted: #9AA6BC;
+  --line: #2B3650;
+  --gridline: rgba(228, 234, 244, 0.04);
+  --teal: #37BFA3;
+  --teal-soft: #163A35;
+  --cobalt: #7090FF;
+  --cobalt-soft: #1F2B55;
+  --marigold: #F2B84B;
+  --marigold-soft: #3B3019;
+  --code-bg: #0C1220;
+  --code-ink: #DCE3F0;
+  --good: #37BFA3;
+  --bad: #F0776F;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--gridline) 1px, transparent 1px),
+    linear-gradient(90deg, var(--gridline) 1px, transparent 1px);
+  background-size: 28px 28px;
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 1.125rem;
+  line-height: 1.65;
+}
+img, svg { max-width: 100%; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 2px; }
+
+h1, h2, h3, h4 { font-family: var(--display); line-height: 1.1; margin: 0; }
+h2 { font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 800; letter-spacing: -0.02em; }
+h3 { font-size: 1.5rem; font-weight: 600; margin-top: 3.5rem; letter-spacing: -0.01em; }
+p { margin: 0.8rem 0; }
+.prose { max-width: 66ch; }
+code { font-family: var(--mono); font-size: 0.86em; background: var(--surface); border: 1px solid var(--line); padding: 0.05em 0.35em; border-radius: 4px; }
+pre { margin: 0; }
+pre code { display: block; background: var(--code-bg); color: var(--code-ink); border: 0; padding: 1rem 1.2rem; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; line-height: 1.6; white-space: pre; }
+
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 1.25rem; }
+
+/* ---------- Hero ---------- */
+.hero { padding: 4.5rem 0 3.5rem; }
+.hero-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(3, minmax(90px, auto));
+  gap: 12px;
+  position: relative;
+}
+.h-title {
+  grid-column: 1 / 5;
+  grid-row: 1 / 3;
+  font-size: clamp(2.8rem, 7.5vw, 5.6rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+  align-self: end;
+}
+.h-lede { grid-column: 1 / 4; grid-row: 3; margin: 0; align-self: start; color: var(--muted); max-width: 46ch; }
+.h-block {
+  border-radius: 10px;
+  padding: 0.6rem 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-end;
+  color: #fff;
+}
+.b1 { grid-column: 5 / 7; grid-row: 1 / 2; background: var(--teal); }
+.b2 { grid-column: 5 / 6; grid-row: 2 / 4; background: var(--cobalt); }
+.b3 { grid-column: 6 / 7; grid-row: 2 / 3; background: var(--marigold); color: #1A1A1A; }
+.b4 { grid-column: 4 / 5; grid-row: 3 / 4; background: transparent; border: 2px dashed var(--line); color: var(--muted); }
+.b5 { grid-column: 6 / 7; grid-row: 3 / 4; background: var(--ink); color: var(--paper); }
+@media (prefers-reduced-motion: no-preference) {
+  .h-block { animation: settle 700ms cubic-bezier(.2,.8,.2,1) both; }
+  .b1 { animation-delay: 80ms; } .b2 { animation-delay: 160ms; } .b3 { animation-delay: 240ms; }
+  .b4 { animation-delay: 320ms; } .b5 { animation-delay: 400ms; }
+  @keyframes settle { from { opacity: 0; transform: translateY(-18px) scale(0.96); } to { opacity: 1; transform: none; } }
+}
+@media (max-width: 700px) {
+  .hero-grid { grid-template-columns: repeat(4, 1fr); grid-template-rows: auto auto 70px 70px; }
+  .h-title { grid-column: 1 / -1; grid-row: 1; }
+  .h-lede { grid-column: 1 / -1; grid-row: 2; }
+  .b1 { grid-column: 1 / 3; grid-row: 3; }
+  .b2 { grid-column: 3 / 4; grid-row: 3 / 5; }
+  .b3 { grid-column: 4 / 5; grid-row: 3; }
+  .b4 { grid-column: 1 / 2; grid-row: 4; }
+  .b5 { grid-column: 2 / 3; grid-row: 4; }
+}
+
+/* ---------- Stage nav ---------- */
+.stage-nav {
+  position: sticky; top: 0; z-index: 20;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.stage-nav ol {
+  list-style: none; margin: 0 auto; padding: 0.6rem 1.25rem;
+  max-width: 1080px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+}
+.stage-nav a {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.6rem;
+  text-decoration: none; padding: 0.45rem 0.7rem; border-radius: 8px;
+  font-family: var(--display); font-size: 0.95rem; font-weight: 600;
+  border: 1px solid transparent;
+}
+.stage-nav a:hover { background: var(--surface); }
+.stage-nav a[aria-current="true"] { background: var(--surface); border-color: var(--line); }
+.stage-nav .num {
+  width: 1.8rem; height: 1.8rem; border-radius: 50%;
+  display: grid; place-items: center; font-size: 0.85rem; color: #fff;
+}
+.stage-nav li:nth-child(1) .num { background: var(--teal); }
+.stage-nav li:nth-child(2) .num { background: var(--cobalt); }
+.stage-nav li:nth-child(3) .num { background: var(--marigold); color: #1A1A1A; }
+.stage-nav .done { color: var(--good); font-size: 0.8rem; font-family: var(--body); font-weight: 400; visibility: hidden; }
+.stage-nav a.is-done .done { visibility: visible; }
+@media (max-width: 640px) {
+  .stage-nav .label { display: none; }
+  .stage-nav a { grid-template-columns: auto 1fr; justify-items: start; }
+}
+
+/* ---------- Stages ---------- */
+.stage { padding: 5rem 0 3rem; }
+.stage[data-stage="1"] { --accent: var(--teal); --accent-soft: var(--teal-soft); --on-accent: #fff; }
+.stage[data-stage="2"] { --accent: var(--cobalt); --accent-soft: var(--cobalt-soft); --on-accent: #fff; }
+.stage[data-stage="3"] { --accent: var(--marigold); --accent-soft: var(--marigold-soft); --on-accent: #1A1A1A; }
+.stage-head { display: grid; grid-template-columns: auto 1fr; gap: 0 1.5rem; align-items: end; padding-bottom: 1.5rem; border-bottom: 3px solid var(--accent); }
+.stage-num {
+  font-family: var(--display); font-weight: 800; font-size: clamp(4rem, 12vw, 8rem); line-height: 0.8;
+  color: var(--accent); grid-row: 1 / 3;
+}
+.stage-head p { margin: 0.5rem 0 0; color: var(--muted); max-width: 56ch; }
+
+/* ---------- Demos ---------- */
+.demo {
+  margin: 1.5rem 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.demo-body { padding: 1.25rem; }
+.demo-split { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+.demo-split > .demo-body + .demo-code { border-left: 1px solid var(--line); }
+@media (max-width: 820px) {
+  .demo-split { grid-template-columns: minmax(0, 1fr); }
+  .demo-split > .demo-body + .demo-code { border-left: 0; border-top: 1px solid var(--line); }
+}
+.demo-code { padding: 1.25rem; background: var(--code-bg); display: flex; flex-direction: column; }
+.demo-code pre code { padding: 0; background: transparent; }
+.demo-code .code-title { font-family: var(--display); color: var(--code-ink); opacity: 0.6; font-size: 0.8rem; margin-bottom: 0.5rem; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 0.9rem 1.4rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--line); font-family: var(--display); font-size: 0.9rem; }
+.controls label { display: grid; gap: 0.25rem; }
+.controls .val { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
+.controls input[type="range"] { accent-color: var(--accent); width: 140px; }
+select, input[type="text"], textarea {
+  font: inherit; font-family: var(--mono); font-size: 0.85rem;
+  color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 0.35rem 0.5rem;
+}
+textarea { width: 100%; resize: vertical; line-height: 1.5; }
+.check { display: flex !important; align-items: center; gap: 0.5rem; grid-template-columns: none; }
+.check input { accent-color: var(--accent); width: 1.1rem; height: 1.1rem; }
+
+button {
+  font-family: var(--display); font-weight: 600; font-size: 0.9rem;
+  border-radius: 6px; padding: 0.45rem 0.85rem; cursor: pointer;
+  border: 1px solid var(--line); background: var(--paper); color: var(--ink);
+}
+button:hover { border-color: var(--accent, var(--cobalt)); }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+button.chip { font-family: var(--mono); font-weight: 400; font-size: 0.78rem; padding: 0.25rem 0.55rem; }
+
+.stage-grid { overflow-x: auto; }
+.cell {
+  background: var(--accent); color: var(--on-accent);
+  border-radius: 6px; min-height: 48px; padding: 0.4rem 0.55rem;
+  font-family: var(--display); font-weight: 600; font-size: 0.95rem;
+  display: flex; align-items: flex-start;
+}
+.cell.soft { background: var(--accent-soft); color: var(--ink); }
+.cell.sel { outline: 3px solid var(--ink); outline-offset: 2px; }
+
+.note { font-size: 0.95rem; color: var(--muted); }
+.msg { font-family: var(--display); font-size: 0.9rem; min-height: 1.4em; margin-top: 0.6rem; }
+.msg.bad { color: var(--bad); }
+.msg.good { color: var(--good); }
+
+/* fr examples */
+.fr-list { display: grid; gap: 14px; }
+.fr-row { display: grid; gap: 8px; }
+.fr-row .cell { min-height: 40px; font-family: var(--mono); font-size: 0.8rem; font-weight: 400; }
+.fr-cap { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; }
+
+/* lines demo */
+.lines-wrap { position: relative; padding: 30px 12px 12px 34px; }
+.lines-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 64px); gap: 12px; position: relative; }
+.lines-grid .ghost { border: 1px dashed var(--line); border-radius: 6px; }
+.lines-grid .span-item { grid-column: 2 / 4; grid-row: 1 / 3; z-index: 1; }
+.line-mark { position: absolute; font-family: var(--mono); font-size: 0.72rem; color: var(--accent); font-weight: 600; transform: translate(-50%, -50%); white-space: nowrap; }
+.line-rule { position: absolute; background: var(--accent); opacity: 0.35; }
+
+/* placement demo */
+.place-grid { display: grid; grid-template-columns: repeat(4, minmax(60px, 1fr)); grid-template-rows: repeat(3, 64px); gap: 10px; background-image: none; }
+.place-grid .cell { cursor: pointer; }
+
+/* areas demo */
+.areas-grid { display: grid; gap: 8px; min-height: 260px; }
+.areas-grid .cell[data-area="header"] { grid-area: header; }
+.areas-grid .cell[data-area="nav"] { grid-area: nav; }
+.areas-grid .cell[data-area="main"] { grid-area: main; }
+.areas-grid .cell[data-area="aside"] { grid-area: aside; }
+.areas-grid .cell[data-area="footer"] { grid-area: footer; }
+.areas-grid .cell[data-area="main"] { background: var(--accent-soft); color: var(--ink); }
+
+/* auto-fit demo */
+.fit-outer { overflow-x: auto; }
+.fit-grid { display: grid; gap: 10px; border: 2px dashed var(--line); padding: 10px; border-radius: 8px; transition: none; }
+.fit-grid .cell { min-height: 70px; }
+
+/* alignment demo */
+.align-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 110px; gap: 10px; }
+.align-grid > div { background: var(--accent-soft); border-radius: 6px; display: grid; }
+.align-grid .cell { min-height: 0; }
+
+/* dense demo */
+.dense-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 56px; gap: 8px; }
+.dense-grid .cell { min-height: 0; }
+.w2 { grid-column: span 2; } .w3 { grid-column: span 3; } .h2 { grid-row: span 2; }
+
+/* subgrid demo */
+.sub-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); column-gap: 14px; row-gap: 0; }
+.sub-card { grid-row: span 3; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 1rem; margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
+.sub-cards.on .sub-card { display: grid; grid-template-rows: subgrid; row-gap: 10px; }
+.sub-card h4 { font-size: 1.1rem; font-weight: 600; outline: 1px dashed var(--accent); outline-offset: 3px; }
+.sub-card p { margin: 0; font-size: 0.95rem; }
+.sub-card button { justify-self: start; align-self: end; background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+/* challenge */
+.chal { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+@media (max-width: 760px) { .chal { grid-template-columns: minmax(0, 1fr); } }
+.chal h4 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+.board { height: 240px; border: 2px dashed var(--line); border-radius: 8px; padding: 0; }
+.board > div { border-radius: 5px; font-family: var(--display); font-size: 0.85rem; font-weight: 600; padding: 0.3rem 0.45rem; min-width: 0; min-height: 0; }
+.board .header { background: var(--teal); color: #fff; }
+.board .nav { background: var(--cobalt); color: #fff; }
+.board .main { background: var(--marigold-soft); color: var(--ink); }
+.board .ads { background: var(--marigold); color: #1A1A1A; }
+.board .footer { background: var(--ink); color: var(--paper); }
+.board > div.miss { outline: 3px solid var(--bad); outline-offset: -3px; }
+#chal-target .board { display: grid; grid-template-columns: 1fr 3fr 1fr; grid-template-rows: 48px 1fr 40px; gap: 8px; }
+#chal-target .header { grid-column: 1 / -1; }
+#chal-target .nav { grid-column: 1; grid-row: 2 / 4; }
+#chal-target .main { grid-column: 2; grid-row: 2; }
+#chal-target .ads { grid-column: 3; grid-row: 2; }
+#chal-target .footer { grid-column: 2 / 4; grid-row: 3; }
+#chal-user .board { display: block; }
+
+/* checkpoints */
+.checkpoint { margin-top: 3rem; border-left: 4px solid var(--accent); padding: 0.4rem 0 0.4rem 1.25rem; }
+.checkpoint h3 { margin-top: 0; font-size: 1.25rem; }
+details { border-bottom: 1px solid var(--line); padding: 0.6rem 0; }
+summary { cursor: pointer; font-family: var(--display); font-weight: 600; font-size: 1rem; }
+details p { color: var(--muted); font-size: 1rem; }
+.stage-end { margin-top: 2rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+
+/* cheat sheet */
+.table-scroll { overflow-x: auto; margin-top: 1.5rem; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 0.95rem; }
+th, td { text-align: left; padding: 0.7rem 1rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--display); font-weight: 600; background: var(--paper); }
+td:first-child { white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td .stage-tag { font-family: var(--display); font-size: 0.8rem; color: var(--muted); }
+
+footer.end { padding: 3rem 0 4rem; color: var(--muted); font-size: 0.95rem; }
+</style>
+</head>
+<body>
+
+<header class="hero wrap">
+  <div class="hero-grid">
+    <h1 class="h-title">CSS Grid, from first line to last</h1>
+    <p class="h-lede">A walkthrough in three stages. Draw your first grid, learn to put items exactly where you want them, then build layouts that adapt on their own. Every box on this page, including the ones to the right, is placed with the code it's showing.</p>
+    <div class="h-block b1">grid-column: 5 / 7</div>
+    <div class="h-block b2">grid-row: 2 / 4</div>
+    <div class="h-block b3">grid-area: 2 / 6</div>
+    <div class="h-block b4">an empty cell</div>
+    <div class="h-block b5">row 3, col 6</div>
+  </div>
+</header>
+
+<nav class="stage-nav" aria-label="Stages">
+  <ol>
+    <li><a href="#stage-1" data-link="1"><span class="num">1</span><span class="label">Meet the grid</span><span class="done">✓ done</span></a></li>
+    <li><a href="#stage-2" data-link="2"><span class="num">2</span><span class="label">Place things precisely</span><span class="done">✓ done</span></a></li>
+    <li><a href="#stage-3" data-link="3"><span class="num">3</span><span class="label">Master the grid</span><span class="done">✓ done</span></a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ================= STAGE 1 ================= -->
+<section class="stage wrap" id="stage-1" data-stage="1">
+  <div class="stage-head">
+    <div class="stage-num" aria-hidden="true">1</div>
+    <h2>Meet the grid</h2>
+    <p>What grid is, how to turn it on, and how columns, rows and the gaps between them work.</p>
+  </div>
+
+  <div class="prose">
+    <h3>Why grid exists</h3>
+    <p>Flexbox arranges items along one direction at a time: a row, or a column. That's perfect for a navigation bar or a row of buttons. But a page layout has two directions at once. The sidebar has to line up with the footer, the cards in row two have to line up with row one.</p>
+    <p>CSS Grid handles both directions together. You describe the rows and columns on the parent, and the children fall into the cells. The parent is called the <strong>grid container</strong> and its direct children are <strong>grid items</strong>.</p>
+
+    <h3>Your first grid</h3>
+    <p>Two lines of CSS create a grid: <code>display: grid</code> turns it on, and <code>grid-template-columns</code> says how many columns there are and how wide each one is. Everything else is optional. Move the controls and watch the code on the right change with the layout.</p>
+  </div>
+
+  <div class="demo">
+    <div class="controls">
+      <label>Columns <input type="range" id="p1-cols" min="1" max="6" value="3"><span class="val" id="p1-cols-v">3</span></label>
+      <label>Column sizing
+        <select id="p1-size">
+          <option value="equal">All equal (1fr)</option>
+          <option value="fixed">Fixed (100px)</option>
+          <option value="wide">First one wider (2fr)</option>
+          <option value="sidebar">Fixed sidebar + flexible</option>
+        </select>
+      </label>
+      <label>Gap <input type="range" id="p1-gap" min="0" max="40" value="12"><span class="val" id="p1-gap-v">12px</span></label>
+      <label>Row height
+        <select id="p1-rows">
+          <option value="auto">auto</option>
+          <option value="80px">80px</option>
+          <option value="minmax(60px, auto)">minmax(60px, auto)</option>
+        </select>
+      </label>
+      <label>Items <input type="range" id="p1-items" min="1" max="12" value="7"><span class="val" id="p1-items-v">7</span></label>
+    </div>
+    <div class="demo-split">
+      <div class="demo-body stage-grid"><div id="p1-grid"></div></div>
+      <div class="demo-code"><div class="code-title">Your CSS</div><pre><code id="p1-code"></code></pre></div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p class="note">Notice that you never told item 4 to start a new row. When the columns run out, grid wraps to the next row automatically. This is called <strong>auto-placement</strong>, and it's what you get until you place items yourself in stage 2.</p>
+
+    <h3>The fr unit</h3>
+    <p><code>fr</code> means "fraction of the leftover space." Grid first sets aside anything with a fixed size (like <code>200px</code>) and the gaps, then shares whatever remains between the <code>fr</code> tracks in proportion. <code>2fr 1fr</code> gives the first column twice as much as the second.</p>
+  </div>
+
+  <div class="demo"><div class="demo-body">
+    <div class="fr-list">
+      <div><div class="fr-cap">grid-template-columns: 1fr 1fr 1fr;</div>
+        <div class="fr-row" style="grid-template-columns: 1fr 1fr 1fr"><div class="cell">1fr</div><div class="cell">1fr</div><div class="cell">1fr</div></div></div>
+      <div><div class="fr-cap">grid-template-columns: 2fr 1fr 1fr;</div>
+        <div class="fr-row" style="grid-template-columns: 2fr 1fr 1fr"><div class="cell">2fr</div><div class="cell">1fr</div><div class="cell">1fr</div></div></div>
+      <div><div class="fr-cap">grid-template-columns: 140px 1fr;</div>
+        <div class="fr-row" style="grid-template-columns: 140px 1fr"><div class="cell soft">140px, always</div><div class="cell">1fr takes the rest</div></div></div>
+      <div><div class="fr-cap">grid-template-columns: repeat(4, 1fr);</div>
+        <div class="fr-row" style="grid-template-columns: repeat(4, 1fr)"><div class="cell">1fr</div><div class="cell">1fr</div><div class="cell">1fr</div><div class="cell">1fr</div></div></div>
+    </div>
+  </div></div>
+
+  <div class="prose">
+    <p><code>repeat(4, 1fr)</code> is shorthand for writing <code>1fr</code> four times. You'll use it constantly.</p>
+
+    <h3>Rows you define, rows grid creates</h3>
+    <p><code>grid-template-rows</code> defines rows up front, the same way columns work. But you often don't know how many rows you'll need, because it depends on how much content there is. Rows that grid creates on its own are called <strong>implicit</strong> rows, and you size them with <code>grid-auto-rows</code>. Try the "Row height" control above: <code>minmax(60px, auto)</code> means "at least 60px, but grow if the content needs it."</p>
+    <p>Finally, <code>gap</code> sets the space between tracks. It never adds space around the outside edge, only between items. You can set them separately with <code>row-gap</code> and <code>column-gap</code>.</p>
+  </div>
+
+  <div class="checkpoint">
+    <h3>Check yourself</h3>
+    <details><summary>A container is 900px wide with <code>grid-template-columns: 300px 2fr 1fr</code> and no gap. How wide is the last column?</summary>
+      <p>200px. The fixed 300px comes out first, leaving 600px. That's shared as 3 fractions (2 + 1), so each fraction is 200px. The middle column gets 400px and the last gets 200px.</p></details>
+    <details><summary>You have 3 columns and 8 items. How many rows does grid make?</summary>
+      <p>3 rows. Two full rows of 3, plus a third row holding the last 2 items. All of them are implicit rows unless you set <code>grid-template-rows</code>.</p></details>
+    <details><summary>Does <code>gap: 20px</code> add space between the grid and its container's border?</summary>
+      <p>No. Gaps only go between tracks. Use padding on the container for space around the outside.</p></details>
+  </div>
+
+  <div class="stage-end">
+    <button class="primary" data-complete="1">Mark stage 1 complete</button>
+    <a href="#stage-2">Go to stage 2</a>
+  </div>
+</section>
+
+<!-- ================= STAGE 2 ================= -->
+<section class="stage wrap" id="stage-2" data-stage="2">
+  <div class="stage-head">
+    <div class="stage-num" aria-hidden="true">2</div>
+    <h2>Place things precisely</h2>
+    <p>Stop letting grid decide. Use line numbers and named areas to put each item exactly where it belongs.</p>
+  </div>
+
+  <div class="prose">
+    <h3>Think in lines, not cells</h3>
+    <p>The key idea in stage 2: grid numbers the <strong>lines</strong> between tracks, not the tracks themselves. A 4-column grid has 5 vertical lines, numbered 1 to 5 from the left. It also has negative numbers counting from the right, so <code>-1</code> is always the last line. That's handy when you want something to stretch to the end without knowing how many columns there are.</p>
+    <p>The blue item below starts at column line 2 and ends at column line 4, and it runs from row line 1 to row line 3.</p>
+  </div>
+
+  <div class="demo demo-split">
+    <div class="demo-body stage-grid">
+      <div class="lines-wrap" id="lines-wrap">
+        <div class="lines-grid" id="lines-grid">
+          <div class="ghost"></div><div class="ghost"></div><div class="ghost"></div><div class="ghost"></div>
+          <div class="ghost"></div><div class="ghost"></div><div class="ghost"></div><div class="ghost"></div>
+          <div class="ghost"></div><div class="ghost"></div><div class="ghost"></div><div class="ghost"></div>
+          <div class="cell span-item">2 / 4</div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-code"><div class="code-title">The blue item</div><pre><code>.item {
+  grid-column: 2 / 4;
+  grid-row: 1 / 3;
+}
+
+/* the same thing, other ways */
+grid-column: 2 / span 2;
+grid-column: 2 / -2;</code></pre></div>
+  </div>
+
+  <div class="prose">
+    <h3>Placing items yourself</h3>
+    <p><code>grid-column</code> takes a start line and an end line separated by a slash. Instead of an end line, you can write <code>span 2</code> to mean "cover two tracks." Pick an item, then type a value or tap a shortcut. Items you haven't placed keep flowing into whatever cells are free.</p>
+  </div>
+
+  <div class="demo">
+    <div class="controls">
+      <label>Item
+        <select id="p2-item"><option>A</option><option>B</option><option>C</option><option>D</option></select>
+      </label>
+      <label>grid-column <input type="text" id="p2-col" placeholder="auto" size="12"></label>
+      <label>grid-row <input type="text" id="p2-row" placeholder="auto" size="12"></label>
+      <div style="display:grid; gap:0.25rem;">Shortcuts
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <button class="chip" data-col="1 / 3">1 / 3</button>
+          <button class="chip" data-col="span 2">span 2</button>
+          <button class="chip" data-col="1 / -1">1 / -1</button>
+          <button class="chip" data-row="1 / span 3">rows: 1 / span 3</button>
+          <button class="chip" id="p2-reset">Reset all</button>
+        </div>
+      </div>
+    </div>
+    <div class="demo-split">
+      <div class="demo-body stage-grid">
+        <div class="place-grid" id="p2-grid"></div>
+        <div class="msg" id="p2-msg" role="status"></div>
+      </div>
+      <div class="demo-code"><div class="code-title">Your CSS</div><pre><code id="p2-code"></code></pre></div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p class="note">Try placing two items on top of each other, like A at <code>1 / 3</code> and B at <code>2 / 4</code> on the same row. Grid lets items overlap. The one later in the HTML sits on top, unless you change it with <code>z-index</code>.</p>
+
+    <h3>Naming areas</h3>
+    <p>Line numbers are precise but hard to read later. <code>grid-template-areas</code> lets you draw the layout as a little text map. Each quoted string is one row, and each word is one cell. Repeat a name to make an area span multiple cells. Use a <code>.</code> for an empty cell. Then give each item a matching <code>grid-area</code> name.</p>
+    <p>Edit the map below. Two rules to keep in mind: every row needs the same number of cells, and every area has to be a rectangle.</p>
+  </div>
+
+  <div class="demo">
+    <div class="controls">
+      <div style="display:grid; gap:0.25rem;">Layouts
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <button class="chip" data-preset="classic">Classic page</button>
+          <button class="chip" data-preset="sidebar">Tall sidebar</button>
+          <button class="chip" data-preset="magazine">Magazine</button>
+          <button class="chip" data-preset="broken">Broken on purpose</button>
+        </div>
+      </div>
+      <label>grid-template-columns <input type="text" id="p3-cols" value="120px 1fr 110px" size="18"></label>
+    </div>
+    <div class="demo-split">
+      <div class="demo-body">
+        <label for="p3-areas" style="font-family:var(--display); font-size:0.9rem;">grid-template-areas</label>
+        <textarea id="p3-areas" rows="4" spellcheck="false"></textarea>
+        <div class="msg" id="p3-msg" role="status"></div>
+        <div class="stage-grid" style="margin-top:0.75rem;">
+          <div class="areas-grid" id="p3-grid">
+            <div class="cell" data-area="header">header</div>
+            <div class="cell" data-area="nav">nav</div>
+            <div class="cell" data-area="main">main</div>
+            <div class="cell" data-area="aside">aside</div>
+            <div class="cell" data-area="footer">footer</div>
+          </div>
+        </div>
+      </div>
+      <div class="demo-code"><div class="code-title">Your CSS</div><pre><code id="p3-code"></code></pre></div>
+    </div>
+  </div>
+
+  <div class="checkpoint">
+    <h3>Check yourself</h3>
+    <details><summary>How many vertical lines does a 6-column grid have?</summary>
+      <p>7. There's always one more line than there are tracks.</p></details>
+    <details><summary>What's the difference between <code>grid-column: 2 / 4</code> and <code>grid-column: 2 / span 4</code>?</summary>
+      <p>The first ends at line 4, so it covers 2 columns. The second covers 4 columns, so it ends at line 6.</p></details>
+    <details><summary>Why is <code>"a a" "a b" "a a"</code> an invalid area map?</summary>
+      <p>Area <code>a</code> wraps around <code>b</code> in an L shape. Every named area must form a single rectangle, so the browser rejects the whole declaration.</p></details>
+  </div>
+
+  <div class="stage-end">
+    <button class="primary" data-complete="2">Mark stage 2 complete</button>
+    <a href="#stage-3">Go to stage 3</a>
+  </div>
+</section>
+
+<!-- ================= STAGE 3 ================= -->
+<section class="stage wrap" id="stage-3" data-stage="3">
+  <div class="stage-head">
+    <div class="stage-num" aria-hidden="true">3</div>
+    <h2>Master the grid</h2>
+    <p>Responsive layouts with no media queries, alignment, gap filling, subgrid, and a final challenge to prove it.</p>
+  </div>
+
+  <div class="prose">
+    <h3>Responsive without media queries</h3>
+    <p>This one line is probably the most useful thing grid can do:</p>
+  </div>
+  <pre><code>grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));</code></pre>
+  <div class="prose">
+    <p>Read it from the inside out. <code>minmax(160px, 1fr)</code> means each column is at least 160px but can grow. <code>auto-fit</code> means "fit as many of those columns as the space allows." As the container shrinks, columns drop onto new rows by themselves. Drag the width slider.</p>
+  </div>
+
+  <div class="demo">
+    <div class="controls">
+      <label>Container width <input type="range" id="p4-width" min="240" max="900" value="700"><span class="val" id="p4-width-v">700px</span></label>
+      <label>Minimum column <input type="range" id="p4-min" min="80" max="240" value="160"><span class="val" id="p4-min-v">160px</span></label>
+      <label>Keyword
+        <select id="p4-mode"><option value="auto-fit">auto-fit</option><option value="auto-fill">auto-fill</option></select>
+      </label>
+      <label>Items
+        <select id="p4-count"><option value="8">8 items</option><option value="2">2 items</option></select>
+      </label>
+    </div>
+    <div class="demo-body">
+      <div class="fit-outer"><div class="fit-grid" id="p4-grid"></div></div>
+      <div class="msg" id="p4-msg" role="status"></div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p class="note">To see the difference between the two keywords, choose "2 items" and make the container wide. <code>auto-fill</code> keeps the empty column slots, so the items stay narrow. <code>auto-fit</code> collapses the empty slots, so the two items stretch to fill the row.</p>
+
+    <h3>Aligning items inside their cells</h3>
+    <p>An item doesn't have to fill its cell. <code>justify-items</code> aligns along the row (left to right) and <code>align-items</code> aligns along the column (top to bottom). Both apply to every item. To override just one, set <code>justify-self</code> or <code>align-self</code> on it, or both at once with <code>place-self</code>.</p>
+  </div>
+
+  <div class="demo">
+    <div class="controls">
+      <label>justify-items
+        <select id="p5-ji"><option>stretch</option><option>start</option><option>center</option><option>end</option></select></label>
+      <label>align-items
+        <select id="p5-ai"><option>stretch</option><option>start</option><option>center</option><option>end</option></select></label>
+      <label>place-self on item 5
+        <select id="p5-ps"><option>auto</option><option>center</option><option>end</option><option>start end</option><option>end start</option></select></label>
+    </div>
+    <div class="demo-split">
+      <div class="demo-body"><div class="align-grid" id="p5-grid"></div></div>
+      <div class="demo-code"><div class="code-title">Your CSS</div><pre><code id="p5-code"></code></pre></div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <h3>Filling the holes with dense</h3>
+    <p>When items span different sizes, auto-placement can leave gaps: an item that's too wide for the remaining space jumps to the next row and leaves a hole behind it. <code>grid-auto-flow: dense</code> tells grid to go back and fill earlier holes with smaller items that come later. Watch the numbers when you turn it on.</p>
+  </div>
+
+  <div class="demo">
+    <div class="controls">
+      <label class="check"><input type="checkbox" id="p6-dense"> grid-auto-flow: row dense</label>
+    </div>
+    <div class="demo-body"><div class="dense-grid" id="p6-grid"></div></div>
+  </div>
+
+  <div class="prose">
+    <p class="note">Use <code>dense</code> for things like photo galleries, where order doesn't matter. Avoid it when order does, because the visual order stops matching the HTML order, which confuses keyboard and screen-reader users.</p>
+
+    <h3>Subgrid: lining up nested content</h3>
+    <p>A grid item can be a grid itself, but normally its inner tracks know nothing about its parent's tracks. That's why card titles of different lengths push the text below them out of line. <code>grid-template-rows: subgrid</code> makes a card borrow its parent's rows, so every title shares a row height with its neighbors. The dashed outlines show where each title sits.</p>
+  </div>
+
+  <div class="demo">
+    <div class="controls">
+      <label class="check"><input type="checkbox" id="p7-sub"> Use subgrid</label>
+      <span class="val" id="p7-support"></span>
+    </div>
+    <div class="demo-split">
+      <div class="demo-body">
+        <div class="sub-cards" id="p7-cards">
+          <article class="sub-card"><h4>Starter</h4><p>For trying things out on one small project.</p><button type="button">Choose Starter</button></article>
+          <article class="sub-card"><h4>Team plan with shared workspaces</h4><p>Invite people, share files and set permissions for each project.</p><button type="button">Choose Team</button></article>
+          <article class="sub-card"><h4>Business</h4><p>Everything in Team, plus audit logs.</p><button type="button">Choose Business</button></article>
+        </div>
+      </div>
+      <div class="demo-code"><div class="code-title">The key lines</div><pre><code>.cards {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.card {
+  grid-row: span 3;   /* title, text, button */
+  display: grid;
+  grid-template-rows: subgrid;
+}</code></pre></div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <h3>Final challenge</h3>
+    <p>Rebuild the target layout on the right side using only CSS. The board is 240px tall and you can target <code>.board</code>, <code>.header</code>, <code>.nav</code>, <code>.main</code>, <code>.ads</code> and <code>.footer</code>. Your version updates as you type. Hit "Check my layout" when you think it matches.</p>
+  </div>
+
+  <div class="demo"><div class="demo-body">
+    <div class="chal">
+      <div id="chal-target">
+        <h4>Target</h4>
+        <div class="board"><div class="header">header</div><div class="nav">nav</div><div class="main">main</div><div class="ads">ads</div><div class="footer">footer</div></div>
+      </div>
+      <div id="chal-user">
+        <h4>Yours</h4>
+        <div class="board"><div class="header">header</div><div class="nav">nav</div><div class="main">main</div><div class="ads">ads</div><div class="footer">footer</div></div>
+      </div>
+    </div>
+    <label for="chal-css" style="display:block; margin-top:1.25rem; font-family:var(--display); font-size:0.9rem;">Your CSS</label>
+    <textarea id="chal-css" rows="12" spellcheck="false"></textarea>
+    <div style="display:flex; gap:0.6rem; margin-top:0.75rem; flex-wrap:wrap;">
+      <button class="primary" id="chal-check">Check my layout</button>
+      <button id="chal-reset">Start over</button>
+    </div>
+    <div class="msg" id="chal-msg" role="status"></div>
+    <details><summary>Hint: the measurements</summary>
+      <p>There are 3 columns. The middle one is three times as wide as each side column. The header row is 48px, the footer row is 40px, and the middle row takes everything else. The gap is 8px. The nav is in the first column and runs down through the footer row.</p></details>
+    <details><summary>Show a solution</summary>
+      <pre><code>.board {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  grid-template-rows: 48px 1fr 40px;
+  gap: 8px;
+}
+.header { grid-column: 1 / -1; }
+.nav    { grid-row: 2 / 4; }
+.footer { grid-column: 2 / 4; }
+
+/* or with areas */
+.board {
+  grid-template-areas:
+    "header header header"
+    "nav    main   ads"
+    "nav    footer footer";
+}</code></pre></details>
+  </div></div>
+
+  <div class="stage-end">
+    <button class="primary" data-complete="3">Mark stage 3 complete</button>
+    <a href="#cheatsheet">See the cheat sheet</a>
+  </div>
+</section>
+
+<!-- ================= CHEAT SHEET ================= -->
+<section class="wrap" id="cheatsheet" style="padding: 3rem 1.25rem 1rem;">
+  <h2>Cheat sheet</h2>
+  <p class="prose" style="color:var(--muted)">Everything from the three stages in one place.</p>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Property</th><th>Goes on</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>display: grid</code></td><td>Container</td><td>Turns the element into a grid. <span class="stage-tag">Stage 1</span></td></tr>
+        <tr><td><code>grid-template-columns</code></td><td>Container</td><td>Sets how many columns there are and their sizes. <span class="stage-tag">Stage 1</span></td></tr>
+        <tr><td><code>grid-template-rows</code></td><td>Container</td><td>Sets the rows you know about up front. <span class="stage-tag">Stage 1</span></td></tr>
+        <tr><td><code>grid-auto-rows</code></td><td>Container</td><td>Sizes rows that grid creates automatically. <span class="stage-tag">Stage 1</span></td></tr>
+        <tr><td><code>gap</code></td><td>Container</td><td>Space between tracks, not around the edge. <span class="stage-tag">Stage 1</span></td></tr>
+        <tr><td><code>fr</code>, <code>repeat()</code></td><td>Track sizes</td><td>Share leftover space; repeat a pattern. <span class="stage-tag">Stage 1</span></td></tr>
+        <tr><td><code>grid-column</code>, <code>grid-row</code></td><td>Item</td><td>Start and end lines, or <code>span n</code>. <span class="stage-tag">Stage 2</span></td></tr>
+        <tr><td><code>grid-template-areas</code></td><td>Container</td><td>Draws the layout as named rows of cells. <span class="stage-tag">Stage 2</span></td></tr>
+        <tr><td><code>grid-area</code></td><td>Item</td><td>Puts an item into a named area. <span class="stage-tag">Stage 2</span></td></tr>
+        <tr><td><code>minmax()</code>, <code>auto-fit</code>, <code>auto-fill</code></td><td>Track sizes</td><td>Columns that wrap on their own as space changes. <span class="stage-tag">Stage 3</span></td></tr>
+        <tr><td><code>justify-items</code>, <code>align-items</code></td><td>Container</td><td>Align every item inside its cell. <span class="stage-tag">Stage 3</span></td></tr>
+        <tr><td><code>place-self</code></td><td>Item</td><td>Align one item, overriding the container. <span class="stage-tag">Stage 3</span></td></tr>
+        <tr><td><code>grid-auto-flow: dense</code></td><td>Container</td><td>Backfills holes left by auto-placement. <span class="stage-tag">Stage 3</span></td></tr>
+        <tr><td><code>subgrid</code></td><td>Nested grid</td><td>Makes a child grid reuse its parent's tracks. <span class="stage-tag">Stage 3</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<footer class="end wrap">
+  <p>Want to keep practicing? Take any website you use daily, sketch its layout as a <code>grid-template-areas</code> map, then build it.</p>
+</footer>
+
+<script>
+(function () {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- Progress + scroll spy ---------- */
+  const KEY = 'grid-walkthrough-done';
+  let done = [];
+  try { done = JSON.parse(localStorage.getItem(KEY) || '[]'); if (!Array.isArray(done)) done = []; } catch (e) { done = []; }
+  function renderDone() {
+    $$('.stage-nav a').forEach(a => a.classList.toggle('is-done', done.includes(a.dataset.link)));
+    $$('[data-complete]').forEach(b => {
+      const n = b.dataset.complete;
+      b.textContent = done.includes(n) ? 'Stage ' + n + ' complete ✓' : 'Mark stage ' + n + ' complete';
+    });
+  }
+  $$('[data-complete]').forEach(b => b.addEventListener('click', () => {
+    const n = b.dataset.complete;
+    done = done.includes(n) ? done.filter(x => x !== n) : done.concat(n);
+    try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (e) {}
+    renderDone();
+  }));
+  renderDone();
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          const n = en.target.dataset.stage;
+          $$('.stage-nav a').forEach(a => a.setAttribute('aria-current', a.dataset.link === n ? 'true' : 'false'));
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    $$('.stage').forEach(s => io.observe(s));
+  }
+
+  /* ---------- Stage 1 playground ---------- */
+  const p1 = { grid: $('#p1-grid'), code: $('#p1-code') };
+  function colString(n, mode) {
+    if (mode === 'fixed') return n === 1 ? '100px' : `repeat(${n}, 100px)`;
+    if (mode === 'wide') return n === 1 ? '2fr' : `2fr repeat(${n - 1}, 1fr)`;
+    if (mode === 'sidebar') return n === 1 ? '160px' : (n === 2 ? '160px 1fr' : `160px repeat(${n - 1}, 1fr)`);
+    return n === 1 ? '1fr' : `repeat(${n}, 1fr)`;
+  }
+  function renderP1() {
+    const n = +$('#p1-cols').value, gap = +$('#p1-gap').value, items = +$('#p1-items').value;
+    const mode = $('#p1-size').value, rows = $('#p1-rows').value;
+    $('#p1-cols-v').textContent = n; $('#p1-gap-v').textContent = gap + 'px'; $('#p1-items-v').textContent = items;
+    const cols = colString(n, mode);
+    Object.assign(p1.grid.style, { display: 'grid', gridTemplateColumns: cols, gridAutoRows: rows, gap: gap + 'px' });
+    if (p1.grid.children.length !== items) {
+      p1.grid.innerHTML = '';
+      for (let i = 1; i <= items; i++) {
+        const d = document.createElement('div');
+        d.className = 'cell' + (i === 3 ? ' soft' : '');
+        d.textContent = i === 3 ? '3 has a bit more text in it' : i;
+        p1.grid.appendChild(d);
+      }
+    }
+    p1.code.textContent = `.grid {\n  display: grid;\n  grid-template-columns: ${cols};\n  grid-auto-rows: ${rows};\n  gap: ${gap}px;\n}`;
+  }
+  ['#p1-cols', '#p1-gap', '#p1-items', '#p1-size', '#p1-rows'].forEach(s => $(s).addEventListener('input', renderP1));
+  renderP1();
+
+  /* ---------- Stage 2: line numbers ---------- */
+  const lwrap = $('#lines-wrap'), lgrid = $('#lines-grid');
+  function parseTracks(str) { return str.split(' ').map(parseFloat).filter(v => !isNaN(v)); }
+  function drawLines() {
+    $$('.line-mark, .line-rule', lwrap).forEach(e => e.remove());
+    const cs = getComputedStyle(lgrid);
+    const cols = parseTracks(cs.gridTemplateColumns), rows = parseTracks(cs.gridTemplateRows);
+    const cgap = parseFloat(cs.columnGap) || 0, rgap = parseFloat(cs.rowGap) || 0;
+    const ox = lgrid.offsetLeft, oy = lgrid.offsetTop;
+    const H = lgrid.offsetHeight, W = lgrid.offsetWidth;
+    let x = 0;
+    for (let i = 0; i <= cols.length; i++) {
+      const pos = i === 0 ? 0 : (i === cols.length ? W : x - cgap / 2);
+      const mark = document.createElement('div');
+      mark.className = 'line-mark';
+      mark.textContent = (i + 1) + ' / ' + (i - cols.length - 1);
+      mark.style.left = (ox + pos) + 'px'; mark.style.top = (oy - 15) + 'px';
+      lwrap.appendChild(mark);
+      const rule = document.createElement('div');
+      rule.className = 'line-rule';
+      Object.assign(rule.style, { left: (ox + pos - 1) + 'px', top: oy + 'px', width: '2px', height: H + 'px' });
+      lwrap.appendChild(rule);
+      if (i < cols.length) x += cols[i] + cgap;
+    }
+    let y = 0;
+    for (let j = 0; j <= rows.length; j++) {
+      const pos = j === 0 ? 0 : (j === rows.length ? H : y - rgap / 2);
+      const mark = document.createElement('div');
+      mark.className = 'line-mark';
+      mark.textContent = j + 1;
+      mark.style.left = (ox - 16) + 'px'; mark.style.top = (oy + pos) + 'px';
+      lwrap.appendChild(mark);
+      const rule = document.createElement('div');
+      rule.className = 'line-rule';
+      Object.assign(rule.style, { left: ox + 'px', top: (oy + pos - 1) + 'px', width: W + 'px', height: '2px' });
+      lwrap.appendChild(rule);
+      if (j < rows.length) y += rows[j] + rgap;
+    }
+  }
+  drawLines();
+  window.addEventListener('resize', drawLines);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawLines);
+
+  /* ---------- Stage 2: placement ---------- */
+  const p2grid = $('#p2-grid');
+  const placements = { A: {}, B: {}, C: {}, D: {} };
+  Object.keys(placements).forEach(k => {
+    const d = document.createElement('div');
+    d.className = 'cell'; d.dataset.name = k; d.textContent = k;
+    d.tabIndex = 0;
+    d.addEventListener('click', () => { $('#p2-item').value = k; loadP2(); });
+    d.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('#p2-item').value = k; loadP2(); } });
+    p2grid.appendChild(d);
+  });
+  function loadP2() {
+    const k = $('#p2-item').value;
+    $('#p2-col').value = placements[k].col || '';
+    $('#p2-row').value = placements[k].row || '';
+    renderP2();
+  }
+  function renderP2() {
+    const k = $('#p2-item').value;
+    const col = $('#p2-col').value.trim(), row = $('#p2-row').value.trim();
+    const msg = $('#p2-msg');
+    msg.textContent = ''; msg.className = 'msg';
+    const okCol = !col || CSS.supports('grid-column', col);
+    const okRow = !row || CSS.supports('grid-row', row);
+    if (okCol) placements[k].col = col; if (okRow) placements[k].row = row;
+    if (!okCol || !okRow) {
+      msg.className = 'msg bad';
+      msg.textContent = `"${!okCol ? col : row}" isn't a valid value. Try a start and end line like 1 / 3, or span 2.`;
+    }
+    let css = '.grid {\n  display: grid;\n  grid-template-columns: repeat(4, 1fr);\n  grid-template-rows: repeat(3, 64px);\n  gap: 10px;\n}';
+    $$('.cell', p2grid).forEach(el => {
+      const p = placements[el.dataset.name];
+      el.style.gridColumn = p.col || ''; el.style.gridRow = p.row || '';
+      el.classList.toggle('sel', el.dataset.name === k);
+      if (p.col || p.row) {
+        css += `\n\n.${el.dataset.name.toLowerCase()} {`;
+        if (p.col) css += `\n  grid-column: ${p.col};`;
+        if (p.row) css += `\n  grid-row: ${p.row};`;
+        css += '\n}';
+      }
+    });
+    $('#p2-code').textContent = css;
+  }
+  $('#p2-item').addEventListener('change', loadP2);
+  $('#p2-col').addEventListener('input', renderP2);
+  $('#p2-row').addEventListener('input', renderP2);
+  $$('[data-col]').forEach(b => b.addEventListener('click', () => { $('#p2-col').value = b.dataset.col; renderP2(); }));
+  $$('[data-row]').forEach(b => b.addEventListener('click', () => { $('#p2-row').value = b.dataset.row; renderP2(); }));
+  $('#p2-reset').addEventListener('click', () => { Object.keys(placements).forEach(k => placements[k] = {}); loadP2(); });
+  loadP2();
+
+  /* ---------- Stage 2: areas ---------- */
+  const presets = {
+    classic: { cols: '120px 1fr 110px', areas: '"header header header"\n"nav    main   aside"\n"footer footer footer"' },
+    sidebar: { cols: '140px 1fr', areas: '"nav header"\n"nav main"\n"nav footer"' },
+    magazine: { cols: '1fr 1fr 1fr', areas: '"header header aside"\n"main   main   aside"\n"main   main   .    "\n"footer footer footer"' },
+    broken: { cols: '1fr 1fr 1fr', areas: '"header header header"\n"main   nav    main"\n"footer footer"' }
+  };
+  function renderP3() {
+    const raw = $('#p3-areas').value.trim();
+    const cols = $('#p3-cols').value.trim();
+    const grid = $('#p3-grid'), msg = $('#p3-msg');
+    const rowsStr = raw.split('\n').map(s => s.trim()).filter(Boolean);
+    const value = rowsStr.join(' ');
+    msg.className = 'msg'; msg.textContent = '';
+    const validAreas = value && CSS.supports('grid-template-areas', value);
+    const validCols = !cols || CSS.supports('grid-template-columns', cols);
+    if (!validAreas) {
+      msg.className = 'msg bad';
+      msg.textContent = 'The browser rejected this map. Check that every row has the same number of cells, every row is in quotes, and each name forms one rectangle.';
+      return;
+    }
+    if (!validCols) {
+      msg.className = 'msg bad';
+      msg.textContent = `"${cols}" isn't a valid column list. Try something like 120px 1fr 110px.`;
+      return;
+    }
+    grid.style.gridTemplateAreas = value;
+    grid.style.gridTemplateColumns = cols;
+    const names = new Set(value.replace(/"/g, ' ').split(/\s+/).filter(n => n && !/^\.+$/.test(n)));
+    const hidden = [];
+    $$('.cell', grid).forEach(el => {
+      const inMap = names.has(el.dataset.area);
+      el.style.display = inMap ? '' : 'none';
+      if (!inMap) hidden.push(el.dataset.area);
+    });
+    if (hidden.length) {
+      msg.textContent = `${hidden.join(', ')} ${hidden.length > 1 ? "aren't" : "isn't"} in your map, so this demo hides ${hidden.length > 1 ? 'them' : 'it'}. In real CSS, grid would push unmapped items into extra rows.`;
+    }
+    const indented = rowsStr.map(r => '    ' + r).join('\n');
+    let css = `.page {\n  display: grid;\n  grid-template-columns: ${cols};\n  grid-template-areas:\n${indented};\n  gap: 8px;\n}\n`;
+    ['header', 'nav', 'main', 'aside', 'footer'].filter(n => names.has(n)).forEach(n => { css += `\n.${n} { grid-area: ${n}; }`; });
+    $('#p3-code').textContent = css;
+  }
+  function loadPreset(name) {
+    $('#p3-cols').value = presets[name].cols;
+    $('#p3-areas').value = presets[name].areas;
+    renderP3();
+  }
+  $$('[data-preset]').forEach(b => b.addEventListener('click', () => loadPreset(b.dataset.preset)));
+  $('#p3-areas').addEventListener('input', renderP3);
+  $('#p3-cols').addEventListener('input', renderP3);
+  loadPreset('classic');
+
+  /* ---------- Stage 3: auto-fit ---------- */
+  function renderP4() {
+    const w = +$('#p4-width').value, min = +$('#p4-min').value, mode = $('#p4-mode').value, count = +$('#p4-count').value;
+    $('#p4-width-v').textContent = w + 'px'; $('#p4-min-v').textContent = min + 'px';
+    const g = $('#p4-grid');
+    g.style.width = w + 'px';
+    g.style.gridTemplateColumns = `repeat(${mode}, minmax(${min}px, 1fr))`;
+    if (g.children.length !== count) {
+      g.innerHTML = '';
+      for (let i = 1; i <= count; i++) { const d = document.createElement('div'); d.className = 'cell'; d.textContent = 'Card ' + i; g.appendChild(d); }
+    }
+    const n = parseTracks(getComputedStyle(g).gridTemplateColumns).length;
+    const used = parseTracks(getComputedStyle(g).gridTemplateColumns).filter(v => v > 0).length;
+    $('#p4-msg').textContent = `grid-template-columns: repeat(${mode}, minmax(${min}px, 1fr)) → ${mode === 'auto-fill' ? n + ' column slots' : used + ' visible column' + (used === 1 ? '' : 's')}`;
+  }
+  ['#p4-width', '#p4-min', '#p4-mode', '#p4-count'].forEach(s => $(s).addEventListener('input', renderP4));
+  renderP4();
+
+  /* ---------- Stage 3: alignment ---------- */
+  const p5grid = $('#p5-grid');
+  for (let i = 1; i <= 6; i++) { const d = document.createElement('div'); d.className = 'cell'; d.textContent = i === 5 ? 'Item 5' : 'Item ' + i; p5grid.appendChild(d); }
+  function renderP5() {
+    const ji = $('#p5-ji').value, ai = $('#p5-ai').value, ps = $('#p5-ps').value;
+    p5grid.style.justifyItems = ji; p5grid.style.alignItems = ai;
+    const five = p5grid.children[4];
+    five.style.placeSelf = ps; five.classList.toggle('sel', ps !== 'auto');
+    let css = `.grid {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  grid-auto-rows: 110px;\n  justify-items: ${ji};\n  align-items: ${ai};\n}`;
+    if (ps !== 'auto') css += `\n\n.item-5 {\n  place-self: ${ps};\n  /* align-self first, then justify-self */\n}`;
+    $('#p5-code').textContent = css;
+  }
+  ['#p5-ji', '#p5-ai', '#p5-ps'].forEach(s => $(s).addEventListener('input', renderP5));
+  renderP5();
+
+  /* ---------- Stage 3: dense ---------- */
+  const shapes = ['', 'w3', '', 'w2', 'h2', 'w3', '', 'w2', '', '', 'w2', ''];
+  const p6grid = $('#p6-grid');
+  shapes.forEach((cls, i) => { const d = document.createElement('div'); d.className = 'cell ' + cls + (cls ? '' : ' soft'); d.textContent = i + 1; p6grid.appendChild(d); });
+  $('#p6-dense').addEventListener('change', e => { p6grid.style.gridAutoFlow = e.target.checked ? 'row dense' : 'row'; });
+
+  /* ---------- Stage 3: subgrid ---------- */
+  const subOk = CSS.supports('grid-template-rows', 'subgrid');
+  $('#p7-support').textContent = subOk ? '' : "Your browser doesn't support subgrid yet, so both states look the same.";
+  $('#p7-sub').addEventListener('change', e => $('#p7-cards').classList.toggle('on', e.target.checked));
+
+  /* ---------- Challenge ---------- */
+  const starter = `.board {\n  display: grid;\n  gap: 8px;\n}\n\n/* place .header, .nav, .main, .ads and .footer */\n`;
+  const userStyle = document.createElement('style');
+  document.head.appendChild(userStyle);
+  let saved = null;
+  try { saved = localStorage.getItem('grid-walkthrough-challenge'); } catch (e) {}
+  $('#chal-css').value = saved || starter;
+  function scopeCss(css) {
+    css = css.replace(/\/\*[\s\S]*?\*\//g, '');
+    return css.split('}').map(chunk => {
+      const i = chunk.indexOf('{');
+      if (i === -1) return '';
+      const sel = chunk.slice(0, i).trim();
+      const body = chunk.slice(i + 1).replace(/[<>]/g, '');
+      if (!sel || /[@<>]/.test(sel)) return '';
+      const scoped = sel.split(',').map(s => '#chal-user ' + s.trim()).join(', ');
+      return `${scoped} {${body}}`;
+    }).join('\n');
+  }
+  let tmr;
+  function applyUser() {
+    userStyle.textContent = scopeCss($('#chal-css').value);
+    $$('#chal-user .board > div').forEach(d => d.classList.remove('miss'));
+    try { localStorage.setItem('grid-walkthrough-challenge', $('#chal-css').value); } catch (e) {}
+  }
+  $('#chal-css').addEventListener('input', () => { clearTimeout(tmr); tmr = setTimeout(applyUser, 150); });
+  applyUser();
+  function rects(boardSel) {
+    const board = $(boardSel);
+    const b = board.getBoundingClientRect();
+    const out = {};
+    $$(':scope > div', board).forEach(el => {
+      const r = el.getBoundingClientRect();
+      out[el.className.split(' ')[0]] = { x: (r.left - b.left) / b.width, y: (r.top - b.top) / b.height, w: r.width / b.width, h: r.height / b.height, el };
+    });
+    return out;
+  }
+  $('#chal-check').addEventListener('click', () => {
+    const t = rects('#chal-target .board'), u = rects('#chal-user .board');
+    const misses = [];
+    Object.keys(t).forEach(k => {
+      const a = t[k], b = u[k];
+      const tol = 0.02;
+      const ok = Math.abs(a.x - b.x) < tol && Math.abs(a.y - b.y) < tol && Math.abs(a.w - b.w) < tol && Math.abs(a.h - b.h) < tol;
+      b.el.classList.toggle('miss', !ok);
+      if (!ok) misses.push(k);
+    });
+    const msg = $('#chal-msg');
+    if (!misses.length) {
+      msg.className = 'msg good';
+      msg.textContent = 'All five blocks match the target. You can build real layouts with grid now.';
+    } else {
+      msg.className = 'msg bad';
+      msg.textContent = `${5 - misses.length} of 5 blocks match. Still off: ${misses.join(', ')}. They're outlined in red.`;
+    }
+  });
+  $('#chal-reset').addEventListener('click', () => { $('#chal-css').value = starter; applyUser(); $('#chal-msg').textContent = ''; });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coding Hub</title>
+<meta name="description" content="Class resources for programming: guides, cheat sheets, and practice sets.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+
+<a class="skip" href="#results">Skip to resources</a>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <h1 class="wordmark" id="site-name">Coding Hub</h1>
+    <p class="tagline" id="site-tagline"></p>
+
+    <search class="finder">
+      <label class="finder-field">
+        <span class="visually-hidden">Search resources</span>
+        <svg class="finder-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+          <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+          <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <input
+          id="q"
+          type="search"
+          placeholder="Search for loops, git, cheat sheet&hellip;"
+          autocomplete="off"
+          spellcheck="false">
+        <kbd class="finder-key" aria-hidden="true">/</kbd>
+      </label>
+
+      <nav class="chips" id="chips" aria-label="Filter by category"></nav>
+    </search>
+
+    <p class="count" id="count" role="status"></p>
+  </div>
+</header>
+
+<main id="results" class="results"></main>
+
+<footer class="footer">
+  <p id="site-footer"></p>
+  <p class="footer-meta">Last updated <span id="site-updated"></span></p>
+</footer>
+
+<script src="./js/resources.js"></script>
+<script src="./js/app.js"></script>
+</body>
+</html>
