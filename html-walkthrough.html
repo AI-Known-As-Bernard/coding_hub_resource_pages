@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HTML — a hands-on walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ---------------------------------------------------------------
+   Volume two of the same series. Same paper, same typefaces.
+   The colour key changes because the subject changed: green marks
+   element names, pink marks attributes, everywhere they appear.
+---------------------------------------------------------------- */
+:root{
+  --paper:#DDE2E5;
+  --plate:#FBFBF9;
+  --ink:#16202A;
+  --ink-soft:#5B6873;
+  --rule:#C0C9CF;
+  --tag:#0B6E4F;
+  --attr:#BE1A7C;
+  --mark:#F2C230;
+  --warn:#B4531A;
+
+  --sans:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+
+  --s0:0.8125rem; --s1:1rem; --s2:1.25rem; --s3:1.563rem;
+  --s4:1.953rem; --s5:2.441rem; --s6:3.052rem;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:17px;line-height:1.62;
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.wrap{max-width:1140px;margin:0 auto;padding:0 clamp(1rem,4vw,2.5rem)}
+
+/* --- Masthead ------------------------------------------------ */
+.masthead{padding:clamp(3rem,9vw,6rem) 0 2.5rem}
+h1{
+  font-family:var(--sans);font-weight:800;
+  font-size:clamp(2.8rem,11vw,6rem);line-height:.92;
+  letter-spacing:-.04em;margin:0 0 1rem;
+  font-variation-settings:"wdth" 85;
+}
+h1 .ang{color:var(--tag);font-weight:400}
+.deck{font-size:var(--s2);max-width:36ch;margin:0 0 2.25rem;color:var(--ink-soft)}
+.deck strong{color:var(--ink);font-weight:600}
+.vol{font-family:var(--sans);font-size:var(--s0);color:var(--ink-soft);margin:0 0 1.5rem}
+
+/* --- Contents ------------------------------------------------ */
+.contents{
+  border-top:1.5px solid var(--ink);padding-top:1rem;
+  margin-bottom:clamp(3rem,8vw,5rem);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));
+  gap:.35rem 2rem;
+}
+.contents h2{font-family:var(--sans);font-size:var(--s0);font-weight:600;margin:0 0 .5rem;color:var(--ink-soft);grid-column:1/-1}
+.contents a{
+  font-family:var(--sans);font-size:var(--s0);color:var(--ink);
+  text-decoration:none;display:flex;gap:.6rem;padding:.2rem 0;
+  border-bottom:1px solid transparent;
+}
+.contents a span{color:var(--tag);font-weight:600;min-width:1.4em}
+.contents a:hover{border-bottom-color:var(--ink)}
+
+/* --- Parts and lessons --------------------------------------- */
+.part{padding:clamp(2rem,6vw,3.5rem) 0 1rem}
+.part h2{font-family:var(--sans);font-weight:800;font-size:var(--s5);letter-spacing:-.02em;margin:0 0 .4rem;font-variation-settings:"wdth" 85}
+.part p{max-width:54ch;margin:0;color:var(--ink-soft)}
+
+.lesson{
+  display:grid;grid-template-columns:minmax(0,20rem) minmax(0,1fr);
+  gap:2rem clamp(1.5rem,4vw,3rem);align-items:start;
+  padding:2.5rem 0;border-top:1px solid var(--rule);
+}
+@media (max-width:920px){.lesson{grid-template-columns:1fr}}
+
+.lesson-text h3{
+  font-family:var(--sans);font-weight:600;font-size:var(--s3);
+  line-height:1.15;letter-spacing:-.015em;margin:0 0 .75rem;
+  display:flex;gap:.7rem;align-items:baseline;
+}
+.lesson-text h3 .num{font-family:var(--mono);font-size:var(--s0);font-weight:700;color:var(--tag);flex:none}
+.lesson-text p{margin:0 0 .9rem;max-width:40ch}
+.lesson-text p:last-child{margin-bottom:0}
+.lesson-text code,.inline-code{
+  font-family:var(--mono);font-size:.82em;background:#fff;
+  border:1px solid var(--rule);border-radius:2px;padding:.08em .32em;
+  white-space:nowrap;
+}
+.lesson-text code{color:var(--tag)}
+.lesson-text code.at{color:var(--attr)}
+.tip{font-size:var(--s0);color:var(--ink-soft);border-left:2px solid var(--attr);padding-left:.9rem;margin-top:1.2rem}
+
+/* --- Panel --------------------------------------------------- */
+.panel{
+  background:var(--plate);border:1.5px solid var(--ink);border-radius:3px;
+  overflow:hidden;container-type:inline-size;
+}
+.editor{display:grid;grid-template-columns:1fr 1fr}
+@container (max-width:640px){.editor{grid-template-columns:1fr}}
+.pane{min-width:0;display:flex;flex-direction:column}
+.pane + .pane{border-left:1.5px solid var(--ink)}
+@container (max-width:640px){.pane + .pane{border-left:0;border-top:1.5px solid var(--ink)}}
+.pane-label{
+  font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);
+  padding:.45rem .7rem;border-bottom:1px solid var(--rule);background:#F1F2EE;
+  display:flex;justify-content:space-between;align-items:center;gap:.5rem;
+}
+.pane-label .mini{
+  font-family:var(--sans);font-size:10.5px;background:none;border:1px solid var(--rule);
+  border-radius:2px;padding:.1rem .4rem;cursor:pointer;color:var(--ink-soft);
+}
+.pane-label .mini:hover{border-color:var(--ink);color:var(--ink)}
+.pane-label .mini:focus-visible{outline:2px solid var(--tag);outline-offset:2px}
+
+textarea.src{
+  flex:1;width:100%;border:0;resize:vertical;
+  background:var(--ink);color:#DDE6EC;
+  font-family:var(--mono);font-size:12.5px;line-height:1.7;
+  padding:.8rem .7rem;tab-size:2;
+}
+textarea.src:focus{outline:2px solid var(--mark);outline-offset:-2px}
+
+iframe.out{width:100%;border:0;background:#fff;display:block;flex:1}
+
+.inspect{padding:.7rem;font-family:var(--mono);font-size:12px;line-height:1.6;overflow:auto;background:#fff;flex:1}
+.inspect ul{list-style:none;margin:0;padding:0 0 0 .85rem;border-left:1px dotted var(--rule)}
+.inspect > ul{padding-left:0;border-left:0}
+.inspect li{position:relative}
+.t-tag{color:var(--tag);font-weight:700}
+.t-attr{color:var(--attr)}
+.t-val{color:var(--ink-soft)}
+.t-text{color:var(--ink-soft);font-style:italic}
+.t-role{color:var(--ink);background:rgba(11,110,79,.1);border-radius:2px;padding:0 .3em;margin-left:.4em;font-size:11px}
+.t-warn{color:var(--warn)}
+.t-empty{color:var(--ink-soft);font-style:italic}
+
+.hint-line{font-family:var(--sans);font-size:11.5px;color:var(--ink-soft);padding:.6rem .7rem 0}
+.note-bar{
+  font-family:var(--sans);font-size:var(--s0);
+  padding:.7rem;border-top:1px solid var(--rule);background:#F1F2EE;color:var(--ink-soft);
+}
+
+/* --- Anatomy diagram ----------------------------------------- */
+.anatomy{padding:1.6rem .9rem 1rem;background:#fff}
+.tagline{font-family:var(--mono);font-size:clamp(13px,2.6vw,17px);line-height:2.6;text-align:center;word-break:break-word}
+.tagline button{
+  font:inherit;background:none;border:0;padding:.1em .05em;cursor:pointer;
+  border-bottom:2px solid transparent;color:var(--ink);
+}
+.tagline button:hover{border-bottom-color:var(--rule)}
+.tagline button[aria-pressed="true"]{background:rgba(242,194,48,.35);border-bottom-color:var(--ink)}
+.tagline button:focus-visible{outline:2px solid var(--tag);outline-offset:2px}
+.tagline .b-tag{color:var(--tag);font-weight:700}
+.tagline .b-attr{color:var(--attr)}
+.anatomy-note{
+  font-family:var(--sans);font-size:var(--s0);color:var(--ink);
+  border-top:1px solid var(--rule);margin-top:1rem;padding-top:.8rem;min-height:4.2em;
+}
+.anatomy-note b{font-family:var(--mono);font-size:.9em}
+
+/* --- Checklist ----------------------------------------------- */
+.checklist{margin:0;padding:.7rem;list-style:none;font-family:var(--sans);font-size:var(--s0);background:#fff;flex:1}
+.checklist li{display:flex;gap:.55rem;padding:.2rem 0;color:var(--ink-soft)}
+.checklist li::before{content:"○";font-family:var(--mono);color:var(--rule)}
+.checklist li.done{color:var(--tag)}
+.checklist li.done::before{content:"●";color:var(--tag)}
+.score{font-family:var(--sans);font-weight:600}
+
+/* --- Reference table ----------------------------------------- */
+.compare{width:100%;border-collapse:collapse;margin-top:.4rem;font-size:var(--s0)}
+.compare th,.compare td{text-align:left;padding:.6rem .8rem;border-bottom:1px solid var(--rule);vertical-align:top}
+.compare th{font-family:var(--sans);font-weight:600;background:#fff}
+.compare td:first-child{font-family:var(--mono);font-size:12px;color:var(--tag);width:30%}
+
+footer{
+  border-top:1.5px solid var(--ink);margin-top:4rem;padding:2rem 0 4rem;
+  font-size:var(--s0);color:var(--ink-soft);
+  display:flex;flex-wrap:wrap;gap:1rem 2rem;justify-content:space-between;
+}
+footer a{color:var(--ink)}
+.noscript{background:var(--mark);padding:1rem;font-family:var(--sans);font-size:var(--s0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol">Second in the series, after Flexbox &amp; Grid</p>
+  <h1><span class="ang">&lt;</span>html<span class="ang">&gt;</span></h1>
+  <p class="deck">The language that gives a page its structure and its meaning. <strong>Every panel below is editable — change the markup and the browser responds.</strong></p>
+
+  <div class="panel" data-demo="editor" data-panes="preview" data-h="230">
+    <script type="text/html" class="seed">
+      <h1>Hello. Try changing me.</h1>
+
+      <p>This is a paragraph. Add <strong>some strong text</strong>
+         or turn this into a heading by swapping the tags.</p>
+
+      <ul>
+        <li>An item</li>
+        <li>Another item</li>
+      </ul>
+    </script>
+  </div>
+  <p class="hint-line">No CSS is loaded in that preview. Everything you see is the browser's own default styling of your tags.</p>
+</header>
+
+<nav class="contents">
+  <h2>What's in here</h2>
+  <a href="#l1"><span>1</span> Anatomy of an element</a>
+  <a href="#l2"><span>2</span> Everything nests</a>
+  <a href="#l3"><span>3</span> The page skeleton</a>
+  <a href="#l4"><span>4</span> Text that means something</a>
+  <a href="#l5"><span>5</span> Lists</a>
+  <a href="#l6"><span>6</span> Links</a>
+  <a href="#l7"><span>7</span> Images and figures</a>
+  <a href="#l8"><span>8</span> Semantic landmarks</a>
+  <a href="#l9"><span>9</span> div and span</a>
+  <a href="#l10"><span>10</span> The heading outline</a>
+  <a href="#l11"><span>11</span> Tables</a>
+  <a href="#l12"><span>12</span> Forms and labels</a>
+  <a href="#l13"><span>13</span> What the browser repairs</a>
+  <a href="#l14"><span>14</span> Your turn</a>
+</nav>
+
+<noscript><p class="noscript">The editors on this page need JavaScript. The explanations and code samples still read fine without it.</p></noscript>
+
+<!-- ============================ PART ONE ============================ -->
+<section class="part">
+  <h2>Part one: the parts</h2>
+  <p>HTML is text with labels attached. The labels tell the browser what each piece of content <em>is</em> — a heading, a link, a list item — and everything else follows from that.</p>
+</section>
+
+<article class="lesson" id="l1">
+  <div class="lesson-text">
+    <h3><span class="num">01</span> Anatomy of an element</h3>
+    <p>Almost every element follows the same shape: an opening tag, some content, a closing tag. The opening tag can carry attributes that configure it.</p>
+    <p>Click any part of the example to find out what it's called and what it does. Learning these five names now saves a lot of confusion later, because error messages and documentation assume them.</p>
+    <p class="tip">A few elements have no content and no closing tag — <code>&lt;img&gt;</code>, <code>&lt;br&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;meta&gt;</code>. They're called void elements.</p>
+  </div>
+  <div class="panel">
+    <div class="anatomy">
+      <p class="tagline" id="anatomy">
+        <button type="button" data-part="open">&lt;<span class="b-tag">a</span></button><button type="button" data-part="attr"> <span class="b-attr">href</span>="/plants"</button><button type="button" data-part="attr2"> <span class="b-attr">class</span>="nav-link"</button><button type="button" data-part="open">&gt;</button><button type="button" data-part="content">House plants</button><button type="button" data-part="close">&lt;/<span class="b-tag">a</span>&gt;</button>
+      </p>
+      <p class="anatomy-note" id="anatomy-note">Pick a part of the tag above.</p>
+    </div>
+  </div>
+</article>
+
+<article class="lesson" id="l2">
+  <div class="lesson-text">
+    <h3><span class="num">02</span> Everything nests</h3>
+    <p>Elements go inside other elements, and that nesting is the whole structure of the document. The result is a tree: every element has one parent and any number of children.</p>
+    <p>The tree pane on the right is built from your markup exactly the way the browser builds it. Indent your code to match the nesting — the browser doesn't care, but you and everyone reading after you will.</p>
+    <p>The one rule that matters: tags close in the reverse order they opened. <span class="inline-code">&lt;p&gt;&lt;em&gt;…&lt;/em&gt;&lt;/p&gt;</span> is fine; crossing them over is not.</p>
+    <p class="tip">Try deleting a closing tag and watch the tree change shape.</p>
+  </div>
+  <div class="panel" data-demo="editor" data-panes="tree" data-h="230">
+    <script type="text/html" class="seed">
+      <article>
+        <h2>Watering</h2>
+        <p>Most plants prefer <em>less</em> water than you think.</p>
+        <ul>
+          <li>Check the soil first</li>
+          <li>Water deeply, then wait</li>
+        </ul>
+      </article>
+    </script>
+  </div>
+</article>
+
+<article class="lesson" id="l3">
+  <div class="lesson-text">
+    <h3><span class="num">03</span> The page skeleton</h3>
+    <p>A real page has a fixed opening. Each line earns its place:</p>
+    <p><code>&lt;!DOCTYPE html&gt;</code> tells the browser to use modern standards rather than an ancient compatibility mode. <code class="at">lang="en"</code> tells screen readers and translators which language to pronounce.</p>
+    <p><code>&lt;meta charset="utf-8"&gt;</code> prevents mangled accents and emoji. The <code>viewport</code> meta stops phones from pretending to be a desktop and zooming your page out.</p>
+    <p>Everything in <code>&lt;head&gt;</code> is information <em>about</em> the page. Everything in <code>&lt;body&gt;</code> is the page itself.</p>
+    <p class="tip">Type this skeleton from memory a few times. It's the one piece of HTML worth memorising.</p>
+  </div>
+  <div class="panel" data-demo="editor" data-doc="1" data-panes="preview" data-h="230">
+    <script type="text/html" class="seed">
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Fern &amp; Frond</title>
+      </head>
+      <body>
+        <h1>Fern &amp; Frond</h1>
+        <p>Plants for rooms with bad light.</p>
+      </body>
+      </html>
+    </script>
+  </div>
+</article>
+
+<article class="lesson" id="l4">
+  <div class="lesson-text">
+    <h3><span class="num">04</span> Text that means something</h3>
+    <p>Headings run from <code>&lt;h1&gt;</code> to <code>&lt;h6&gt;</code>. They aren't font sizes — they're rank. An <code>&lt;h2&gt;</code> is a subsection of the <code>&lt;h1&gt;</code> above it, and CSS can make it any size you want later.</p>
+    <p><code>&lt;strong&gt;</code> means the content is important; <code>&lt;em&gt;</code> means it carries emphasis that changes the sentence's meaning. <code>&lt;b&gt;</code> and <code>&lt;i&gt;</code> are their appearance-only cousins — reach for them only when nothing is actually being stressed, like a taxonomic name.</p>
+    <p>Other useful ones: <code>&lt;blockquote&gt;</code> with <code>&lt;cite&gt;</code>, <code>&lt;code&gt;</code>, <code>&lt;time&gt;</code>, <code>&lt;abbr&gt;</code>, and <code>&lt;small&gt;</code> for legal fine print.</p>
+    <p class="tip">Never use a heading tag to make text big, and never use <code>&lt;br&gt;</code> to make a gap. Those are CSS's job.</p>
+  </div>
+  <div class="panel" data-demo="editor" data-panes="preview" data-h="250">
+    <script type="text/html" class="seed">
+      <h2>Repotting</h2>
+      <p>Do this in <em>spring</em>, not autumn.
+         <strong>Never water immediately after.</strong></p>
+
+      <blockquote>
+        <p>A pot one size up. Not three.</p>
+        <footer>— <cite>The Indoor Gardener</cite></footer>
+      </blockquote>
+
+      <p><small>Advice applies to <i>Monstera deliciosa</i>.</small></p>
+    </script>
+  </div>
+</article>
+
+<article class="lesson" id="l5">
+  <div class="lesson-text">
+    <h3><span class="num">05</span> Lists</h3>
+    <p>Three kinds, and the difference is meaning rather than bullet shape.</p>
+    <p><code>&lt;ul&gt;</code> is for items whose order doesn't matter. <code>&lt;ol&gt;</code> is for steps or rankings, where reordering would change the sense. <code>&lt;dl&gt;</code> pairs terms with descriptions using <code>&lt;dt&gt;</code> and <code>&lt;dd&gt;</code>.</p>
+    <p>Only <code>&lt;li&gt;</code> may sit directly inside a <code>&lt;ul&gt;</code> or <code>&lt;ol&gt;</code>. To nest a sublist, put the whole inner list inside an <code>&lt;li&gt;</code>.</p>
+    <p class="tip">Navigation menus are lists. Wrapping your nav links in a <code>&lt;ul&gt;</code> tells a screen reader how many links are coming.</p>
+  </div>
+  <div class="panel" data-demo="editor" data-panes="preview,tree" data-h="250">
+    <script type="text/html" class="seed">
+      <ol>
+        <li>Soak the rootball
+          <ul>
+            <li>Ten minutes is plenty</li>
+          </ul>
+        </li>
+        <li>Drain it fully</li>
+      </ol>
+
+      <dl>
+        <dt>Bright indirect</dt>
+        <dd>Near a window, out of direct sun.</dd>
+      </dl>
+    </script>
+  </div>
+</article>
+
+<article class="lesson" id="l6">
+  <div class="lesson-text">
+    <h3><span class="num">06</span> Links</h3>
+    <p>The <code>&lt;a&gt;</code> element plus an <code class="at">href</code> is what makes the web a web. The value can be a full address, a path on your own site like <span class="inline-code">/about</span>, a file next to the current page like <span class="inline-code">plants.html</span>, or <span class="inline-code">#section-id</span> to jump within the page.</p>
+    <p>Write link text that makes sense read on its own. Many people navigate by pulling up a list of every link on the page, and a list of six identical "click here" entries tells them nothing.</p>
+    <p class="tip">If a link opens in a new tab with <code class="at">target="_blank"</code>, say so in the text. A tab appearing unannounced is disorienting.</p>
+  </div>
+  <div class="panel" data-demo="editor" data-panes="preview" data-h="200">
+    <script type="text/html" class="seed">
+      <p>Read the <a href="/guides/light">guide to light levels</a>
+         before you buy.</p>
+
+      <p>Jump to <a href="#watering">watering</a>, or email
+         <a href="mailto:hello@example.com">the shop</a>.</p>
+
+      <p>Vague version: <a href="/guides/light">click here</a></p>
+    </script>
+  </div>
+</article>
+
+<article class="lesson" id="l7">
+  <div class="lesson-text">
+    <h3><span class="num">07</span> Images and figures</h3>
+    <p><code>&lt;img&gt;</code> needs two things: <code class="at">src</code>, the file to load, and <code class="at">alt</code>, the text that stands in for the image when it can't be seen.</p>
+    <p>Write <code class="at">alt</code> as a replacement, not a caption — describe what a person would miss. If the image is purely decorative, use an empty <span class="inline-code">alt=""</span>, which tells screen readers to skip it. Leaving <code class="at">alt</code> off altogether is different and worse: some screen readers then read out the filename.</p>
+    <p>Use <code>&lt;figure&gt;</code> with <code>&lt;figcaption&gt;</code> when the image needs a visible caption tied to it.</p>
+    <p class="tip">Setting <code class="at">width</code> and <code class="at">height</code> lets the browser reserve the right space before the file arrives, so the page stops jumping around as it loads.</p>
+  </div>
+  <div class="panel" data-demo="editor" data-panes="preview,tree" data-h="250">
+    <script type="text/html" class="seed">
+      <figure>
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='110'%3E%3Crect width='160' height='110' fill='%230B6E4F'/%3E%3Ccircle cx='118' cy='30' r='15' fill='%23F2C230'/%3E%3Cpath d='M0 110 L45 52 L85 92 L115 68 L160 110 Z' fill='%23FBFBF9'/%3E%3C/svg%3E"
+             alt="A fern on a windowsill at sunrise"
+             width="160" height="110">
+        <figcaption>Morning light, filtered.</figcaption>
+      </figure>
+    </script>
+  </div>
+</article>
+
+<!-- ============================ PART TWO ============================ -->
+<section class="part">
+  <h2>Part two: meaning</h2>
+  <p>Two pages can look identical and be completely different underneath. This part is about the difference, which is what search engines, screen readers, and your future self all read.</p>
+</section>
+
+<article class="lesson" id="l8">
+  <div class="lesson-text">
+    <h3><span class="num">08</span> Semantic landmarks</h3>
+    <p>A handful of elements label the big regions of a page: <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;footer&gt;</code>, plus <code>&lt;article&gt;</code> and <code>&lt;section&gt;</code> for the content itself.</p>
+    <p>They come with built-in roles, listed in the pane on the right. Screen reader users jump straight between these — the equivalent of glancing at a page and seeing where things are. Swap them all for <code>&lt;div&gt;</code> and that list empties out.</p>
+    <p>Use exactly one <code>&lt;main&gt;</code>, holding the content unique to this page. The nav and footer that repeat on every page belong outside it.</p>
+    <p class="tip">A <code>&lt;section&gt;</code> only becomes a landmark when it has a name — give it an <code class="at">aria-label</code> or a heading referenced by <code class="at">aria-labelledby</code>.</p>
+  </div>
+  <div class="panel" data-demo="editor" data-panes="landmarks" data-h="260">
+    <script type="text/html" class="seed">
+      <header>
+        <h1>Fern &amp; Frond</h1>
+        <nav aria-label="Main">
+          <ul><li><a href="/shop">Shop</a></li></ul>
+        </nav>
+      </header>
+
+      <main>
+        <article>
+          <h2>Ferns for dark rooms</h2>
+          <p>Five that forgive neglect.</p>
+        </article>
+        <aside>
+          <h2>Related</h2>
+        </aside>
+      </main>
+
+      <footer>
+        <p>© 2026</p>
+      </footer>
+    </script>
+  </div>
+</article>
+
+<article class="lesson" id="l9">
+  <div class="lesson-text">
+    <h3><span class="num">09</span> div and span</h3>
+    <p>These two mean nothing at all, and that's the point. Use them when you need a box to hang styling or scripting on and no element with actual meaning fits.</p>
+    <p><code>&lt;div&gt;</code> is the block-level one: it starts on a new line and fills the width. <code>&lt;span&gt;</code> is inline: it sits inside a line of text without breaking it.</p>
+    <p>The question to ask before typing <code>&lt;div&gt;</code> is simply whether a more specific element exists. Usually one does. A wrapper purely for layout, though, is a perfectly good div — that's exactly what it's for.</p>
+    <p class="tip">Compare the two versions on the right in the landmarks pane. They render identically and one of them is invisible to assistive technology.</p>
+  </div>
+  <div class="panel" data-demo="editor" data-panes="preview,landmarks" data-h="240">
+    <script type="text/html" class="seed">
+      <div class="header">
+        <div class="title">Fern &amp; Frond</div>
+        <div class="nav"><a href="/shop">Shop</a></div>
+      </div>
+      <div class="content">
+        <p>Price: <span class="amount">£18</span></p>
+      </div>
+    </script>
+  </div>
+</article>
+
+<article class="lesson" id="l10">
+  <div class="lesson-text">
+    <h3><span class="num">10</span> The heading outline</h3>
+    <p>Your headings form a table of contents whether you meant them to or not. The pane on the right extracts it, the same way assistive technology does.</p>
+    <p>Start at <code>&lt;h1&gt;</code> and don't skip levels on the way down. Jumping from <code>&lt;h2&gt;</code> to <code>&lt;h4&gt;</code> implies a missing section and leaves a hole in the outline — try it and the pane will flag it.</p>
+    <p>Going back <em>up</em> a level is normal and fine: that's just the next section starting.</p>
+    <p class="tip">A quick self-test for any page you build: read only the headings aloud. If the page still makes sense, the structure is sound.</p>
+  </div>
+  <div class="panel" data-demo="editor" data-panes="outline" data-h="240">
+    <script type="text/html" class="seed">
+      <h1>Caring for ferns</h1>
+        <h2>Light</h2>
+          <h3>North-facing rooms</h3>
+          <h3>Under artificial light</h3>
+        <h2>Water</h2>
+          <h4>Tap water</h4>
+        <h2>Feeding</h2>
+    </script>
+  </div>
+</article>
+
+<article class="lesson" id="l11">
+  <div class="lesson-text">
+    <h3><span class="num">11</span> Tables</h3>
+    <p>Tables are for data with two dimensions — rows and columns that both mean something. They are not for page layout; that was 1998 and we have grid now.</p>
+    <p>A good table has a <code>&lt;caption&gt;</code> saying what it contains, a <code>&lt;thead&gt;</code> and <code>&lt;tbody&gt;</code>, and header cells marked as <code>&lt;th&gt;</code> rather than <code>&lt;td&gt;</code>.</p>
+    <p>The critical attribute is <code class="at">scope</code>. <span class="inline-code">scope="col"</span> says a header labels its column, <span class="inline-code">scope="row"</span> its row. That's what lets a screen reader announce "Water, twice weekly" instead of reading out a bare, contextless number.</p>
+  </div>
+  <div class="panel" data-demo="editor" data-panes="preview" data-h="240">
+    <script type="text/html" class="seed">
+      <table>
+        <caption>Care schedule</caption>
+        <thead>
+          <tr>
+            <th scope="col">Plant</th>
+            <th scope="col">Water</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Boston fern</th>
+            <td>Twice weekly</td>
+          </tr>
+          <tr>
+            <th scope="row">Snake plant</th>
+            <td>Monthly</td>
+          </tr>
+        </tbody>
+      </table>
+    </script>
+  </div>
+</article>
+
+<article class="lesson" id="l12">
+  <div class="lesson-text">
+    <h3><span class="num">12</span> Forms and labels</h3>
+    <p>Every input needs a <code>&lt;label&gt;</code>, connected by matching the label's <code class="at">for</code> to the input's <code class="at">id</code>. This isn't decoration: it's what makes clicking the label focus the field, and what makes the field announce its own name.</p>
+    <p>Placeholder text is not a label. It vanishes the moment someone starts typing, exactly when they might want to check what they're filling in.</p>
+    <p>Pick the right <code class="at">type</code> and you get validation and the correct phone keyboard for free — <span class="inline-code">email</span>, <span class="inline-code">tel</span>, <span class="inline-code">number</span>, <span class="inline-code">date</span>, <span class="inline-code">search</span>.</p>
+    <p class="tip">Group related controls such as radio buttons in a <code>&lt;fieldset&gt;</code> with a <code>&lt;legend&gt;</code>, and always give <code>&lt;button&gt;</code> an explicit <code class="at">type</code>.</p>
+  </div>
+  <div class="panel" data-demo="editor" data-panes="preview" data-h="260">
+    <script type="text/html" class="seed">
+      <form>
+        <p>
+          <label for="email">Email address</label><br>
+          <input type="email" id="email" name="email" required>
+        </p>
+        <fieldset>
+          <legend>How often?</legend>
+          <label><input type="radio" name="freq" value="w"> Weekly</label>
+          <label><input type="radio" name="freq" value="m"> Monthly</label>
+        </fieldset>
+        <p><button type="submit">Sign up</button></p>
+      </form>
+    </script>
+  </div>
+</article>
+
+<article class="lesson" id="l13">
+  <div class="lesson-text">
+    <h3><span class="num">13</span> What the browser repairs</h3>
+    <p>HTML never throws an error. Hand a browser something impossible and it silently builds the closest legal tree it can, then carries on.</p>
+    <p>That sounds generous until your CSS stops matching and you can't see why. The markup on the right is invalid — a <code>&lt;div&gt;</code> can't live inside a <code>&lt;p&gt;</code>, and the tags cross over. Compare what you typed with the tree you actually got.</p>
+    <p>The third block is a different case: a <code>&lt;p&gt;</code> inside a <code>&lt;ul&gt;</code> is invalid, but the parser has no rule to repair it, so it stays exactly as typed and nothing warns you. Only a validator catches that kind.</p>
+    <p>The fix is always to write the nesting you meant, not to work around the repair.</p>
+    <p class="tip">Paste your own markup into <a href="https://validator.w3.org/nu/#textarea">the W3C validator</a> to catch these before they confuse you.</p>
+  </div>
+  <div class="panel" data-demo="editor" data-panes="tree" data-h="220">
+    <script type="text/html" class="seed">
+      <p>Ferns like humidity.
+        <div>This div cannot be in here.</div>
+      </p>
+
+      <p><em>Crossed <strong>over</em> tags</strong></p>
+
+      <ul>
+        <p>This paragraph is not a list item.</p>
+      </ul>
+    </script>
+  </div>
+</article>
+
+<!-- =========================== PART THREE =========================== -->
+<section class="part">
+  <h2>Part three: putting it to work</h2>
+  <p>One page of markup with six things wrong with it, and a checklist that updates as you type.</p>
+</section>
+
+<article class="lesson" id="l14">
+  <div class="lesson-text">
+    <h3><span class="num">14</span> Your turn</h3>
+    <p>The markup on the right renders acceptably and is structurally poor. Fix it until every item in the checklist lights up.</p>
+    <p>Work through it from the outside in: get the landmarks and the single <code>&lt;h1&gt;</code> in place first, then the list, then the image and the form field.</p>
+    <p>Each item corresponds to something from a lesson above. If one won't go green, the lesson number is in the wording.</p>
+  </div>
+  <div class="panel" data-demo="editor" data-panes="check" data-h="300">
+    <script type="text/html" class="seed">
+      <div class="top">
+        <div class="logo">Fern &amp; Frond</div>
+      </div>
+
+      <div class="body">
+        <div class="big-title">Ferns for dark rooms</div>
+        <div class="big-title">Our five favourites</div>
+
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='80'%3E%3Crect width='120' height='80' fill='%230B6E4F'/%3E%3C/svg%3E">
+
+        <div>Boston fern</div>
+        <div>Maidenhair</div>
+        <div>Bird's nest</div>
+
+        <input type="text" placeholder="Your email">
+        <div class="btn">Sign up</div>
+      </div>
+    </script>
+  </div>
+</article>
+
+<article class="lesson">
+  <div class="lesson-text">
+    <h3>A pocket reference</h3>
+    <p>The elements worth knowing by name, with what they're for rather than what they look like.</p>
+  </div>
+  <div>
+    <table class="compare">
+      <thead><tr><th>Element</th><th>Use it when</th></tr></thead>
+      <tbody>
+        <tr><td>&lt;main&gt;</td><td>Wrapping the content unique to this page. One per page.</td></tr>
+        <tr><td>&lt;article&gt;</td><td>A piece that would still make sense on its own — a post, a card, a comment.</td></tr>
+        <tr><td>&lt;section&gt;</td><td>A themed chunk of a page that has a heading.</td></tr>
+        <tr><td>&lt;nav&gt;</td><td>A set of navigation links, not every group of links.</td></tr>
+        <tr><td>&lt;aside&gt;</td><td>Content related to the main thread but not part of it.</td></tr>
+        <tr><td>&lt;figure&gt;</td><td>An image, diagram or snippet referenced from the text, usually captioned.</td></tr>
+        <tr><td>&lt;button&gt;</td><td>Something happens on this page. Use &lt;a&gt; when you go somewhere.</td></tr>
+        <tr><td>&lt;label&gt;</td><td>Always, next to every form control.</td></tr>
+        <tr><td>&lt;time&gt;</td><td>A date or duration, with a machine-readable datetime attribute.</td></tr>
+        <tr><td>&lt;div&gt;</td><td>Nothing more specific fits and you need a box.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</article>
+
+<footer>
+  <p>Volume two. The first covers Flexbox and Grid — the styling that goes on top of this.</p>
+  <p>Keep going: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element">MDN's element reference</a> · <a href="https://validator.w3.org/nu/#textarea">W3C validator</a></p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script>
+(function () {
+  "use strict";
+
+  var PREVIEW_CSS =
+    "body{margin:12px;font-family:Georgia,'Times New Roman',serif;color:#16202A;line-height:1.5}" +
+    "img{max-width:100%;height:auto}" +
+    "table{border-collapse:collapse}th,td{border:1px solid #999;padding:4px 8px;text-align:left}" +
+    "caption{text-align:left;padding-bottom:4px;font-style:italic}" +
+    "fieldset{margin:8px 0}";
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  }
+
+  function dedent(s) {
+    var lines = s.replace(/\t/g, "  ").split("\n");
+    while (lines.length && !lines[0].trim()) lines.shift();
+    while (lines.length && !lines[lines.length - 1].trim()) lines.pop();
+    var min = Infinity;
+    lines.forEach(function (l) {
+      if (l.trim()) min = Math.min(min, l.match(/^ */)[0].length);
+    });
+    if (!isFinite(min)) min = 0;
+    return lines.map(function (l) { return l.slice(min); }).join("\n");
+  }
+
+  /* Parse the markup the way the browser would. Fragments go through
+     a <template> so we see the real error correction; full documents
+     go through DOMParser so html/head/body survive. */
+  function parse(code, isDoc) {
+    if (isDoc) {
+      var doc = new DOMParser().parseFromString(code, "text/html");
+      return [doc.documentElement];
+    }
+    var t = document.createElement("template");
+    t.innerHTML = code;
+    return Array.prototype.slice.call(t.content.childNodes);
+  }
+
+  /* ---------- inspector panes ---------- */
+
+  function treePane(host, nodes) {
+    host.innerHTML = "";
+    var root = el("ul");
+
+    function walk(node, into) {
+      if (node.nodeType === 3) {
+        var txt = node.nodeValue.replace(/\s+/g, " ").trim();
+        if (!txt) return;
+        if (txt.length > 38) txt = txt.slice(0, 38) + "…";
+        into.appendChild(el("li")).appendChild(el("span", "t-text", '"' + txt + '"'));
+        return;
+      }
+      if (node.nodeType === 8) {
+        into.appendChild(el("li")).appendChild(el("span", "t-text", "<!-- comment -->"));
+        return;
+      }
+      if (node.nodeType !== 1) return;
+
+      var li = el("li");
+      var head = el("div");
+      head.appendChild(el("span", "t-tag", node.tagName.toLowerCase()));
+      Array.prototype.forEach.call(node.attributes, function (a) {
+        head.appendChild(document.createTextNode(" "));
+        head.appendChild(el("span", "t-attr", a.name));
+        if (a.value) {
+          var v = a.value.length > 18 ? a.value.slice(0, 18) + "…" : a.value;
+          head.appendChild(el("span", "t-val", '="' + v + '"'));
+        }
+      });
+      li.appendChild(head);
+      if (node.childNodes.length) {
+        var kids = el("ul");
+        Array.prototype.forEach.call(node.childNodes, function (c) { walk(c, kids); });
+        if (kids.childNodes.length) li.appendChild(kids);
+      }
+      into.appendChild(li);
+    }
+
+    nodes.forEach(function (n) { walk(n, root); });
+    if (!root.childNodes.length) root.appendChild(el("li", "t-empty", "nothing yet"));
+    host.appendChild(root);
+  }
+
+  var ROLES = {
+    HEADER: "banner", NAV: "navigation", MAIN: "main", ASIDE: "complementary",
+    FOOTER: "contentinfo", ARTICLE: "article", FORM: "form", SEARCH: "search"
+  };
+
+  function landmarksPane(host, nodes) {
+    host.innerHTML = "";
+    var list = el("ul");
+    var found = 0;
+
+    function walk(node) {
+      if (node.nodeType !== 1) return;
+      var tag = node.tagName;
+      var role = ROLES[tag];
+      if (tag === "SECTION") {
+        role = (node.getAttribute("aria-label") || node.getAttribute("aria-labelledby"))
+          ? "region" : null;
+      }
+      if (role) {
+        found++;
+        var li = el("li");
+        li.appendChild(el("span", "t-tag", "<" + tag.toLowerCase() + ">"));
+        li.appendChild(el("span", "t-role", role));
+        var name = node.getAttribute("aria-label");
+        if (name) li.appendChild(el("span", "t-val", ' "' + name + '"'));
+        list.appendChild(li);
+      }
+      Array.prototype.forEach.call(node.children, walk);
+    }
+
+    nodes.forEach(walk);
+    if (!found) {
+      list.appendChild(el("li", "t-warn", "No landmarks. Nothing here to navigate by."));
+    }
+    host.appendChild(el("div", "t-text", "Regions a screen reader can jump to:"));
+    host.appendChild(list);
+  }
+
+  function outlinePane(host, nodes) {
+    host.innerHTML = "";
+    var heads = [];
+    function walk(node) {
+      if (node.nodeType !== 1) return;
+      var m = /^H([1-6])$/.exec(node.tagName);
+      if (m) heads.push({ level: +m[1], text: node.textContent.replace(/\s+/g, " ").trim() });
+      Array.prototype.forEach.call(node.children, walk);
+    }
+    nodes.forEach(walk);
+
+    if (!heads.length) {
+      host.appendChild(el("div", "t-empty", "No headings found."));
+      return;
+    }
+    var list = el("ul");
+    var prev = 0;
+    heads.forEach(function (h, i) {
+      var li = el("li");
+      li.style.paddingLeft = ((h.level - 1) * 1.1) + "rem";
+      li.appendChild(el("span", "t-tag", "h" + h.level));
+      li.appendChild(document.createTextNode(" " + (h.text || "(empty)")));
+      if (i === 0 && h.level !== 1) {
+        li.appendChild(el("span", "t-warn", "  ← should start at h1"));
+      } else if (prev && h.level > prev + 1) {
+        li.appendChild(el("span", "t-warn", "  ← skipped h" + (prev + 1)));
+      }
+      prev = h.level;
+      list.appendChild(li);
+    });
+    host.appendChild(list);
+  }
+
+  /* ---------- the repair checklist for lesson 14 ---------- */
+
+  var CHECKS = [
+    { label: "Exactly one <h1> on the page (4)", test: function (r) {
+        return r.querySelectorAll("h1").length === 1; } },
+    { label: "Sub-headings use <h2>, not divs (4, 10)", test: function (r) {
+        return r.querySelectorAll("h2").length >= 1; } },
+    { label: "A <header> and a <main> wrap the page (8)", test: function (r) {
+        return !!r.querySelector("header") && r.querySelectorAll("main").length === 1; } },
+    { label: "The three plants are a <ul> of <li> (5)", test: function (r) {
+        var ul = r.querySelector("ul, ol");
+        return !!ul && ul.querySelectorAll("li").length >= 3; } },
+    { label: "The image has a described alt (7)", test: function (r) {
+        var img = r.querySelector("img");
+        return !!img && img.hasAttribute("alt") && img.getAttribute("alt").trim().length > 4; } },
+    { label: "The email field has type=email and a <label for> (12)", test: function (r) {
+        var input = r.querySelector("input");
+        if (!input || input.getAttribute("type") !== "email") return false;
+        var id = input.getAttribute("id");
+        return !!id && !!r.querySelector('label[for="' + id + '"]'); } },
+    { label: "Sign up is a real <button> (12)", test: function (r) {
+        return !!r.querySelector("button"); } }
+  ];
+
+  function checkPane(host, nodes) {
+    var root = document.createElement("div");
+    nodes.forEach(function (n) { root.appendChild(n.cloneNode(true)); });
+
+    host.innerHTML = "";
+    var list = el("ul", "checklist");
+    var passed = 0;
+    CHECKS.forEach(function (c) {
+      var ok = false;
+      try { ok = !!c.test(root); } catch (e) { ok = false; }
+      if (ok) passed++;
+      list.appendChild(el("li", ok ? "done" : "", c.label));
+    });
+    var score = el("p", "score", passed === CHECKS.length
+      ? "All seven. That is a well-built page."
+      : passed + " of " + CHECKS.length + " fixed");
+    score.style.padding = ".5rem .2rem 0";
+    score.style.color = passed === CHECKS.length ? "var(--tag)" : "var(--ink-soft)";
+    host.appendChild(list);
+    host.appendChild(score);
+  }
+
+  /* ---------- the editor ---------- */
+
+  function editorDemo(panel) {
+    var seed = panel.querySelector("script.seed");
+    var initial = dedent(seed ? seed.textContent : "");
+    if (seed) seed.parentNode.removeChild(seed);
+
+    var isDoc = panel.dataset.doc === "1";
+    var height = parseInt(panel.dataset.h || "220", 10);
+    var panes = (panel.dataset.panes || "preview").split(",");
+
+    var grid = el("div", "editor");
+    if (panes.length > 1) grid.style.gridTemplateColumns = "1fr 1fr 1fr";
+    panel.appendChild(grid);
+
+    /* code pane */
+    var codePane = el("div", "pane");
+    var label = el("div", "pane-label");
+    label.appendChild(el("span", null, "your markup — edit it"));
+    var reset = el("button", "mini", "Reset");
+    reset.type = "button";
+    label.appendChild(reset);
+    codePane.appendChild(label);
+
+    var ta = document.createElement("textarea");
+    ta.className = "src";
+    ta.spellcheck = false;
+    ta.setAttribute("aria-label", "HTML source, editable");
+    ta.value = initial;
+    ta.style.minHeight = height + "px";
+    codePane.appendChild(ta);
+    grid.appendChild(codePane);
+
+    /* output panes */
+    var outs = [];
+    panes.forEach(function (kind) {
+      var p = el("div", "pane");
+      var names = {
+        preview: "what the browser shows",
+        tree: "the tree the browser built",
+        landmarks: "landmarks",
+        outline: "heading outline",
+        check: "checklist"
+      };
+      p.appendChild(el("div", "pane-label")).appendChild(el("span", null, names[kind] || kind));
+      var body;
+      if (kind === "preview") {
+        body = document.createElement("iframe");
+        body.className = "out";
+        body.setAttribute("sandbox", "");
+        body.setAttribute("title", "Rendered result");
+        body.style.minHeight = height + "px";
+      } else {
+        body = el("div", "inspect");
+        body.style.minHeight = height + "px";
+      }
+      p.appendChild(body);
+      grid.appendChild(p);
+      outs.push({ kind: kind, node: body });
+    });
+
+    function render() {
+      var code = ta.value;
+      var nodes = null;
+      outs.forEach(function (o) {
+        if (o.kind === "preview") {
+          o.node.srcdoc = isDoc ? code
+            : '<!doctype html><meta charset="utf-8"><style>' + PREVIEW_CSS + "</style>" + code;
+          return;
+        }
+        if (!nodes) nodes = parse(code, isDoc);
+        if (o.kind === "tree") treePane(o.node, nodes);
+        else if (o.kind === "landmarks") landmarksPane(o.node, nodes);
+        else if (o.kind === "outline") outlinePane(o.node, nodes);
+        else if (o.kind === "check") checkPane(o.node, nodes);
+      });
+    }
+
+    var timer = null;
+    ta.addEventListener("input", function () {
+      clearTimeout(timer);
+      timer = setTimeout(render, 220);
+    });
+    ta.addEventListener("keydown", function (e) {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        var s = ta.selectionStart, en = ta.selectionEnd;
+        ta.value = ta.value.slice(0, s) + "  " + ta.value.slice(en);
+        ta.selectionStart = ta.selectionEnd = s + 2;
+        clearTimeout(timer);
+        timer = setTimeout(render, 220);
+      }
+    });
+    reset.addEventListener("click", function () {
+      ta.value = initial;
+      render();
+      ta.focus();
+    });
+
+    render();
+  }
+
+  /* ---------- the anatomy diagram ---------- */
+
+  var PARTS = {
+    open: ["Opening tag", "Angle brackets around a tag name. It names the element and switches it on. The name is case-insensitive, but everyone writes it lowercase."],
+    attr: ["Attribute", "A name and a value in quotes, sitting inside the opening tag. <b>href</b> is specific to links — it holds the destination."],
+    attr2: ["Attribute", "<b>class</b> is a global attribute, allowed on any element. It carries no meaning to the browser; it's a hook for CSS and JavaScript."],
+    content: ["Content", "Everything between the tags. Here it's text, but it could be more elements. For a link, this is the visible, clickable part."],
+    close: ["Closing tag", "The same tag name with a slash. It marks where the element ends. Leave it off and the element swallows whatever comes next."]
+  };
+
+  function anatomy() {
+    var host = document.getElementById("anatomy");
+    if (!host) return;
+    var note = document.getElementById("anatomy-note");
+    var buttons = host.querySelectorAll("button");
+
+    Array.prototype.forEach.call(buttons, function (b) {
+      b.setAttribute("aria-pressed", "false");
+      b.addEventListener("click", function () {
+        Array.prototype.forEach.call(buttons, function (o) {
+          o.setAttribute("aria-pressed", o === b ? "true" : "false");
+        });
+        var p = PARTS[b.dataset.part];
+        note.innerHTML = "<strong>" + p[0] + ".</strong> " + p[1];
+      });
+    });
+  }
+
+  /* ---------- boot ---------- */
+
+  document.querySelectorAll('[data-demo="editor"]').forEach(editorDemo);
+  anatomy();
+})();
+</script>
+</body>
+</html>
