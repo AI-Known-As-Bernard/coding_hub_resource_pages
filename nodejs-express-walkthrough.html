@@ -1,0 +1,2510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Node.js &amp; Express from an Empty Folder</title>
+  <meta name="description" content="A self-paced tutorial that walks you through setting up a Node.js and Express project the way professional teams do it, with Express 4 (CommonJS) and Express 5 (ES modules) side by side.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" href="css/nodejs_styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="topbar">
+    <button class="nav-toggle" type="button" aria-controls="sidebar" aria-expanded="false">
+      <span class="nav-toggle-bars" aria-hidden="true"></span>
+      <span class="visually-hidden">Open lesson list</span>
+    </button>
+    <a class="brand" href="#start">Empty folder <span aria-hidden="true">/</span> Express API</a>
+    <div class="module-switch" role="group" aria-label="Choose which code style to show">
+      <span class="module-switch-label" id="module-switch-label">Show code for</span>
+      <button type="button" data-set-module="cjs" aria-pressed="true">Express 4 <small>CommonJS</small></button>
+      <button type="button" data-set-module="esm" aria-pressed="false">Express 5 <small>ES modules</small></button>
+    </div>
+    <div class="progress" aria-hidden="true"><span class="progress-bar"></span></div>
+  </header>
+
+  <div class="layout">
+    <nav class="sidebar" id="sidebar" aria-label="Lessons">
+      <ol class="toc">
+        <li class="toc-group">Foundations</li>
+        <li><a href="#node"><span class="toc-num">1</span>What Node.js is</a></li>
+        <li><a href="#install"><span class="toc-num">2</span>Install and verify Node</a></li>
+        <li class="toc-group">npm and packages</li>
+        <li><a href="#npm-init"><span class="toc-num">3</span>Start a project with npm init</a></li>
+        <li><a href="#package-json"><span class="toc-num">4</span>package.json, field by field</a></li>
+        <li><a href="#deps"><span class="toc-num">5</span>dependencies vs devDependencies</a></li>
+        <li><a href="#installing"><span class="toc-num">6</span>Installing, the lockfile, node_modules</a></li>
+        <li class="toc-group">Express</li>
+        <li><a href="#modules"><span class="toc-num">7</span>CommonJS vs ES modules, Express 4 vs 5</a></li>
+        <li><a href="#first-server"><span class="toc-num">8</span>Your first Express server</a></li>
+        <li><a href="#routing"><span class="toc-num">9</span>Routing</a></li>
+        <li><a href="#middleware"><span class="toc-num">10</span>Middleware</a></li>
+        <li class="toc-group">Real project setup</li>
+        <li><a href="#structure"><span class="toc-num">11</span>Folder structure and naming</a></li>
+        <li><a href="#env"><span class="toc-num">12</span>Environment variables and .env</a></li>
+        <li><a href="#full-project"><span class="toc-num">13</span>Put it all together</a></li>
+        <li class="toc-group">Practice</li>
+        <li><a href="#playground"><span class="toc-num">14</span>Playground</a></li>
+        <li><a href="#tools"><span class="toc-num">15</span>Tools for practice</a></li>
+        <li><a href="#checklist"><span class="toc-num">16</span>Setup checklist</a></li>
+      </ol>
+    </nav>
+    <div class="scrim" hidden></div>
+
+    <main id="main" tabindex="-1">
+
+      <!-- ============ HERO ============ -->
+      <section class="hero" id="start" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <h1 id="hero-title">Node.js and Express, from an empty folder</h1>
+          <p class="lede">You already write JavaScript. This tutorial shows you how professional teams set up a Node.js and Express backend: every file, every command, and the reason each one exists.</p>
+          <p class="hero-meta">16 lessons, about 3 hours. Work through them in order; each builds on the last.</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#node">Start lesson 1</a>
+            <a class="btn" href="#playground">Open the playground</a>
+          </div>
+        </div>
+        <figure class="terminal hero-terminal" aria-label="Example terminal session setting up a project">
+          <div class="terminal-chrome" aria-hidden="true"><span></span><span></span><span></span><em>zsh: ~/code</em></div>
+          <pre class="terminal-body" id="hero-terminal"></pre>
+          <figcaption class="visually-hidden">A terminal creating a project, installing Express and nodemon, and starting the server.</figcaption>
+        </figure>
+      </section>
+
+      <section class="intro-notes" aria-label="How to use this tutorial">
+        <div class="how-to">
+          <h2>How to use this tutorial</h2>
+          <p>Use the switch at the top of the page to choose the code you want to see. <strong>Express 4 with CommonJS</strong> (<code>require</code>) is what you'll find in most existing codebases. <strong>Express 5 with ES modules</strong> (<code>import</code>) is the modern default for new projects. Every example on the page follows your choice, and lesson 7 explains the differences.</p>
+          <p>Blocks marked with a filename are files you create. Blocks marked <em>Terminal</em> are commands you run. Every block has a copy button.</p>
+        </div>
+        <aside class="legend" aria-label="Where each concept can be practised">
+          <h2>Where you can run things</h2>
+          <ul class="legend-list">
+            <li><span class="badge badge-sim">Playground</span> Runs instantly in this page with a simulated Express.</li>
+            <li><span class="badge badge-sb">StackBlitz</span> Real Node.js running in your browser tab.</li>
+            <li><span class="badge badge-local">Local only</span> Needs Node installed on your machine.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- ============ 1. NODE ============ -->
+      <section class="lesson" id="node" aria-labelledby="node-title">
+        <header class="lesson-head">
+          <span class="lesson-num" aria-hidden="true">1</span>
+          <div>
+            <h2 id="node-title">What Node.js is, and why backends use it</h2>
+            <p class="lesson-where"><span class="badge badge-local">Local only</span> <span class="badge badge-sb">StackBlitz</span></p>
+          </div>
+        </header>
+
+        <p>JavaScript was created to run inside web browsers. <strong>Node.js</strong> is a program that runs JavaScript <em>outside</em> the browser, on a laptop or a server. It takes Google's V8 engine (the same one inside Chrome) and adds the things a server needs that a browser deliberately doesn't allow: reading and writing files, opening network ports, spawning processes, and reading environment variables.</p>
+
+        <p>Node is not a language and not a framework. It's a <em>runtime</em>: the environment your code runs in. The language is still JavaScript, which is the first reason teams choose it. One language across the frontend and backend means shared validation code, shared tooling, and developers who can move between both.</p>
+
+        <h3>The event loop: why Node is good at servers</h3>
+        <p>A web API spends most of its time <em>waiting</em>: for a database query, for a file read, for another API to respond. Many traditional servers dedicate a thread to each request, and that thread sits idle while it waits. Node takes a different approach. It runs your JavaScript on a single thread and hands slow I/O work to the operating system. When the work finishes, a callback is queued and the <strong>event loop</strong> runs it. While one request waits on the database, Node is free to handle hundreds of others.</p>
+
+        <div class="callout why">
+          <p class="callout-title">Why this matters to you</p>
+          <p>Because there's only one JavaScript thread, blocking it blocks every user. A synchronous 2-second loop in a route handler freezes the whole server for 2 seconds. That's why Node APIs are asynchronous (<code>async</code>/<code>await</code>, promises, callbacks) and why CPU-heavy work like video encoding is usually moved to worker threads or a separate service.</p>
+        </div>
+
+        <h3>Browser JavaScript vs Node.js</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col"></th><th scope="col">In the browser</th><th scope="col">In Node.js</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Global object</th><td><code>window</code> (or <code>globalThis</code>)</td><td><code>global</code> (or <code>globalThis</code>)</td></tr>
+              <tr><th scope="row">Page access</th><td><code>document</code>, the DOM, events</td><td>None. There's no page.</td></tr>
+              <tr><th scope="row">System access</th><td>Sandboxed for safety</td><td>Files (<code>fs</code>), networking (<code>http</code>), processes, <code>process.env</code></td></tr>
+              <tr><th scope="row">Packages</th><td>Bundled by a build tool, or loaded from a CDN</td><td>Installed with npm into <code>node_modules</code></td></tr>
+              <tr><th scope="row">Shared APIs</th><td colspan="2"><code>fetch</code>, <code>setTimeout</code>, <code>URL</code>, <code>console</code>, promises, and the whole language</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>What Express adds on top</h3>
+        <p>Node ships with a built-in <code>http</code> module, so you can write a web server with no packages at all. Here is one. Notice how much routing you have to do by hand:</p>
+
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="raw-server.js"><code>const http = require('node:http');
+
+const server = http.createServer((req, res) => {
+  if (req.method === 'GET' && req.url === '/') {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Hello from plain Node');
+  } else {
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('Not found');
+  }
+});
+
+server.listen(3000, () => {
+  console.log('Listening on http://localhost:3000');
+});</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="raw-server.mjs"><code>import http from 'node:http';
+
+const server = http.createServer((req, res) => {
+  if (req.method === 'GET' && req.url === '/') {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Hello from plain Node');
+  } else {
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('Not found');
+  }
+});
+
+server.listen(3000, () => {
+  console.log('Listening on http://localhost:3000');
+});</code></pre>
+          </div>
+        </div>
+
+        <p>That works, but every new URL means another <code>if</code>, and there's no built-in way to parse JSON bodies, read URL parameters, or share logic like authentication between routes. <strong>Express</strong> is a small, unopinionated framework built on top of <code>http</code> that gives you three things: <strong>routing</strong> (map a method and URL to a function), <strong>middleware</strong> (reusable steps every request passes through), and <strong>helpers</strong> on the request and response objects (<code>req.params</code>, <code>res.json()</code>, <code>res.status()</code>). It's the most widely used Node web framework, and frameworks like NestJS use it under the hood, so learning it pays off even if you move on later.</p>
+
+        <p class="note">The <code>node:</code> prefix (<code>node:http</code>) marks a built-in module. It's optional, but it's the current convention because it makes it obvious the module isn't an npm package.</p>
+      </section>
+
+      <!-- ============ 2. INSTALL ============ -->
+      <section class="lesson" id="install" aria-labelledby="install-title">
+        <header class="lesson-head">
+          <span class="lesson-num" aria-hidden="true">2</span>
+          <div>
+            <h2 id="install-title">Install Node.js and verify it works</h2>
+            <p class="lesson-where"><span class="badge badge-local">Local only</span></p>
+          </div>
+        </header>
+
+        <p>Installing Node also installs <strong>npm</strong>, the Node Package Manager, which you'll use for everything from creating the project to running scripts.</p>
+
+        <h3>Pick an LTS version</h3>
+        <p>Node releases a new major version every six months. Even-numbered versions (20, 22, 24…) become <strong>LTS</strong> (Long-Term Support): they receive security and bug fixes for about 30 months. Odd-numbered versions are short-lived. Production servers run LTS, so you should learn on LTS too. The nodejs.org download page labels the current LTS clearly.</p>
+
+        <h3>Use a version manager, not a one-off installer</h3>
+        <p>The industry-standard approach is to install Node through a <strong>version manager</strong>. Different projects often need different Node versions, and a version manager lets you switch per project with one command. It also installs Node inside your user folder, so you never need <code>sudo</code> to install global tools, which avoids a whole class of permission errors.</p>
+
+        <div class="tabs" data-tabs>
+          <div class="tab-list" role="tablist" aria-label="Operating system">
+            <button type="button" role="tab" id="tab-mac" aria-controls="panel-mac" aria-selected="true">macOS and Linux</button>
+            <button type="button" role="tab" id="tab-win" aria-controls="panel-win" aria-selected="false" tabindex="-1">Windows</button>
+          </div>
+          <div class="tab-panel" role="tabpanel" id="panel-mac" aria-labelledby="tab-mac">
+            <p>Install <a href="https://github.com/nvm-sh/nvm" target="_blank" rel="noopener">nvm</a> (Node Version Manager). The install script URL contains a version number, so copy the current command from the nvm README. Then restart your terminal and run:</p>
+<pre class="code" data-lang="bash" data-file="Terminal"><code># Install and use the latest LTS release
+nvm install --lts
+nvm use --lts
+
+# Make it the default for new terminals
+nvm alias default lts/*</code></pre>
+            <p>Prefer something faster? <a href="https://github.com/Schniz/fnm" target="_blank" rel="noopener">fnm</a> and <a href="https://volta.sh" target="_blank" rel="noopener">Volta</a> are popular alternatives that do the same job.</p>
+          </div>
+          <div class="tab-panel" role="tabpanel" id="panel-win" aria-labelledby="tab-win" hidden>
+            <p>nvm itself doesn't run on Windows. Use <a href="https://github.com/Schniz/fnm" target="_blank" rel="noopener">fnm</a> or <a href="https://github.com/coreybutler/nvm-windows" target="_blank" rel="noopener">nvm-windows</a>. With fnm in PowerShell:</p>
+<pre class="code" data-lang="bash" data-file="PowerShell"><code># Install fnm, then add it to your PowerShell profile (see the fnm README)
+winget install Schniz.fnm
+
+# Install and use the latest LTS release
+fnm install --lts
+fnm use lts-latest</code></pre>
+            <p>If you just want Node without switching versions, the LTS installer from <a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org</a> works fine. Many Windows developers also work inside <a href="https://learn.microsoft.com/windows/wsl/" target="_blank" rel="noopener">WSL</a> and follow the macOS and Linux steps there.</p>
+          </div>
+        </div>
+
+        <h3>Verify the install</h3>
+        <p>Open a <em>new</em> terminal (so it picks up the updated <code>PATH</code>) and check both tools respond:</p>
+<pre class="code" data-lang="bash" data-file="Terminal"><code>node -v
+npm -v</code></pre>
+<pre class="code" data-lang="out" data-file="Output (your numbers will differ)"><code>v22.12.0
+10.9.0</code></pre>
+        <p>Then prove Node can actually run code, two ways:</p>
+<pre class="code" data-lang="bash" data-file="Terminal"><code># Run a one-line script
+node -e "console.log('Node works:', process.version)"
+
+# Start the interactive REPL (type .exit or press Ctrl+C twice to leave)
+node</code></pre>
+        <p>The <strong>REPL</strong> (Read-Eval-Print Loop) is a JavaScript console in your terminal. It's handy for checking how a built-in behaves: try <code>typeof window</code> (it's <code>'undefined'</code>) or <code>process.platform</code>.</p>
+
+        <details class="deep-dive">
+          <summary>Troubleshooting: "command not found: node"</summary>
+          <p>The shell can't find Node on your <code>PATH</code>. Close and reopen the terminal first. If that doesn't help, check that the version manager's setup lines were added to your shell profile (<code>~/.zshrc</code>, <code>~/.bashrc</code>, or your PowerShell profile). <code>which node</code> (macOS and Linux) or <code>where node</code> (Windows) shows which binary, if any, is being picked up.</p>
+        </details>
+
+        <details class="deep-dive">
+          <summary>Pin the Node version for your team with .nvmrc</summary>
+          <p>Add a <code>.nvmrc</code> file to the project root containing a version like <code>22</code>. Anyone who clones the repo can run <code>nvm use</code> (or <code>fnm use</code>) and get the same major version you developed on. It's a one-line file that prevents a lot of "works on my machine" bugs.</p>
+<pre class="code" data-lang="bash" data-file="Terminal"><code>node -v | cut -d. -f1 | tr -d v > .nvmrc</code></pre>
+        </details>
+      </section>
+
+      <!-- ============ 3. NPM INIT ============ -->
+      <section class="lesson" id="npm-init" aria-labelledby="npm-init-title">
+        <header class="lesson-head">
+          <span class="lesson-num" aria-hidden="true">3</span>
+          <div>
+            <h2 id="npm-init-title">Start a project with <code>npm init</code></h2>
+            <p class="lesson-where"><span class="badge badge-local">Local only</span> <span class="badge badge-sb">StackBlitz</span></p>
+          </div>
+        </header>
+
+        <p>A Node project is just a folder with a <code>package.json</code> file at its root. That file is the project's manifest: its name, the packages it depends on, and the commands used to run it. <code>npm init</code> creates it.</p>
+
+<pre class="code" data-lang="bash" data-file="Terminal"><code>mkdir my-express-api
+cd my-express-api
+git init
+npm init</code></pre>
+
+        <p>We run <code>git init</code> straight away because version control should cover the project from its first file. <code>npm init</code> then asks a series of questions. Here's what each one means:</p>
+
+        <dl class="field-list">
+          <dt>package name</dt><dd>Defaults to the folder name. Must be lowercase, with no spaces; use hyphens (<code>my-express-api</code>).</dd>
+          <dt>version</dt><dd>Defaults to <code>1.0.0</code>. Fine to accept.</dd>
+          <dt>description</dt><dd>One sentence about the project. Shows up in search if you ever publish.</dd>
+          <dt>entry point</dt><dd>Becomes the <code>main</code> field. We'll change it to <code>src/server.js</code> later.</dd>
+          <dt>test command</dt><dd>Becomes <code>scripts.test</code>. Leave blank for now.</dd>
+          <dt>git repository, keywords, author</dt><dd>Metadata. Fill in what you know.</dd>
+          <dt>license</dt><dd>Defaults to <code>ISC</code>. <code>MIT</code> is the most common open-source choice; private company code often uses <code>UNLICENSED</code>.</dd>
+          <dt>type</dt><dd>Newer npm versions ask this. <code>commonjs</code> or <code>module</code>; lesson 7 explains the choice.</dd>
+        </dl>
+
+        <p>To skip the questions and accept every default, use the <code>-y</code> flag. Most developers do this and edit the file afterwards:</p>
+<pre class="code" data-lang="bash" data-file="Terminal"><code>npm init -y</code></pre>
+<pre class="code" data-lang="json" data-file="package.json (generated)"><code>{
+  "name": "my-express-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}</code></pre>
+        <p>That's a working project. It has no code yet, but npm now knows where the project root is, and every <code>npm install</code> from this folder will be recorded here.</p>
+
+        <details class="deep-dive">
+          <summary>Set your own defaults for future projects</summary>
+          <p>If you always use the same author and license, tell npm once and <code>npm init -y</code> will fill them in:</p>
+<pre class="code" data-lang="bash" data-file="Terminal"><code>npm config set init-author-name "Your Name"
+npm config set init-license "MIT"</code></pre>
+        </details>
+      </section>
+
+      <!-- ============ 4. PACKAGE.JSON ============ -->
+      <section class="lesson" id="package-json" aria-labelledby="pj-title">
+        <header class="lesson-head">
+          <span class="lesson-num" aria-hidden="true">4</span>
+          <div>
+            <h2 id="pj-title"><code>package.json</code>, field by field</h2>
+            <p class="lesson-where"><span class="badge badge-sb">StackBlitz</span> <span class="badge badge-local">Local only</span></p>
+          </div>
+        </header>
+
+        <p>Here's what <code>package.json</code> looks like for a real Express API after a few installs. Read it, then read the field notes below.</p>
+
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="json" data-file="package.json"><code>{
+  "name": "my-express-api",
+  "version": "1.0.0",
+  "description": "A REST API for managing users",
+  "main": "src/server.js",
+  "private": true,
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "lint": "eslint .",
+    "test": "jest"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.17.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
+    "supertest": "^7.0.0"
+  }
+}</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="json" data-file="package.json"><code>{
+  "name": "my-express-api",
+  "version": "1.0.0",
+  "description": "A REST API for managing users",
+  "main": "src/server.js",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.17.0",
+    "nodemon": "^3.1.9",
+    "supertest": "^7.0.0",
+    "vitest": "^3.0.0"
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <dl class="field-list">
+          <dt><code>name</code></dt>
+          <dd>The package's identifier. Lowercase, URL-safe, up to 214 characters. For an app you never publish, it's mostly a label, but tools and logs display it.</dd>
+
+          <dt><code>version</code></dt>
+          <dd>Follows <strong>semantic versioning</strong>: <code>MAJOR.MINOR.PATCH</code>. Bump PATCH for bug fixes, MINOR for new backwards-compatible features, MAJOR for breaking changes. Understanding this matters mostly for reading <em>other</em> packages' versions (see the <code>^</code> note under dependencies).</dd>
+
+          <dt><code>description</code></dt>
+          <dd>A one-line summary for humans.</dd>
+
+          <dt><code>main</code></dt>
+          <dd>The file that's loaded when someone <em>requires this package</em>. For a library, it's critical. For an application like ours, nobody imports it, so it's documentation: it tells readers where the app starts. Keep it pointing at the real entry file.</dd>
+
+          <dt><code>type</code></dt>
+          <dd>Tells Node how to interpret <code>.js</code> files. Missing or <code>"commonjs"</code> means <code>require</code>/<code>module.exports</code>. <code>"module"</code> means <code>import</code>/<code>export</code>. This one field changes how every file in your project is parsed; lesson 7 covers it in depth.</dd>
+
+          <dt><code>private</code></dt>
+          <dd><code>true</code> makes <code>npm publish</code> refuse to run. Applications aren't meant to be published to the public registry, so this is a cheap guard against leaking company code.</dd>
+
+          <dt><code>scripts</code></dt>
+          <dd>
+            <p>Named commands for your project. Run them with <code>npm run &lt;name&gt;</code>. Two names are special and don't need <code>run</code>: <code>npm start</code> and <code>npm test</code>.</p>
+            <p>Scripts are the project's shared vocabulary. A new teammate doesn't need to know you use nodemon, Jest, or ESLint; they run <code>npm run dev</code>, <code>npm test</code>, and <code>npm run lint</code>. Deployment platforms also run <code>npm start</code> by default, so it should start the app with plain <code>node</code>, never a dev tool.</p>
+            <p>When a script runs, npm adds <code>node_modules/.bin</code> to the <code>PATH</code>. That's why <code>"dev": "nodemon src/server.js"</code> works even though nodemon isn't installed globally: npm finds the project's local copy.</p>
+          </dd>
+
+          <dt><code>engines</code></dt>
+          <dd>Declares which Node versions the project supports. npm only <em>warns</em> on a mismatch by default, but many hosting platforms read this field to pick the Node version for deployment. Express 5 requires Node 18 or newer, so a project on Express 5 should never say less than that.</dd>
+
+          <dt><code>dependencies</code> and <code>devDependencies</code></dt>
+          <dd>
+            <p>The packages your project needs, split by when they're needed (lesson 5). npm writes these for you when you install; you rarely edit them by hand.</p>
+            <p>Version ranges use semver operators. <code>"^4.21.2"</code> (caret, npm's default) means "4.21.2 or any newer 4.x", because minor and patch releases shouldn't break you. <code>"~4.21.2"</code> (tilde) allows only patch updates, 4.21.x. <code>"4.21.2"</code> with no operator means exactly that version. The lockfile (lesson 6) records what was actually installed.</p>
+          </dd>
+
+          <dt><code>author</code>, <code>license</code>, <code>keywords</code>, <code>repository</code></dt>
+          <dd>Metadata. Worth filling in for anything shared; no effect on how the code runs.</dd>
+        </dl>
+
+        <p class="note">The version numbers in these examples will be older than what you get. That's expected: when you run <code>npm install express</code>, npm writes the latest matching version for you. You never need to type version numbers into <code>package.json</code> yourself.</p>
+
+        <details class="deep-dive">
+          <summary>Script hooks: pre and post</summary>
+          <p>npm automatically runs <code>pre&lt;name&gt;</code> before and <code>post&lt;name&gt;</code> after any script. With <code>"pretest": "npm run lint"</code>, every <code>npm test</code> lints first. Use sparingly: hidden steps can confuse teammates.</p>
+        </details>
+      </section>
+
+      <!-- ============ 5. DEPS ============ -->
+      <section class="lesson" id="deps" aria-labelledby="deps-title">
+        <header class="lesson-head">
+          <span class="lesson-num" aria-hidden="true">5</span>
+          <div>
+            <h2 id="deps-title"><code>dependencies</code> vs <code>devDependencies</code></h2>
+            <p class="lesson-where"><span class="badge badge-sb">StackBlitz</span> <span class="badge badge-local">Local only</span></p>
+          </div>
+        </header>
+
+        <p>Every package you install goes into one of two lists. The rule for deciding is a single question:</p>
+
+        <blockquote class="rule">Does the running application need this package in production?</blockquote>
+
+        <p>If your server code <code>require</code>s or <code>import</code>s it while handling requests, it's a <strong>dependency</strong>. If it's only used while you write, check, test, or build the code, it's a <strong>devDependency</strong>.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Package</th><th scope="col">Goes in</th><th scope="col">Why</th></tr></thead>
+            <tbody>
+              <tr><td><code>express</code></td><td>dependencies</td><td>The server can't start without it.</td></tr>
+              <tr><td><code>dotenv</code></td><td>dependencies</td><td>Your code calls it at startup. If it's missing in production, the <code>require</code>/<code>import</code> line crashes.</td></tr>
+              <tr><td><code>cors</code>, <code>helmet</code>, <code>morgan</code></td><td>dependencies</td><td>Middleware that runs on live requests.</td></tr>
+              <tr><td>Database drivers and ORMs (<code>pg</code>, <code>mongoose</code>, <code>prisma</code> client)</td><td>dependencies</td><td>Used on every query in production.</td></tr>
+              <tr><td><code>nodemon</code></td><td>devDependencies</td><td>Restarts the server when you save a file. Production never restarts on file changes.</td></tr>
+              <tr><td><code>eslint</code>, <code>prettier</code></td><td>devDependencies</td><td>Check and format code before it ships. Not used at runtime.</td></tr>
+              <tr><td><code>jest</code>, <code>vitest</code>, <code>supertest</code></td><td>devDependencies</td><td>Tests run in development and CI, not on the live server.</td></tr>
+              <tr><td><code>typescript</code>, <code>@types/*</code></td><td>devDependencies</td><td>Only needed to compile. Production runs the compiled JavaScript.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Why the split matters</h3>
+        <p>When you deploy, you install with devDependencies left out:</p>
+<pre class="code" data-lang="bash" data-file="Terminal (production server or Dockerfile)"><code>npm ci --omit=dev</code></pre>
+        <p>That gives you a smaller install (test frameworks and linters are often most of <code>node_modules</code>), faster deploys and container builds, and fewer packages in production that could contain security vulnerabilities. It also documents intent: a reader can see at a glance what the app actually runs on.</p>
+
+        <div class="callout warn">
+          <p class="callout-title">The mistake to watch for</p>
+          <p>Putting a runtime package in devDependencies works perfectly on your machine, because locally you install everything. It only breaks in production, with <code>Error: Cannot find module 'dotenv'</code>. If you <code>require</code>/<code>import</code> it in <code>src/</code>, it belongs in dependencies.</p>
+        </div>
+
+        <details class="deep-dive">
+          <summary>What about global installs like <code>npm install -g nodemon</code>?</summary>
+          <p>Older tutorials install tools globally. The current convention is to install them per project as devDependencies and run them through npm scripts or <code>npx</code>. Global tools aren't listed in <code>package.json</code>, so teammates and CI servers don't get them, and different projects can't use different versions. A local devDependency solves both.</p>
+        </details>
+      </section>
+
+      <!-- ============ 6. INSTALLING ============ -->
+      <section class="lesson" id="installing" aria-labelledby="installing-title">
+        <header class="lesson-head">
+          <span class="lesson-num" aria-hidden="true">6</span>
+          <div>
+            <h2 id="installing-title">Installing packages, the lockfile, and <code>node_modules</code></h2>
+            <p class="lesson-where"><span class="badge badge-sb">StackBlitz</span> <span class="badge badge-local">Local only</span></p>
+          </div>
+        </header>
+
+        <p>The commands you'll use every day:</p>
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="bash" data-file="Terminal"><code># Runtime dependencies (saved to "dependencies" by default)
+npm install express@4 dotenv
+
+# Development-only tools (saved to "devDependencies")
+npm install --save-dev nodemon eslint jest supertest
+
+# Short forms: i = install, -D = --save-dev
+npm i -D nodemon</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="bash" data-file="Terminal"><code># Runtime dependencies (saved to "dependencies" by default)
+npm install express dotenv
+
+# Development-only tools (saved to "devDependencies")
+npm install --save-dev nodemon eslint vitest supertest
+
+# Short forms: i = install, -D = --save-dev
+npm i -D nodemon</code></pre>
+          </div>
+        </div>
+        <p><code>npm install express</code> installs the version tagged <em>latest</em> on npm, which is Express 5. To stay on Express 4, ask for it explicitly with <code>express@4</code>.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Command</th><th scope="col">What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>npm install</code></td><td>Installs everything listed in <code>package.json</code>. Run it after cloning a project.</td></tr>
+              <tr><td><code>npm ci</code></td><td>Clean install from the lockfile exactly. Deletes <code>node_modules</code> first and fails if <code>package.json</code> and the lockfile disagree. Use it in CI and deployments.</td></tr>
+              <tr><td><code>npm uninstall &lt;pkg&gt;</code></td><td>Removes a package and its entry in <code>package.json</code>.</td></tr>
+              <tr><td><code>npm outdated</code></td><td>Lists packages with newer versions available.</td></tr>
+              <tr><td><code>npm update</code></td><td>Updates packages within the ranges allowed in <code>package.json</code>.</td></tr>
+              <tr><td><code>npm ls express</code></td><td>Shows which version is installed and what depends on it.</td></tr>
+              <tr><td><code>npm audit</code></td><td>Checks installed packages against known security advisories.</td></tr>
+              <tr><td><code>npx &lt;tool&gt;</code></td><td>Runs a package's command: the local copy if installed, otherwise a temporary download.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>What happens when you install</h3>
+        <p>npm reads the version range, asks the registry which versions exist, picks the newest one that fits, and then does the same for every package <em>that</em> package depends on, all the way down. Express alone pulls in a few dozen packages. npm then writes three things:</p>
+        <ol class="steps">
+          <li><strong>The files</strong>, into <code>node_modules/</code>.</li>
+          <li><strong>The range you asked for</strong>, into <code>package.json</code> (for example <code>"express": "^5.1.0"</code>).</li>
+          <li><strong>The exact versions of everything it installed</strong>, into <code>package-lock.json</code>.</li>
+        </ol>
+
+        <h3><code>package-lock.json</code>: commit it</h3>
+        <p><code>package.json</code> says "any 5.x is fine". The lockfile says "we are using 5.1.0, and its dependency <code>body-parser</code> is exactly 2.2.0, downloaded from this URL, with this integrity hash". It records the <em>entire</em> installed tree.</p>
+        <p>That precision is the point. Without it, two developers who install a week apart could get different sub-dependency versions and see different bugs. With it, everyone (and every server) running <code>npm ci</code> gets byte-for-byte the same packages, and the integrity hashes guarantee nothing was tampered with. <strong>Always commit <code>package-lock.json</code>. Never edit it by hand.</strong></p>
+
+        <h3><code>node_modules</code>: never commit it</h3>
+        <p><code>node_modules</code> is where the installed code lives. It's regularly tens of thousands of files and hundreds of megabytes. Keep it out of Git because:</p>
+        <ul class="plain">
+          <li>It's fully reproducible. <code>package.json</code> plus the lockfile is a complete recipe; <code>npm ci</code> rebuilds it exactly.</li>
+          <li>Some packages compile native binaries for the machine they're installed on. A <code>node_modules</code> built on a Mac can break on a Linux server.</li>
+          <li>It would bury your real changes in noise and bloat the repository permanently.</li>
+        </ul>
+        <p>Tell Git to ignore it by creating a <code>.gitignore</code> file in the project root before your first commit:</p>
+<pre class="code" data-lang="text" data-file=".gitignore"><code># Dependencies (rebuilt with npm ci)
+node_modules/
+
+# Secrets and local config
+.env
+.env.local
+
+# Logs and generated output
+npm-debug.log*
+coverage/
+dist/
+
+# OS and editor files
+.DS_Store
+.vscode/*
+!.vscode/extensions.json</code></pre>
+<pre class="code" data-lang="bash" data-file="Terminal"><code>git add .
+git commit -m "Initialize project"</code></pre>
+        <p class="note">If you accidentally committed <code>node_modules</code> already, adding it to <code>.gitignore</code> isn't enough, because Git keeps tracking files it already knows about. Run <code>git rm -r --cached node_modules</code> and commit.</p>
+      </section>
+
+      <!-- ============ 7. MODULES ============ -->
+      <section class="lesson" id="modules" aria-labelledby="modules-title">
+        <header class="lesson-head">
+          <span class="lesson-num" aria-hidden="true">7</span>
+          <div>
+            <h2 id="modules-title">CommonJS vs ES modules, Express 4 vs Express 5</h2>
+            <p class="lesson-where"><span class="badge badge-sim">Playground</span> <span class="badge badge-sb">StackBlitz</span></p>
+          </div>
+        </header>
+
+        <p>You'll meet two separate choices in the Node ecosystem, and older tutorials rarely explain either. This lesson untangles them.</p>
+
+        <h3>Two module systems</h3>
+        <p><strong>CommonJS</strong> (CJS) is Node's original module system, from 2009, long before JavaScript had modules of its own. <strong>ES modules</strong> (ESM) are the official JavaScript standard, added to the language in 2015 and the same syntax browsers use. Node supports both, and decides per file:</p>
+        <ul class="plain">
+          <li><code>.js</code> files are CommonJS, unless the nearest <code>package.json</code> has <code>"type": "module"</code>, in which case they're ESM.</li>
+          <li><code>.cjs</code> files are always CommonJS. <code>.mjs</code> files are always ESM.</li>
+        </ul>
+
+        <div class="side-by-side">
+          <div>
+            <h4>CommonJS</h4>
+<pre class="code" data-lang="js" data-file="math.js"><code>function add(a, b) {
+  return a + b;
+}
+
+module.exports = { add };</code></pre>
+<pre class="code" data-lang="js" data-file="app.js"><code>const express = require('express');
+const { add } = require('./math');
+
+console.log(add(2, 3));</code></pre>
+          </div>
+          <div>
+            <h4>ES modules</h4>
+<pre class="code" data-lang="js" data-file="math.js"><code>export function add(a, b) {
+  return a + b;
+}</code></pre>
+<pre class="code" data-lang="js" data-file="app.js"><code>import express from 'express';
+import { add } from './math.js';
+
+console.log(add(2, 3));</code></pre>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col"></th><th scope="col">CommonJS</th><th scope="col">ES modules</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Import</th><td><code>const x = require('x')</code></td><td><code>import x from 'x'</code></td></tr>
+              <tr><th scope="row">Export</th><td><code>module.exports = …</code></td><td><code>export</code> / <code>export default</code></td></tr>
+              <tr><th scope="row">Relative paths</th><td>Extension optional: <code>'./math'</code></td><td>Extension required: <code>'./math.js'</code></td></tr>
+              <tr><th scope="row">Folder imports</th><td><code>'./routes'</code> finds <code>routes/index.js</code></td><td>Must write <code>'./routes/index.js'</code></td></tr>
+              <tr><th scope="row">When it loads</th><td>Synchronously, when the line runs</td><td>All imports are resolved before any code runs (hoisted)</td></tr>
+              <tr><th scope="row"><code>__dirname</code></th><td>Available</td><td>Not defined; use <code>import.meta.dirname</code> (Node 20.11+)</td></tr>
+              <tr><th scope="row">Top-level <code>await</code></th><td>Not allowed</td><td>Allowed</td></tr>
+              <tr><th scope="row">Standard</th><td>Node-specific</td><td>JavaScript language standard; same as the browser</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Mixing them in the wrong place produces errors you'll see often, so learn to recognize them:</p>
+<pre class="code" data-lang="out" data-file="Using import in a CommonJS project"><code>SyntaxError: Cannot use import statement outside a module</code></pre>
+<pre class="code" data-lang="out" data-file="Using require in an ES module project"><code>ReferenceError: require is not defined in ES module scope, you can use import instead</code></pre>
+        <p>The fix is never to rewrite the error; it's to make the syntax match the <code>"type"</code> field. Try it: the playground raises the same errors when your code doesn't match the style chosen at the top of the page.</p>
+
+        <h3>Two major versions of Express</h3>
+        <p>Express 4 was the stable release from 2014 until Express 5.0 shipped in late 2024. Express 5 is now what <code>npm install express</code> gives you. The core API (<code>app.get</code>, <code>app.use</code>, <code>req</code>, <code>res</code>) is almost identical, and most tutorials still work. The differences that matter day to day:</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col"></th><th scope="col">Express 4</th><th scope="col">Express 5</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Minimum Node</th><td>Very old versions still supported</td><td>Node 18+</td></tr>
+              <tr><th scope="row">Errors in <code>async</code> handlers</th><td>Not caught. You must <code>try/catch</code> and call <code>next(err)</code>, or the request hangs.</td><td>Rejected promises are passed to your error handler automatically.</td></tr>
+              <tr><th scope="row">Wildcards</th><td><code>'/files/*'</code></td><td>Must be named: <code>'/files/*filepath'</code></td></tr>
+              <tr><th scope="row">Optional params</th><td><code>'/posts/:page?'</code></td><td><code>'/posts{/:page}'</code></td></tr>
+              <tr><th scope="row"><code>req.body</code> with no parser match</th><td><code>{}</code> after <code>express.json()</code></td><td><code>undefined</code></td></tr>
+              <tr><th scope="row">Invalid status codes</th><td>Accepted silently</td><td><code>res.status()</code> throws</td></tr>
+              <tr><th scope="row">Removed</th><td></td><td><code>app.del()</code>, <code>req.param()</code>, <code>res.send(status)</code>, <code>res.sendfile()</code> (use <code>sendFile</code>)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout why">
+          <p class="callout-title">An important clarification</p>
+          <p>The module system and the Express version are <em>independent</em>. Express 5 works with <code>require</code>, and Express 4 works with <code>import</code>. This tutorial pairs them because that's the pattern you'll actually encounter: older codebases tend to be Express 4 with CommonJS, and new projects tend to start on Express 5 with ES modules. Learning both pairings prepares you for both kinds of job.</p>
+        </div>
+
+        <h3>Which should you use?</h3>
+        <div class="side-by-side">
+          <div class="choice">
+            <h4>Express 4 with CommonJS</h4>
+            <ul class="plain">
+              <li>You're joining or maintaining an existing codebase that uses it.</li>
+              <li>You're following a course, book, or library documentation written for it.</li>
+              <li>You depend on an older package that only works with <code>require</code>.</li>
+            </ul>
+          </div>
+          <div class="choice">
+            <h4>Express 5 with ES modules</h4>
+            <ul class="plain">
+              <li>You're starting a new project today. This is the default recommendation.</li>
+              <li>You want async error handling without boilerplate.</li>
+              <li>You want the same module syntax you use in the browser and in TypeScript.</li>
+            </ul>
+          </div>
+        </div>
+        <p>Migrating from 4 to 5 is usually small: update the path patterns, remove the removed methods, and delete your async error wrappers. The Express team publishes a migration guide and a codemod that automates most of it.</p>
+      </section>
+
+      <!-- ============ 8. FIRST SERVER ============ -->
+      <section class="lesson" id="first-server" aria-labelledby="first-title">
+        <header class="lesson-head">
+          <span class="lesson-num" aria-hidden="true">8</span>
+          <div>
+            <h2 id="first-title">Your first Express server</h2>
+            <p class="lesson-where"><span class="badge badge-sim">Playground</span> <span class="badge badge-sb">StackBlitz</span> <span class="badge badge-local">Local only</span></p>
+          </div>
+        </header>
+
+        <p>Starting from the project you created in lesson 3, install Express and nodemon:</p>
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="bash" data-file="Terminal"><code>npm install express@4
+npm install --save-dev nodemon
+mkdir src</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="bash" data-file="Terminal"><code>npm install express
+npm install --save-dev nodemon
+npm pkg set type=module
+mkdir src</code></pre>
+            <p><code>npm pkg set type=module</code> adds <code>"type": "module"</code> to <code>package.json</code> without opening the file.</p>
+          </div>
+        </div>
+
+        <p>Create the entry file. By convention, application code lives in <code>src/</code>, and the file that starts the server is called <code>server.js</code> (you'll also see <code>index.js</code> and <code>app.js</code>; lesson 11 explains why we eventually use both <code>app.js</code> and <code>server.js</code>).</p>
+
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="src/server.js"><code>const express = require('express');
+
+// Create the application object
+const app = express();
+
+// Use the PORT environment variable if set, otherwise 3000
+const PORT = process.env.PORT || 3000;
+
+// Parse JSON request bodies into req.body
+app.use(express.json());
+
+// A route: when a GET request arrives for "/", run this function
+app.get('/', (req, res) => {
+  res.send('Hello from Express!');
+});
+
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', uptime: process.uptime() });
+});
+
+// Start listening for HTTP requests
+app.listen(PORT, () => {
+  console.log(`Server listening on http://localhost:${PORT}`);
+});</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="src/server.js"><code>import express from 'express';
+
+// Create the application object
+const app = express();
+
+// Use the PORT environment variable if set, otherwise 3000
+const PORT = process.env.PORT || 3000;
+
+// Parse JSON request bodies into req.body
+app.use(express.json());
+
+// A route: when a GET request arrives for "/", run this function
+app.get('/', (req, res) => {
+  res.send('Hello from Express!');
+});
+
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', uptime: process.uptime() });
+});
+
+// Start listening for HTTP requests
+app.listen(PORT, () => {
+  console.log(`Server listening on http://localhost:${PORT}`);
+});</code></pre>
+          </div>
+        </div>
+
+        <h3>What each piece does</h3>
+        <dl class="field-list">
+          <dt><code>express()</code></dt><dd>Creates an application: an object that holds your routes and middleware, and is itself a request handler function that Node's <code>http</code> server can call.</dd>
+          <dt><code>app.get(path, handler)</code></dt><dd>Registers a route. When a request's method is GET and its path matches, Express calls your handler with <code>req</code> and <code>res</code>.</dd>
+          <dt><code>req</code></dt><dd>The incoming request: <code>req.method</code>, <code>req.path</code>, <code>req.params</code>, <code>req.query</code>, <code>req.body</code>, <code>req.get('header-name')</code>.</dd>
+          <dt><code>res</code></dt><dd>Your reply. <code>res.send()</code> sends text or HTML, <code>res.json()</code> sends JSON with the right <code>Content-Type</code>, <code>res.status(code)</code> sets the status. Every request must end with exactly one response, or the client waits until it times out.</dd>
+          <dt><code>app.listen(port)</code></dt><dd>Creates the HTTP server and starts accepting connections. Nothing is reachable until this runs.</dd>
+          <dt><code>process.env.PORT || 3000</code></dt><dd>Hosting platforms tell your app which port to use through the <code>PORT</code> environment variable. Reading it (with a local fallback) makes the same code run everywhere.</dd>
+        </dl>
+
+        <h3>Add scripts and run it</h3>
+        <p>Add these to the <code>scripts</code> section of <code>package.json</code>, and update <code>main</code> to match:</p>
+<pre class="code" data-lang="json" data-file="package.json (excerpt)"><code>"main": "src/server.js",
+"scripts": {
+  "start": "node src/server.js",
+  "dev": "nodemon src/server.js"
+}</code></pre>
+<pre class="code" data-lang="bash" data-file="Terminal"><code>npm run dev</code></pre>
+        <p>Open <a href="http://localhost:3000" target="_blank" rel="noopener">http://localhost:3000</a> in a browser, or test from a second terminal:</p>
+<pre class="code" data-lang="bash" data-file="Terminal"><code>curl http://localhost:3000/api/health</code></pre>
+        <p>Now edit the message in <code>src/server.js</code> and save. nodemon notices the change and restarts the server, so a refresh shows the new text. Without it you'd stop and restart by hand after every edit. <code>npm start</code> runs plain <code>node</code> with no watching, which is what production uses.</p>
+        <p class="note">Node 22 and later include a built-in watcher: <code>"dev": "node --watch src/server.js"</code>. It does the same job with no extra package. nodemon remains common because it's more configurable and works on older Node versions.</p>
+
+        <div class="try">
+          <p>Run this server without installing anything, and send it requests.</p>
+          <button class="btn primary" type="button" data-preset="hello">Open in the playground</button>
+        </div>
+      </section>
+
+      <!-- ============ 9. ROUTING ============ -->
+      <section class="lesson" id="routing" aria-labelledby="routing-title">
+        <header class="lesson-head">
+          <span class="lesson-num" aria-hidden="true">9</span>
+          <div>
+            <h2 id="routing-title">Routing</h2>
+            <p class="lesson-where"><span class="badge badge-sim">Playground</span> <span class="badge badge-sb">StackBlitz</span></p>
+          </div>
+        </header>
+
+        <p>A route is the combination of an <strong>HTTP method</strong> and a <strong>path</strong>, mapped to a handler. REST APIs use the method to say what to do and the path to say what to do it to. Paths name resources with plural nouns; the method is the verb.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Method and path</th><th scope="col">Meaning</th><th scope="col">Typical success status</th></tr></thead>
+            <tbody>
+              <tr><td><code>GET /api/users</code></td><td>List users</td><td>200 OK</td></tr>
+              <tr><td><code>GET /api/users/42</code></td><td>Get one user</td><td>200 OK (404 if missing)</td></tr>
+              <tr><td><code>POST /api/users</code></td><td>Create a user</td><td>201 Created</td></tr>
+              <tr><td><code>PUT /api/users/42</code></td><td>Replace a user</td><td>200 OK</td></tr>
+              <tr><td><code>PATCH /api/users/42</code></td><td>Update some fields</td><td>200 OK</td></tr>
+              <tr><td><code>DELETE /api/users/42</code></td><td>Delete a user</td><td>204 No Content</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Avoid verbs in paths like <code>/getUsers</code> or <code>/deleteUser/42</code>. The method already carries the verb, and consistent URLs make an API predictable for everyone who uses it.</p>
+
+        <h3>Three ways to receive data</h3>
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="src/server.js (excerpt)"><code>// 1. Route parameters: part of the path, for identifying a resource
+// GET /api/users/42  ->  req.params.id === '42'
+app.get('/api/users/:id', (req, res) => {
+  const id = Number(req.params.id); // params are always strings
+  res.json({ id });
+});
+
+// 2. Query string: after the "?", for filtering, sorting, paging
+// GET /api/users?role=admin&page=2  ->  req.query.role === 'admin'
+app.get('/api/users', (req, res) => {
+  const { role, page = '1' } = req.query;
+  res.json({ role, page: Number(page) });
+});
+
+// 3. Request body: for sending data to create or update
+// POST /api/users with JSON {"name":"Ada"}  ->  req.body.name === 'Ada'
+// Requires app.use(express.json()) earlier in the file
+app.post('/api/users', (req, res) => {
+  const { name } = req.body;
+  res.status(201).json({ id: 3, name });
+});</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="src/server.js (excerpt)"><code>// 1. Route parameters: part of the path, for identifying a resource
+// GET /api/users/42  ->  req.params.id === '42'
+app.get('/api/users/:id', (req, res) => {
+  const id = Number(req.params.id); // params are always strings
+  res.json({ id });
+});
+
+// 2. Query string: after the "?", for filtering, sorting, paging
+// GET /api/users?role=admin&page=2  ->  req.query.role === 'admin'
+app.get('/api/users', (req, res) => {
+  const { role, page = '1' } = req.query;
+  res.json({ role, page: Number(page) });
+});
+
+// 3. Request body: for sending data to create or update
+// POST /api/users with JSON {"name":"Ada"}  ->  req.body.name === 'Ada'
+// Requires app.use(express.json()) earlier in the file.
+// In Express 5, req.body is undefined when no JSON was sent, so default it.
+app.post('/api/users', (req, res) => {
+  const { name } = req.body ?? {};
+  res.status(201).json({ id: 3, name });
+});</code></pre>
+          </div>
+        </div>
+
+        <h3>Grouping routes with <code>express.Router</code></h3>
+        <p>Putting every route in one file stops scaling after a dozen endpoints. A <strong>router</strong> is a mini application that holds a group of related routes. You <em>mount</em> it at a path prefix, and the routes inside it are written relative to that prefix:</p>
+
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="src/routes/users.routes.js"><code>const express = require('express');
+
+const router = express.Router();
+
+// These paths are relative to wherever the router is mounted
+router.get('/', (req, res) => res.json([]));          // GET /api/users
+router.get('/:id', (req, res) => res.json({}));       // GET /api/users/:id
+router.post('/', (req, res) => res.status(201).json({})); // POST /api/users
+
+module.exports = router;</code></pre>
+<pre class="code" data-lang="js" data-file="src/server.js (excerpt)"><code>const usersRouter = require('./routes/users.routes');
+
+app.use('/api/users', usersRouter);</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="src/routes/users.routes.js"><code>import { Router } from 'express';
+
+const router = Router();
+
+// These paths are relative to wherever the router is mounted
+router.get('/', (req, res) => res.json([]));          // GET /api/users
+router.get('/:id', (req, res) => res.json({}));       // GET /api/users/:id
+router.post('/', (req, res) => res.status(201).json({})); // POST /api/users
+
+export default router;</code></pre>
+<pre class="code" data-lang="js" data-file="src/server.js (excerpt)"><code>import usersRouter from './routes/users.routes.js';
+
+app.use('/api/users', usersRouter);</code></pre>
+          </div>
+        </div>
+        <p>If you ever decide the API should live under <code>/api/v2/users</code>, you change one line. That's the payoff.</p>
+
+        <h3>Path syntax that changed in Express 5</h3>
+        <div class="side-by-side">
+          <div>
+            <h4>Express 4</h4>
+<pre class="code" data-lang="js"><code>app.get('/files/*', handler);
+// req.params[0] === 'a/b.txt'
+
+app.get('/posts/:page?', handler);</code></pre>
+          </div>
+          <div>
+            <h4>Express 5</h4>
+<pre class="code" data-lang="js"><code>app.get('/files/*filepath', handler);
+// req.params.filepath === ['a', 'b.txt']
+
+app.get('/posts{/:page}', handler);</code></pre>
+          </div>
+        </div>
+        <p>Express 5 throws an error at startup if it sees the old syntax, so these problems show up immediately rather than as silent routing bugs. The playground reproduces that check.</p>
+
+        <div class="try">
+          <p>Experiment with params, query strings, and bodies against an in-memory users API.</p>
+          <button class="btn primary" type="button" data-preset="routing">Open in the playground</button>
+          <button class="btn" type="button" data-preset="router">Try the Router version</button>
+        </div>
+      </section>
+
+      <!-- ============ 10. MIDDLEWARE ============ -->
+      <section class="lesson" id="middleware" aria-labelledby="mw-title">
+        <header class="lesson-head">
+          <span class="lesson-num" aria-hidden="true">10</span>
+          <div>
+            <h2 id="mw-title">Middleware</h2>
+            <p class="lesson-where"><span class="badge badge-sim">Playground</span> <span class="badge badge-sb">StackBlitz</span></p>
+          </div>
+        </header>
+
+        <p>Middleware is the idea that makes Express Express. A middleware function receives the request, can inspect or change <code>req</code> and <code>res</code>, and then either <strong>ends the request</strong> by sending a response, or <strong>passes it on</strong> by calling <code>next()</code>. Your app is a pipeline of these functions, run in the order you registered them.</p>
+
+        <figure class="pipeline" aria-label="Request pipeline diagram">
+          <ol class="pipeline-steps">
+            <li><span>Request</span></li>
+            <li><code>express.json()</code><small>parses the body</small></li>
+            <li><code>logger</code><small>records the request</small></li>
+            <li><code>requireAuth</code><small>may reply 401 and stop</small></li>
+            <li><code>route handler</code><small>sends the response</small></li>
+            <li class="pipeline-err"><code>errorHandler</code><small>only runs if something failed</small></li>
+          </ol>
+          <figcaption>Each step calls <code>next()</code> to continue, sends a response to finish, or calls <code>next(err)</code> to jump to the error handler.</figcaption>
+        </figure>
+
+        <p>Route handlers are middleware too; they're simply the last step and usually don't call <code>next()</code>. Seeing everything as one pipeline explains most Express behavior, including why <strong>order matters</strong>: <code>express.json()</code> must be registered before the routes that read <code>req.body</code>, and a 404 handler must come after every route.</p>
+
+        <h3>Writing your own</h3>
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="src/middleware/requestLogger.js"><code>// Logs method, path, status, and how long the request took
+function requestLogger(req, res, next) {
+  const start = Date.now();
+
+  // 'finish' fires after the response has been sent
+  res.on('finish', () => {
+    const ms = Date.now() - start;
+    console.log(`${req.method} ${req.originalUrl} ${res.statusCode} ${ms}ms`);
+  });
+
+  next(); // hand off to the next middleware
+}
+
+module.exports = requestLogger;</code></pre>
+<pre class="code" data-lang="js" data-file="src/middleware/requireApiKey.js"><code>// Rejects requests without the right x-api-key header
+function requireApiKey(req, res, next) {
+  if (req.get('x-api-key') !== process.env.API_KEY) {
+    return res.status(401).json({ error: 'Invalid or missing API key' });
+  }
+  next();
+}
+
+module.exports = requireApiKey;</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="src/middleware/requestLogger.js"><code>// Logs method, path, status, and how long the request took
+export default function requestLogger(req, res, next) {
+  const start = Date.now();
+
+  // 'finish' fires after the response has been sent
+  res.on('finish', () => {
+    const ms = Date.now() - start;
+    console.log(`${req.method} ${req.originalUrl} ${res.statusCode} ${ms}ms`);
+  });
+
+  next(); // hand off to the next middleware
+}</code></pre>
+<pre class="code" data-lang="js" data-file="src/middleware/requireApiKey.js"><code>// Rejects requests without the right x-api-key header
+export default function requireApiKey(req, res, next) {
+  if (req.get('x-api-key') !== process.env.API_KEY) {
+    return res.status(401).json({ error: 'Invalid or missing API key' });
+  }
+  next();
+}</code></pre>
+          </div>
+        </div>
+        <p>Note the <code>return</code> before <code>res.status(401)</code>. Without it, the function would send a 401 and then call <code>next()</code> anyway, and the route would try to send a second response, which crashes with <code>Cannot set headers after they are sent to the client</code>.</p>
+
+        <h3>Where middleware can be attached</h3>
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="src/app.js (excerpt)"><code>// Every request
+app.use(requestLogger);
+
+// Only requests whose path starts with /admin
+app.use('/admin', requireApiKey);
+
+// Only this one route (middleware listed before the handler)
+app.delete('/api/users/:id', requireApiKey, deleteUser);
+
+// Every route in a router
+router.use(requireApiKey);</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="src/app.js (excerpt)"><code>// Every request
+app.use(requestLogger);
+
+// Only requests whose path starts with /admin
+app.use('/admin', requireApiKey);
+
+// Only this one route (middleware listed before the handler)
+app.delete('/api/users/:id', requireApiKey, deleteUser);
+
+// Every route in a router
+router.use(requireApiKey);</code></pre>
+          </div>
+        </div>
+
+        <h3>Built-in and third-party middleware</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Middleware</th><th scope="col">Source</th><th scope="col">What it does</th></tr></thead>
+            <tbody>
+              <tr><td><code>express.json()</code></td><td>Built in</td><td>Parses JSON bodies into <code>req.body</code></td></tr>
+              <tr><td><code>express.urlencoded()</code></td><td>Built in</td><td>Parses HTML form submissions</td></tr>
+              <tr><td><code>express.static('public')</code></td><td>Built in</td><td>Serves files like images and CSS from a folder</td></tr>
+              <tr><td><code>helmet()</code></td><td><code>npm i helmet</code></td><td>Sets security-related HTTP headers</td></tr>
+              <tr><td><code>cors()</code></td><td><code>npm i cors</code></td><td>Allows browsers on other origins to call your API</td></tr>
+              <tr><td><code>morgan('dev')</code></td><td><code>npm i morgan</code></td><td>Request logging, a ready-made version of our logger</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Error-handling middleware and 404s</h3>
+        <p>Express recognizes an error handler by its <strong>four parameters</strong>: <code>(err, req, res, next)</code>. It's skipped during normal requests and runs only when something calls <code>next(err)</code> or throws. Register it last, after a catch-all 404 handler:</p>
+
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="src/app.js (end of file)"><code>// No route matched: reply 404
+app.use((req, res) => {
+  res.status(404).json({ error: `Not found: ${req.method} ${req.originalUrl}` });
+});
+
+// Something failed: reply with the error's status, or 500
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(err.status || 500).json({ error: err.message });
+});</code></pre>
+            <p>In Express 4, errors thrown inside <code>async</code> functions are <em>not</em> caught. You must catch them and forward them yourself:</p>
+<pre class="code" data-lang="js" data-file="Express 4 async handler"><code>app.get('/api/users', async (req, res, next) => {
+  try {
+    const users = await db.findUsers();
+    res.json(users);
+  } catch (err) {
+    next(err); // forward to the error handler
+  }
+});</code></pre>
+            <p>Forget the <code>try/catch</code> and a failed database call leaves the request hanging, with an <code>UnhandledPromiseRejection</code> warning in the console. Many Express 4 codebases use a small wrapper (or the <code>express-async-errors</code> package) to avoid repeating this.</p>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="src/app.js (end of file)"><code>// No route matched: reply 404
+app.use((req, res) => {
+  res.status(404).json({ error: `Not found: ${req.method} ${req.originalUrl}` });
+});
+
+// Something failed: reply with the error's status, or 500
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(err.status || 500).json({ error: err.message });
+});</code></pre>
+            <p>In Express 5, a rejected promise from an <code>async</code> handler is forwarded to the error handler automatically, so handlers stay clean:</p>
+<pre class="code" data-lang="js" data-file="Express 5 async handler"><code>app.get('/api/users', async (req, res) => {
+  const users = await db.findUsers(); // if this throws, the error handler runs
+  res.json(users);
+});</code></pre>
+          </div>
+        </div>
+
+        <div class="try">
+          <p>Watch requests flow through a pipeline, get rejected by auth, and hit the error handler.</p>
+          <button class="btn primary" type="button" data-preset="middleware">Open middleware example</button>
+          <button class="btn" type="button" data-preset="errors">Compare async error handling</button>
+        </div>
+      </section>
+
+      <!-- ============ 11. STRUCTURE ============ -->
+      <section class="lesson" id="structure" aria-labelledby="structure-title">
+        <header class="lesson-head">
+          <span class="lesson-num" aria-hidden="true">11</span>
+          <div>
+            <h2 id="structure-title">Folder structure and naming conventions</h2>
+            <p class="lesson-where"><span class="badge badge-sb">StackBlitz</span> <span class="badge badge-local">Local only</span></p>
+          </div>
+        </header>
+
+        <p>Express doesn't enforce any structure. That freedom is why teams converge on a common one: when every project looks roughly the same, a new developer knows where to find a route or a database query on their first day. This is the layout you'll see most often:</p>
+
+<pre class="tree" aria-label="Project folder tree"><code>my-express-api/
+├── src/
+│   ├── config/
+│   │   └── index.js              <span class="tree-note">Reads and validates environment variables</span>
+│   ├── controllers/
+│   │   └── users.controller.js   <span class="tree-note">Handles requests: reads input, sends responses</span>
+│   ├── middleware/
+│   │   ├── errorHandler.js       <span class="tree-note">Central error responses</span>
+│   │   └── notFound.js           <span class="tree-note">Catch-all 404</span>
+│   ├── models/
+│   │   └── user.model.js         <span class="tree-note">Data shape and database access</span>
+│   ├── routes/
+│   │   ├── index.js              <span class="tree-note">Mounts every router under /api</span>
+│   │   └── users.routes.js       <span class="tree-note">Maps URLs to controller functions</span>
+│   ├── app.js                    <span class="tree-note">Builds and exports the Express app</span>
+│   └── server.js                 <span class="tree-note">Starts the app listening on a port</span>
+├── tests/
+│   └── users.test.js
+├── .env                          <span class="tree-note">Your local secrets. Never committed.</span>
+├── .env.example                  <span class="tree-note">Template of required variables. Committed.</span>
+├── .gitignore
+├── eslint.config.js
+├── package.json
+├── package-lock.json
+└── README.md</code></pre>
+
+        <h3>What each part is responsible for</h3>
+        <dl class="field-list">
+          <dt><code>src/</code></dt><dd>All application source code. Keeping it separate from config files, tests, and docs at the root makes the root easy to scan and makes build and lint configuration simpler.</dd>
+          <dt><code>routes/</code></dt><dd>Only URL-to-function mapping. A routes file should read like a table of contents for that resource, with no business logic.</dd>
+          <dt><code>controllers/</code></dt><dd>The HTTP layer. Reads <code>req.params</code>, <code>req.query</code>, and <code>req.body</code>, calls the model or service, and chooses the status code and response.</dd>
+          <dt><code>models/</code></dt><dd>Data: its shape, validation rules, and the code that talks to the database. Controllers shouldn't contain SQL or ORM queries.</dd>
+          <dt><code>middleware/</code></dt><dd>Reusable pipeline steps: auth, logging, validation, error handling.</dd>
+          <dt><code>config/</code></dt><dd>The one place that reads <code>process.env</code>. Everything else imports settings from here.</dd>
+          <dt><code>services/</code> (optional)</dt><dd>Business logic that doesn't belong to one request, such as sending emails or calculating an invoice. Add it when controllers start getting long.</dd>
+          <dt><code>tests/</code></dt><dd>Automated tests. Some teams instead put <code>users.test.js</code> next to the file it tests; both are common.</dd>
+          <dt><code>README.md</code></dt><dd>How to install, configure, run, and test the project. The first file anyone reads.</dd>
+        </dl>
+
+        <div class="callout why">
+          <p class="callout-title">Why split <code>app.js</code> and <code>server.js</code>?</p>
+          <p><code>app.js</code> creates and configures the app and exports it. <code>server.js</code> imports it and calls <code>listen()</code>. The split lets tests import the app and send it requests with Supertest without opening a real network port, and it keeps startup concerns (ports, graceful shutdown, clustering) out of your app configuration.</p>
+        </div>
+
+        <h3>A request's path through the layers</h3>
+        <p><code>GET /api/users/2</code> enters <code>app.js</code>, passes through global middleware, is matched by <code>routes/index.js</code> to the users router, which calls <code>usersController.getUser</code>, which asks <code>User.findById(2)</code> for data and sends it back as JSON. Each layer knows about the layer below it, never above. That one-way flow is what makes each piece easy to test and replace. Swapping the in-memory model for PostgreSQL later touches only <code>models/</code>.</p>
+
+        <h3>Naming conventions</h3>
+        <ul class="plain">
+          <li><strong>Lowercase file names.</strong> macOS and Windows treat <code>User.js</code> and <code>user.js</code> as the same file; Linux servers don't. A casing mismatch in an import works on your laptop and fails in production.</li>
+          <li><strong>A consistent pattern for multi-word names.</strong> Kebab-case (<code>request-logger.js</code>) and camelCase (<code>requestLogger.js</code>) are both widespread. Pick one per project and stick to it.</li>
+          <li><strong>Role suffixes are optional but helpful:</strong> <code>users.controller.js</code>, <code>users.routes.js</code>, <code>user.model.js</code>. When five editor tabs are all named <code>users.js</code>, you'll appreciate them.</li>
+          <li><strong>Plural for collections, singular for models:</strong> the <code>users</code> routes and controller deal with many users; the <code>User</code> model describes one.</li>
+          <li><strong>Test files mirror their subject:</strong> <code>users.test.js</code> or <code>users.spec.js</code>. Test runners find them by that suffix.</li>
+          <li><strong>Dotfiles at the root</strong> (<code>.env</code>, <code>.gitignore</code>, <code>.nvmrc</code>) are configuration for tools. The leading dot hides them in most file listings.</li>
+        </ul>
+
+        <details class="deep-dive">
+          <summary>Structuring by feature instead of by layer</summary>
+          <p>Larger codebases often group by feature: <code>src/users/</code> contains <code>users.routes.js</code>, <code>users.controller.js</code>, and <code>user.model.js</code> together. Everything about users is in one folder, so features can be added or removed as a unit. Layer-based structure (above) is easier to learn and is still the most common in small and medium Express apps. The responsibilities of each file are identical in both.</p>
+        </details>
+      </section>
+
+      <!-- ============ 12. ENV ============ -->
+      <section class="lesson" id="env" aria-labelledby="env-title">
+        <header class="lesson-head">
+          <span class="lesson-num" aria-hidden="true">12</span>
+          <div>
+            <h2 id="env-title">Environment variables and <code>.env</code></h2>
+            <p class="lesson-where"><span class="badge badge-sim">Playground</span> <span class="badge badge-sb">StackBlitz</span> <span class="badge badge-local">Local only</span></p>
+          </div>
+        </header>
+
+        <p>Your app needs settings that change between environments: the port, the database URL, API keys for other services. Those values must not be written into the code, for two reasons. <strong>Secrets in code end up in Git</strong>, and anyone with repository access (or a leaked copy) can read them forever. And <strong>the same code must run in several places</strong>: your laptop, a teammate's laptop, CI, staging, production, each with different values.</p>
+        <p>The standard answer is <strong>environment variables</strong>: key-value pairs the operating system passes to a process. Node exposes them as <code>process.env</code>. Values are always strings.</p>
+<pre class="code" data-lang="bash" data-file="Terminal (macOS and Linux)"><code>PORT=4000 node src/server.js</code></pre>
+
+        <h3>Using a <code>.env</code> file locally</h3>
+        <p>Typing variables before every command gets old. The <code>dotenv</code> package reads a file named <code>.env</code> and copies its values into <code>process.env</code> when your app starts. Production platforms set real environment variables instead, and dotenv never overwrites a variable that's already set, so the same code works in both places.</p>
+<pre class="code" data-lang="bash" data-file="Terminal"><code>npm install dotenv</code></pre>
+<pre class="code" data-lang="env" data-file=".env"><code># Server
+PORT=3000
+NODE_ENV=development
+
+# Secrets: never commit this file
+API_KEY=dev-only-change-me
+DATABASE_URL=postgres://localhost:5432/my_express_api</code></pre>
+        <p>Format rules: one <code>KEY=value</code> per line, no spaces around <code>=</code>, uppercase names with underscores, <code>#</code> for comments. Quotes are optional unless the value contains spaces or <code>#</code>.</p>
+
+        <h3>Load it before anything reads it</h3>
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="src/server.js (first lines)"><code>require('dotenv').config(); // must run before any code reads process.env
+
+const express = require('express');
+
+console.log(process.env.PORT); // '3000'</code></pre>
+            <p>With CommonJS, <code>require</code> calls run in order from top to bottom, so putting <code>config()</code> first is enough.</p>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="src/server.js (first lines)"><code>import 'dotenv/config'; // must be the first import
+
+import express from 'express';
+
+console.log(process.env.PORT); // '3000'</code></pre>
+            <p>With ES modules, <em>all</em> imports are loaded before any of the file's own code runs. If you wrote <code>import dotenv from 'dotenv'</code> and then called <code>dotenv.config()</code> on a later line, every imported module would already have run, and any of them that read <code>process.env</code> at load time would have seen <code>undefined</code>. The side-effect import <code>'dotenv/config'</code> loads the file as part of the import phase, in order.</p>
+          </div>
+        </div>
+
+        <h3>Centralize it in <code>config/</code></h3>
+        <p>Scattering <code>process.env.X</code> across the codebase makes it hard to know which variables the app needs, and a typo silently produces <code>undefined</code>. The professional pattern is one config module that loads, converts, and validates everything, and fails at startup if something required is missing:</p>
+
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="src/config/index.js"><code>require('dotenv').config();
+
+function required(name) {
+  const value = process.env[name];
+  if (value === undefined || value === '') {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+  return value;
+}
+
+const config = {
+  env: process.env.NODE_ENV || 'development',
+  port: Number(process.env.PORT) || 3000,
+  apiKey: required('API_KEY'),
+};
+
+config.isProduction = config.env === 'production';
+
+module.exports = config;</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="src/config/index.js"><code>import 'dotenv/config';
+
+function required(name) {
+  const value = process.env[name];
+  if (value === undefined || value === '') {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+  return value;
+}
+
+const config = {
+  env: process.env.NODE_ENV || 'development',
+  port: Number(process.env.PORT) || 3000,
+  apiKey: required('API_KEY'),
+};
+
+config.isProduction = config.env === 'production';
+
+export default config;</code></pre>
+          </div>
+        </div>
+        <p>Crashing on startup sounds harsh, but it's the kind outcome: you find out in the first second of a deploy, instead of when the first user hits the route that needed the missing key.</p>
+
+        <h3>Commit a <code>.env.example</code>, never the <code>.env</code></h3>
+        <p><code>.env</code> is in <code>.gitignore</code> (lesson 6). So how does a new teammate know which variables to set? You commit a template with the same keys and safe placeholder values:</p>
+<pre class="code" data-lang="env" data-file=".env.example"><code>PORT=3000
+NODE_ENV=development
+API_KEY=
+DATABASE_URL=postgres://localhost:5432/my_express_api</code></pre>
+<pre class="code" data-lang="bash" data-file="Terminal (a new teammate's setup)"><code>cp .env.example .env
+# then fill in the real values</code></pre>
+
+        <div class="callout warn">
+          <p class="callout-title">If a secret is ever committed</p>
+          <p>Deleting the file in a new commit doesn't help; the secret is still in the Git history. Treat it as leaked: revoke and regenerate the key with the provider, then clean the history if needed.</p>
+        </div>
+
+        <details class="deep-dive">
+          <summary>Node's built-in alternative: <code>--env-file</code></summary>
+          <p>Node 20.6 and later can load a <code>.env</code> file with no package: <code>node --env-file=.env src/server.js</code>. It's a good choice for new projects on a recent Node version. dotenv remains the most common approach because it works on every Node version and in every tool (test runners, scripts) without changing how they're launched.</p>
+          <p>Also note: dotenv version 17 and later print a one-line message when loading. Pass <code>{ quiet: true }</code> to <code>config()</code> to silence it.</p>
+        </details>
+
+        <div class="try">
+          <p>See what happens when <code>.env</code> is loaded, loaded too late, or not loaded at all.</p>
+          <button class="btn primary" type="button" data-preset="env">Open the .env example</button>
+        </div>
+      </section>
+
+      <!-- ============ 13. FULL PROJECT ============ -->
+      <section class="lesson" id="full-project" aria-labelledby="full-title">
+        <header class="lesson-head">
+          <span class="lesson-num" aria-hidden="true">13</span>
+          <div>
+            <h2 id="full-title">Put it all together</h2>
+            <p class="lesson-where"><span class="badge badge-sb">StackBlitz</span> <span class="badge badge-local">Local only</span></p>
+          </div>
+        </header>
+
+        <p>Here is the complete project from lesson 11, every file, following every convention in this tutorial. Build it yourself file by file (recommended; typing it teaches more than reading), or open it in StackBlitz to run the finished version.</p>
+
+        <div class="try try-top">
+          <p>Opens all the files below as a real Node project in a new tab.</p>
+          <button class="btn primary" type="button" data-stackblitz-project="full">Open the full project in StackBlitz</button>
+        </div>
+
+        <h3>1. Create the project</h3>
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="bash" data-file="Terminal"><code>mkdir my-express-api && cd my-express-api
+git init
+npm init -y
+npm install express@4 dotenv
+npm install --save-dev nodemon eslint @eslint/js globals jest supertest
+mkdir -p src/config src/controllers src/middleware src/models src/routes tests</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="bash" data-file="Terminal"><code>mkdir my-express-api && cd my-express-api
+git init
+npm init -y
+npm pkg set type=module
+npm install express dotenv
+npm install --save-dev nodemon eslint @eslint/js globals vitest supertest
+mkdir -p src/config src/controllers src/middleware src/models src/routes tests</code></pre>
+          </div>
+        </div>
+        <p class="note">On Windows PowerShell, create the folders with <code>mkdir src/config, src/controllers, src/middleware, src/models, src/routes, tests</code>.</p>
+
+        <h3>2. Project configuration files</h3>
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="json" data-file="package.json" data-project="full"><code>{
+  "name": "my-express-api",
+  "version": "1.0.0",
+  "description": "A REST API for managing users",
+  "main": "src/server.js",
+  "private": true,
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "lint": "eslint .",
+    "test": "jest"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9",
+    "supertest": "^7.0.0"
+  }
+}</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="json" data-file="package.json" data-project="full"><code>{
+  "name": "my-express-api",
+  "version": "1.0.0",
+  "description": "A REST API for managing users",
+  "main": "src/server.js",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
+    "nodemon": "^3.1.9",
+    "supertest": "^7.0.0",
+    "vitest": "^3.0.0"
+  }
+}</code></pre>
+          </div>
+        </div>
+
+<pre class="code" data-lang="text" data-file=".gitignore" data-project="full"><code>node_modules/
+.env
+.env.local
+npm-debug.log*
+coverage/
+dist/
+.DS_Store</code></pre>
+<pre class="code" data-lang="env" data-file=".env.example" data-project="full"><code>PORT=3000
+NODE_ENV=development</code></pre>
+        <p>Copy <code>.env.example</code> to <code>.env</code> after creating it.</p>
+
+        <h3>3. Configuration</h3>
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="src/config/index.js" data-project="full"><code>require('dotenv').config();
+
+const config = {
+  env: process.env.NODE_ENV || 'development',
+  port: Number(process.env.PORT) || 3000,
+};
+
+config.isProduction = config.env === 'production';
+
+module.exports = config;</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="src/config/index.js" data-project="full"><code>import 'dotenv/config';
+
+const config = {
+  env: process.env.NODE_ENV || 'development',
+  port: Number(process.env.PORT) || 3000,
+};
+
+config.isProduction = config.env === 'production';
+
+export default config;</code></pre>
+          </div>
+        </div>
+
+        <h3>4. Model</h3>
+        <p>An in-memory array stands in for a database. The functions are <code>async</code> on purpose: real database calls are, so the controllers are written the way they will be when you swap in PostgreSQL or MongoDB.</p>
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="src/models/user.model.js" data-project="full"><code>const users = [
+  { id: 1, name: 'Ada Lovelace', email: 'ada@example.com' },
+  { id: 2, name: 'Alan Turing', email: 'alan@example.com' },
+];
+let nextId = 3;
+
+async function findAll() {
+  return users;
+}
+
+async function findById(id) {
+  return users.find((user) => user.id === Number(id)) || null;
+}
+
+async function create({ name, email }) {
+  const user = { id: nextId++, name, email };
+  users.push(user);
+  return user;
+}
+
+async function remove(id) {
+  const index = users.findIndex((user) => user.id === Number(id));
+  if (index === -1) return false;
+  users.splice(index, 1);
+  return true;
+}
+
+module.exports = { findAll, findById, create, remove };</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="src/models/user.model.js" data-project="full"><code>const users = [
+  { id: 1, name: 'Ada Lovelace', email: 'ada@example.com' },
+  { id: 2, name: 'Alan Turing', email: 'alan@example.com' },
+];
+let nextId = 3;
+
+export async function findAll() {
+  return users;
+}
+
+export async function findById(id) {
+  return users.find((user) => user.id === Number(id)) ?? null;
+}
+
+export async function create({ name, email }) {
+  const user = { id: nextId++, name, email };
+  users.push(user);
+  return user;
+}
+
+export async function remove(id) {
+  const index = users.findIndex((user) => user.id === Number(id));
+  if (index === -1) return false;
+  users.splice(index, 1);
+  return true;
+}</code></pre>
+          </div>
+        </div>
+
+        <h3>5. Controller</h3>
+        <p>Compare the two versions: this is the Express 4 vs 5 async difference from lesson 10, in real code.</p>
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="src/controllers/users.controller.js" data-project="full"><code>const User = require('../models/user.model');
+
+async function listUsers(req, res, next) {
+  try {
+    const users = await User.findAll();
+    res.json(users);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getUser(req, res, next) {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function createUser(req, res, next) {
+  try {
+    const { name, email } = req.body;
+    if (!name || !email) {
+      return res.status(400).json({ error: 'name and email are required' });
+    }
+    const user = await User.create({ name, email });
+    res.status(201).json(user);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function deleteUser(req, res, next) {
+  try {
+    const deleted = await User.remove(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.status(204).end();
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { listUsers, getUser, createUser, deleteUser };</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="src/controllers/users.controller.js" data-project="full"><code>import * as User from '../models/user.model.js';
+
+// Express 5 forwards rejected promises to the error handler,
+// so these handlers need no try/catch.
+
+export async function listUsers(req, res) {
+  const users = await User.findAll();
+  res.json(users);
+}
+
+export async function getUser(req, res) {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+  res.json(user);
+}
+
+export async function createUser(req, res) {
+  const { name, email } = req.body ?? {};
+  if (!name || !email) {
+    return res.status(400).json({ error: 'name and email are required' });
+  }
+  const user = await User.create({ name, email });
+  res.status(201).json(user);
+}
+
+export async function deleteUser(req, res) {
+  const deleted = await User.remove(req.params.id);
+  if (!deleted) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+  res.status(204).end();
+}</code></pre>
+          </div>
+        </div>
+
+        <h3>6. Routes</h3>
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="src/routes/users.routes.js" data-project="full"><code>const { Router } = require('express');
+const usersController = require('../controllers/users.controller');
+
+const router = Router();
+
+router.get('/', usersController.listUsers);
+router.get('/:id', usersController.getUser);
+router.post('/', usersController.createUser);
+router.delete('/:id', usersController.deleteUser);
+
+module.exports = router;</code></pre>
+<pre class="code" data-lang="js" data-file="src/routes/index.js" data-project="full"><code>const { Router } = require('express');
+const usersRouter = require('./users.routes');
+
+const router = Router();
+
+router.use('/users', usersRouter);
+
+module.exports = router;</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="src/routes/users.routes.js" data-project="full"><code>import { Router } from 'express';
+import * as usersController from '../controllers/users.controller.js';
+
+const router = Router();
+
+router.get('/', usersController.listUsers);
+router.get('/:id', usersController.getUser);
+router.post('/', usersController.createUser);
+router.delete('/:id', usersController.deleteUser);
+
+export default router;</code></pre>
+<pre class="code" data-lang="js" data-file="src/routes/index.js" data-project="full"><code>import { Router } from 'express';
+import usersRouter from './users.routes.js';
+
+const router = Router();
+
+router.use('/users', usersRouter);
+
+export default router;</code></pre>
+          </div>
+        </div>
+
+        <h3>7. Middleware</h3>
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="src/middleware/notFound.js" data-project="full"><code>function notFound(req, res) {
+  res.status(404).json({ error: `Not found: ${req.method} ${req.originalUrl}` });
+}
+
+module.exports = notFound;</code></pre>
+<pre class="code" data-lang="js" data-file="src/middleware/errorHandler.js" data-project="full"><code>const config = require('../config');
+
+// Four parameters: this is how Express recognizes an error handler
+function errorHandler(err, req, res, next) {
+  // If a response already started, let Express close the connection
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  const status = err.status || err.statusCode || 500;
+  if (status >= 500) {
+    console.error(err);
+  }
+
+  res.status(status).json({
+    // Don't reveal internal error details to users in production
+    error: status >= 500 && config.isProduction ? 'Internal Server Error' : err.message,
+  });
+}
+
+module.exports = errorHandler;</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="src/middleware/notFound.js" data-project="full"><code>export default function notFound(req, res) {
+  res.status(404).json({ error: `Not found: ${req.method} ${req.originalUrl}` });
+}</code></pre>
+<pre class="code" data-lang="js" data-file="src/middleware/errorHandler.js" data-project="full"><code>import config from '../config/index.js';
+
+// Four parameters: this is how Express recognizes an error handler
+export default function errorHandler(err, req, res, next) {
+  // If a response already started, let Express close the connection
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  const status = err.status ?? err.statusCode ?? 500;
+  if (status >= 500) {
+    console.error(err);
+  }
+
+  res.status(status).json({
+    // Don't reveal internal error details to users in production
+    error: status >= 500 && config.isProduction ? 'Internal Server Error' : err.message,
+  });
+}</code></pre>
+          </div>
+        </div>
+
+        <h3>8. App and server</h3>
+        <div class="variants">
+          <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="src/app.js" data-project="full"><code>const express = require('express');
+const routes = require('./routes');
+const notFound = require('./middleware/notFound');
+const errorHandler = require('./middleware/errorHandler');
+
+const app = express();
+
+// Global middleware
+app.use(express.json());
+
+// Health check for monitoring and load balancers
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
+// All API routes live under /api
+app.use('/api', routes);
+
+// These two must come last
+app.use(notFound);
+app.use(errorHandler);
+
+module.exports = app;</code></pre>
+<pre class="code" data-lang="js" data-file="src/server.js" data-project="full"><code>const app = require('./app');
+const config = require('./config');
+
+app.listen(config.port, () => {
+  console.log(`Server listening on http://localhost:${config.port} (${config.env})`);
+});</code></pre>
+          </div>
+          <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="src/app.js" data-project="full"><code>import express from 'express';
+import routes from './routes/index.js';
+import notFound from './middleware/notFound.js';
+import errorHandler from './middleware/errorHandler.js';
+
+const app = express();
+
+// Global middleware
+app.use(express.json());
+
+// Health check for monitoring and load balancers
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
+// All API routes live under /api
+app.use('/api', routes);
+
+// These two must come last
+app.use(notFound);
+app.use(errorHandler);
+
+export default app;</code></pre>
+<pre class="code" data-lang="js" data-file="src/server.js" data-project="full"><code>import app from './app.js';
+import config from './config/index.js';
+
+app.listen(config.port, () => {
+  console.log(`Server listening on http://localhost:${config.port} (${config.env})`);
+});</code></pre>
+          </div>
+        </div>
+
+        <h3>9. Linting and tests</h3>
+        <details class="deep-dive" open>
+          <summary>ESLint configuration</summary>
+          <p>ESLint 9 uses a single <code>eslint.config.js</code> file (the "flat config"). This one enables the recommended rules and tells ESLint which globals exist.</p>
+          <div class="variants">
+            <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="eslint.config.js" data-project="full"><code>const js = require('@eslint/js');
+const globals = require('globals');
+
+module.exports = [
+  { ignores: ['node_modules/', 'coverage/'] },
+  js.configs.recommended,
+  {
+    files: ['**/*.js'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: { ...globals.node },
+    },
+    rules: {
+      'no-unused-vars': ['error', { argsIgnorePattern: '^(next|req|res)$' }],
+    },
+  },
+  {
+    files: ['tests/**/*.js'],
+    languageOptions: { globals: { ...globals.jest } },
+  },
+];</code></pre>
+            </div>
+            <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="eslint.config.js" data-project="full"><code>import js from '@eslint/js';
+import globals from 'globals';
+
+export default [
+  { ignores: ['node_modules/', 'coverage/'] },
+  js.configs.recommended,
+  {
+    files: ['**/*.js'],
+    languageOptions: {
+      sourceType: 'module',
+      globals: { ...globals.node },
+    },
+    rules: {
+      'no-unused-vars': ['error', { argsIgnorePattern: '^(next|req|res)$' }],
+    },
+  },
+];</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <details class="deep-dive" open>
+          <summary>An API test with Supertest</summary>
+          <p>Supertest sends requests directly to the exported <code>app</code>, no port needed. This is the payoff of the <code>app.js</code>/<code>server.js</code> split. The ES modules track uses Vitest because Jest's ES module support still requires an experimental Node flag.</p>
+          <div class="variants">
+            <div class="variant" data-module="cjs">
+<pre class="code" data-lang="js" data-file="tests/users.test.js" data-project="full"><code>const request = require('supertest');
+const app = require('../src/app');
+
+describe('Users API', () => {
+  it('lists users', async () => {
+    const res = await request(app).get('/api/users');
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+  });
+
+  it('rejects a user without an email', async () => {
+    const res = await request(app).post('/api/users').send({ name: 'No Email' });
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 404 for unknown routes', async () => {
+    const res = await request(app).get('/api/nope');
+    expect(res.status).toBe(404);
+  });
+});</code></pre>
+            </div>
+            <div class="variant" data-module="esm">
+<pre class="code" data-lang="js" data-file="tests/users.test.js" data-project="full"><code>import { describe, it, expect } from 'vitest';
+import request from 'supertest';
+import app from '../src/app.js';
+
+describe('Users API', () => {
+  it('lists users', async () => {
+    const res = await request(app).get('/api/users');
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+  });
+
+  it('rejects a user without an email', async () => {
+    const res = await request(app).post('/api/users').send({ name: 'No Email' });
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 404 for unknown routes', async () => {
+    const res = await request(app).get('/api/nope');
+    expect(res.status).toBe(404);
+  });
+});</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <h3>10. README</h3>
+<pre class="code" data-lang="text" data-file="README.md" data-project="full"><code># my-express-api
+
+A REST API for managing users, built with Node.js and Express.
+
+## Requirements
+
+- Node.js (see "engines" in package.json)
+
+## Setup
+
+1. Install dependencies: `npm install`
+2. Create your environment file: `cp .env.example .env`
+3. Fill in the values in `.env`
+
+## Scripts
+
+- `npm run dev` - start with auto-restart on file changes
+- `npm start` - start for production
+- `npm test` - run the test suite
+- `npm run lint` - check code style
+
+## API
+
+- `GET /health`
+- `GET /api/users`
+- `GET /api/users/:id`
+- `POST /api/users` with JSON `{ "name": "...", "email": "..." }`
+- `DELETE /api/users/:id`</code></pre>
+
+        <h3>11. Run it</h3>
+<pre class="code" data-lang="bash" data-file="Terminal"><code>cp .env.example .env
+npm run dev
+
+# In a second terminal
+curl http://localhost:3000/api/users
+curl -X POST http://localhost:3000/api/users -H "Content-Type: application/json" -d '{"name":"Grace Hopper","email":"grace@example.com"}'
+npm test
+npm run lint</code></pre>
+      </section>
+
+      <!-- ============ 14. PLAYGROUND ============ -->
+      <section class="lesson lesson-wide" id="playground" aria-labelledby="pg-title">
+        <header class="lesson-head">
+          <span class="lesson-num" aria-hidden="true">14</span>
+          <div>
+            <h2 id="pg-title">Playground</h2>
+            <p class="lesson-where"><span class="badge badge-sim">Playground</span> <span class="badge badge-sb">StackBlitz</span></p>
+          </div>
+        </header>
+
+        <p>Write Express code on the left, press <strong>Run</strong> (or <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>Enter</kbd>), then send requests on the right. The playground runs a <strong>simulated Express</strong> inside this page, so it starts instantly and works offline. It follows the style chosen at the top of the page: Express 4 behavior with CommonJS, or Express 5 behavior with ES modules. When you want real Node, send the same code to StackBlitz.</p>
+
+        <div class="playground" id="pg">
+          <div class="pg-toolbar">
+            <label class="pg-select">
+              <span>Example</span>
+              <select id="pg-preset"></select>
+            </label>
+            <p class="pg-mode">Running as <strong id="pg-mode-label">Express 4 (CommonJS)</strong></p>
+            <div class="pg-actions">
+              <button class="btn" type="button" id="pg-reset">Reset example</button>
+              <button class="btn primary" type="button" id="pg-run">Run</button>
+            </div>
+          </div>
+          <p class="pg-blurb" id="pg-blurb"></p>
+          <p class="pg-notice" id="pg-notice" hidden></p>
+
+          <div class="pg-grid">
+            <div class="pg-editor-pane">
+              <div class="pg-filetabs" role="tablist" aria-label="Files">
+                <button type="button" role="tab" aria-selected="true" data-pg-file="code" id="pg-tab-code">index.js</button>
+                <button type="button" role="tab" aria-selected="false" data-pg-file="env" id="pg-tab-env" tabindex="-1">.env</button>
+              </div>
+              <div class="editor">
+                <pre class="editor-highlight" aria-hidden="true"><code id="pg-highlight"></code></pre>
+                <textarea id="pg-code" class="editor-input" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off" aria-labelledby="pg-tab-code" aria-describedby="pg-editor-help"></textarea>
+              </div>
+              <p class="pg-help" id="pg-editor-help">Tab inserts two spaces. Press Esc, then Tab, to move focus out of the editor.</p>
+            </div>
+
+            <div class="pg-side">
+              <section class="pg-panel" aria-labelledby="pg-req-title">
+                <h3 id="pg-req-title">Send a request</h3>
+                <div class="pg-quick" id="pg-quick" aria-label="Example requests"></div>
+                <div class="pg-req-line">
+                  <label class="visually-hidden" for="pg-method">Method</label>
+                  <select id="pg-method">
+                    <option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option>
+                  </select>
+                  <label class="visually-hidden" for="pg-path">Path</label>
+                  <input id="pg-path" type="text" value="/" spellcheck="false" autocomplete="off">
+                  <button class="btn primary" type="button" id="pg-send">Send</button>
+                </div>
+                <label class="pg-label" for="pg-headers">Headers <small>one per line, <code>Name: value</code></small></label>
+                <textarea id="pg-headers" class="pg-small-input" rows="2" spellcheck="false"></textarea>
+                <label class="pg-label" for="pg-body">JSON body <small>for POST, PUT, PATCH</small></label>
+                <textarea id="pg-body" class="pg-small-input" rows="3" spellcheck="false"></textarea>
+              </section>
+
+              <section class="pg-panel" aria-labelledby="pg-res-title" aria-live="polite">
+                <h3 id="pg-res-title">Response</h3>
+                <div id="pg-response" class="pg-response"><p class="pg-empty">Run your code, then send a request to see the response here.</p></div>
+              </section>
+            </div>
+          </div>
+
+          <section class="pg-console-wrap" aria-labelledby="pg-console-title">
+            <div class="pg-console-head">
+              <h3 id="pg-console-title">Terminal output</h3>
+              <button class="btn btn-small" type="button" id="pg-clear">Clear</button>
+            </div>
+            <pre class="pg-console" id="pg-console" role="log" aria-live="polite"></pre>
+          </section>
+
+          <section class="pg-sb" aria-labelledby="pg-sb-title">
+            <h3 id="pg-sb-title">Run this code with real Node.js</h3>
+            <p>StackBlitz runs Node.js inside your browser tab using WebContainers. It installs Express from npm, runs your file with the same <code>package.json</code> settings as the style you've chosen, and shows the live server in a preview pane. Needs an internet connection; works best in Chrome and Edge.</p>
+            <div class="pg-sb-actions">
+              <button class="btn primary" type="button" id="pg-sb-embed">Load StackBlitz below</button>
+              <button class="btn" type="button" id="pg-sb-open">Open in a new tab</button>
+            </div>
+            <div class="pg-sb-frame" id="pg-sb-frame" hidden></div>
+          </section>
+        </div>
+
+        <h3>What you can practise where</h3>
+        <div class="table-wrap">
+          <table class="capability">
+            <thead><tr><th scope="col">Concept</th><th scope="col">Playground</th><th scope="col">StackBlitz</th><th scope="col">Local</th></tr></thead>
+            <tbody>
+              <tr><td>Routes, params, query strings, JSON bodies</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+              <tr><td>Middleware order, <code>next()</code>, auth checks</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+              <tr><td>Error handlers, Express 4 vs 5 async errors</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+              <tr><td>CommonJS vs ES module syntax errors</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+              <tr><td><code>dotenv</code> and <code>process.env</code></td><td>Yes (simulated)</td><td>Yes</td><td>Yes</td></tr>
+              <tr><td>Multi-file projects, folder structure</td><td>No, single file</td><td>Yes</td><td>Yes</td></tr>
+              <tr><td>Real <code>npm install</code>, <code>package.json</code> scripts, nodemon</td><td>No</td><td>Yes</td><td>Yes</td></tr>
+              <tr><td>Other npm packages (<code>cors</code>, <code>helmet</code>, <code>morgan</code>)</td><td>Simplified versions only</td><td>Yes</td><td>Yes</td></tr>
+              <tr><td>Installing Node, version managers, <code>PATH</code></td><td>No</td><td>No</td><td>Yes</td></tr>
+              <tr><td>Git, <code>.gitignore</code>, committing</td><td>No</td><td>Partly</td><td>Yes</td></tr>
+              <tr><td>Postman or Thunder Client against <code>localhost</code>, databases</td><td>No</td><td>No</td><td>Yes</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">The simulator models Express's routing, middleware, and error-handling rules closely, but it's a teaching tool, not Node. Streams, the file system, real networking, and <code>res.sendFile()</code> aren't available. When the simulator and StackBlitz disagree, trust StackBlitz.</p>
+      </section>
+
+      <!-- ============ 15. TOOLS ============ -->
+      <section class="lesson" id="tools" aria-labelledby="tools-title">
+        <header class="lesson-head">
+          <span class="lesson-num" aria-hidden="true">15</span>
+          <div>
+            <h2 id="tools-title">Tools for practice</h2>
+          </div>
+        </header>
+
+        <h3>Online sandboxes: run Node with nothing installed</h3>
+        <dl class="tool-list">
+          <dt><a href="https://stackblitz.com" target="_blank" rel="noopener">StackBlitz</a></dt>
+          <dd>Runs real Node.js inside the browser tab using WebContainers, so it boots in seconds and keeps working if your connection drops. Start from its Node or Express starter, or use the buttons in this tutorial. Best for quick experiments and sharing a runnable example.</dd>
+          <dt><a href="https://codesandbox.io" target="_blank" rel="noopener">CodeSandbox</a></dt>
+          <dd>Runs projects in cloud VMs (Devboxes), so it behaves like a real Linux machine, including databases and native packages. Slower to start than StackBlitz, closer to production.</dd>
+          <dt><a href="https://replit.com" target="_blank" rel="noopener">Replit</a></dt>
+          <dd>A cloud workspace with a built-in shell and one-click hosting. Useful for keeping a small API running at a public URL to share with others.</dd>
+        </dl>
+
+        <h3>Local setup: what professionals use</h3>
+        <dl class="tool-list">
+          <dt><a href="https://code.visualstudio.com" target="_blank" rel="noopener">Visual Studio Code</a></dt>
+          <dd>The most common editor for Node development. Its built-in terminal and JavaScript debugger work with Node out of the box. Worth installing: the <strong>ESLint</strong> extension (shows lint errors as you type), <strong>Prettier</strong> (consistent formatting on save), and <strong>DotENV</strong> (syntax highlighting for <code>.env</code> files).</dd>
+          <dt><a href="https://www.thunderclient.com" target="_blank" rel="noopener">Thunder Client</a></dt>
+          <dd>A lightweight API client inside VS Code. Send GET and POST requests to <code>localhost:3000</code> without leaving the editor. The simplest way to test a POST route with a JSON body.</dd>
+          <dt><a href="https://www.postman.com" target="_blank" rel="noopener">Postman</a></dt>
+          <dd>A full-featured API client. Save requests into collections, use variables for base URLs and tokens, and write simple tests. The industry-standard tool when working on APIs in a team.</dd>
+          <dt><code>curl</code></dt>
+          <dd>Built into macOS, Linux, and Windows 10+. Less convenient than a GUI, but every API's documentation uses it, so learning to read curl commands is essential.</dd>
+          <dt>The VS Code debugger</dt>
+          <dd>Instead of scattering <code>console.log</code>, open a JavaScript Debug Terminal from the terminal dropdown and run <code>npm run dev</code> in it. Breakpoints you set in the editor then pause your route handlers, and you can inspect <code>req</code> and <code>res</code> live.</dd>
+        </dl>
+
+        <h3>Practice exercises</h3>
+        <p>Each exercise extends the project from lesson 13. Do them in order; they get progressively harder.</p>
+        <ol class="exercises">
+          <li><strong>Add <code>PATCH /api/users/:id</code>.</strong> Update only the fields sent in the body. Return 404 for unknown users. Test it with Thunder Client or Postman.</li>
+          <li><strong>Add a request logger middleware</strong> in <code>src/middleware/</code> that logs method, path, status, and duration. Register it in <code>app.js</code>. Then try registering it after the routes and explain what changes.</li>
+          <li><strong>Protect write routes with an API key.</strong> Add <code>API_KEY</code> to <code>.env</code> and <code>.env.example</code>, read it in <code>config/</code>, and require an <code>x-api-key</code> header on POST, PATCH, and DELETE.</li>
+          <li><strong>Add a second resource.</strong> Create posts with their own model, controller, and routes, mounted at <code>/api/posts</code>. Notice how little of the existing code you have to touch.</li>
+          <li><strong>Add query filtering.</strong> Support <code>GET /api/users?name=ada</code> for a case-insensitive name search.</li>
+          <li><strong>Write tests</strong> for everything you added. Aim for one success case and one failure case per route.</li>
+          <li><strong>Switch tracks.</strong> Convert your finished project from CommonJS to ES modules, or the reverse, and upgrade or downgrade Express. Keep a list of every change you needed.</li>
+        </ol>
+      </section>
+
+      <!-- ============ 16. CHECKLIST ============ -->
+      <section class="lesson" id="checklist" aria-labelledby="checklist-title">
+        <header class="lesson-head">
+          <span class="lesson-num" aria-hidden="true">16</span>
+          <div>
+            <h2 id="checklist-title">Setup checklist</h2>
+          </div>
+        </header>
+        <p>Use this whenever you start a new Node and Express project. Your ticks are saved in this browser.</p>
+        <ul class="checklist" id="checklist-list">
+          <li><label><input type="checkbox" data-check="node"> <span>Node LTS installed through a version manager; <code>.nvmrc</code> added</span></label></li>
+          <li><label><input type="checkbox" data-check="git"> <span><code>git init</code> run before the first file</span></label></li>
+          <li><label><input type="checkbox" data-check="init"> <span><code>npm init -y</code>, then <code>name</code>, <code>description</code>, <code>main</code>, <code>private</code>, <code>engines</code> set</span></label></li>
+          <li><label><input type="checkbox" data-check="type"> <span>Module system chosen; <code>"type": "module"</code> set if using ES modules</span></label></li>
+          <li><label><input type="checkbox" data-check="gitignore"> <span><code>.gitignore</code> created with <code>node_modules/</code> and <code>.env</code> before the first commit</span></label></li>
+          <li><label><input type="checkbox" data-check="deps"> <span>Runtime packages in <code>dependencies</code>, tools in <code>devDependencies</code></span></label></li>
+          <li><label><input type="checkbox" data-check="lock"> <span><code>package-lock.json</code> committed</span></label></li>
+          <li><label><input type="checkbox" data-check="scripts"> <span><code>start</code>, <code>dev</code>, <code>test</code>, and <code>lint</code> scripts defined</span></label></li>
+          <li><label><input type="checkbox" data-check="structure"> <span>Code in <code>src/</code> with <code>routes</code>, <code>controllers</code>, <code>models</code>, <code>middleware</code>, <code>config</code></span></label></li>
+          <li><label><input type="checkbox" data-check="split"> <span><code>app.js</code> exports the app; <code>server.js</code> calls <code>listen()</code></span></label></li>
+          <li><label><input type="checkbox" data-check="env"> <span>Settings read from <code>process.env</code> in one config module; <code>.env.example</code> committed</span></label></li>
+          <li><label><input type="checkbox" data-check="errors"> <span>404 handler and four-argument error handler registered last</span></label></li>
+          <li><label><input type="checkbox" data-check="tests"> <span>At least one Supertest test passing</span></label></li>
+          <li><label><input type="checkbox" data-check="readme"> <span>README explains setup, scripts, and endpoints</span></label></li>
+        </ul>
+        <p class="checklist-status" id="checklist-status" aria-live="polite"></p>
+        <button class="btn btn-small" type="button" id="checklist-reset">Clear all ticks</button>
+      </section>
+
+      <footer class="site-footer">
+        <p>Built as a static site: open <code>index.html</code> in any modern browser. No build step, no server. Express and Node.js are trademarks of the OpenJS Foundation.</p>
+      </footer>
+    </main>
+  </div>
+
+  <!-- ============ PLAYGROUND PRESETS (raw source) ============ -->
+<script type="text/plain" id="preset-hello-cjs">// A complete Express 4 server in one file (CommonJS)
+const express = require('express');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+  res.send('Hello from Express!');
+});
+
+app.get('/api/time', (req, res) => {
+  res.json({ now: new Date().toISOString() });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server listening on http://localhost:${PORT}`);
+});
+</script>
+<script type="text/plain" id="preset-hello-esm">// A complete Express 5 server in one file (ES modules)
+import express from 'express';
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+  res.send('Hello from Express!');
+});
+
+app.get('/api/time', (req, res) => {
+  res.json({ now: new Date().toISOString() });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server listening on http://localhost:${PORT}`);
+});
+</script>
+<script type="text/plain" id="preset-routing-cjs">const express = require('express');
+
+const app = express();
+app.use(express.json()); // try removing this and POSTing again
+
+const users = [
+  { id: 1, name: 'Ada', role: 'admin' },
+  { id: 2, name: 'Alan', role: 'member' },
+];
+
+// Query string: GET /api/users?role=admin
+app.get('/api/users', (req, res) => {
+  const { role } = req.query;
+  const result = role ? users.filter((u) => u.role === role) : users;
+  res.json(result);
+});
+
+// Route parameter: GET /api/users/2
+app.get('/api/users/:id', (req, res) => {
+  const user = users.find((u) => u.id === Number(req.params.id));
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+  res.json(user);
+});
+
+// Request body: POST /api/users with {"name":"Grace"}
+app.post('/api/users', (req, res) => {
+  const { name, role = 'member' } = req.body;
+  if (!name) {
+    return res.status(400).json({ error: 'name is required' });
+  }
+  const user = { id: users.length + 1, name, role };
+  users.push(user);
+  res.status(201).json(user);
+});
+
+// Express 4 wildcard syntax: GET /files/docs/readme.md
+app.get('/files/*', (req, res) => {
+  res.json({ path: req.params[0] });
+});
+
+app.listen(3000, () => console.log('Listening on port 3000'));
+</script>
+<script type="text/plain" id="preset-routing-esm">import express from 'express';
+
+const app = express();
+app.use(express.json()); // try removing this and POSTing again
+
+const users = [
+  { id: 1, name: 'Ada', role: 'admin' },
+  { id: 2, name: 'Alan', role: 'member' },
+];
+
+// Query string: GET /api/users?role=admin
+app.get('/api/users', (req, res) => {
+  const { role } = req.query;
+  const result = role ? users.filter((u) => u.role === role) : users;
+  res.json(result);
+});
+
+// Route parameter: GET /api/users/2
+app.get('/api/users/:id', (req, res) => {
+  const user = users.find((u) => u.id === Number(req.params.id));
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+  res.json(user);
+});
+
+// Request body: POST /api/users with {"name":"Grace"}
+// In Express 5, req.body is undefined when no JSON arrives, hence ?? {}
+app.post('/api/users', (req, res) => {
+  const { name, role = 'member' } = req.body ?? {};
+  if (!name) {
+    return res.status(400).json({ error: 'name is required' });
+  }
+  const user = { id: users.length + 1, name, role };
+  users.push(user);
+  res.status(201).json(user);
+});
+
+// Express 5 wildcard syntax: the wildcard needs a name.
+// Try changing '*filepath' to plain '*' and running again.
+app.get('/files/*filepath', (req, res) => {
+  res.json({ path: req.params.filepath });
+});
+
+app.listen(3000, () => console.log('Listening on port 3000'));
+</script>
+<script type="text/plain" id="preset-router-cjs">const express = require('express');
+
+// --- controllers/users.controller.js ---
+const users = [{ id: 1, name: 'Ada' }];
+
+const usersController = {
+  list(req, res) {
+    res.json(users);
+  },
+  get(req, res) {
+    const user = users.find((u) => u.id === Number(req.params.id));
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  },
+  create(req, res) {
+    const user = { id: users.length + 1, name: req.body.name };
+    users.push(user);
+    res.status(201).json(user);
+  },
+};
+
+// --- routes/users.routes.js ---
+const usersRouter = express.Router();
+usersRouter.get('/', usersController.list);
+usersRouter.get('/:id', usersController.get);
+usersRouter.post('/', usersController.create);
+
+// --- app.js ---
+const app = express();
+app.use(express.json());
+
+// Mount the router: its '/' becomes '/api/users'
+app.use('/api/users', usersRouter);
+
+app.listen(3000, () => console.log('Listening on port 3000'));
+</script>
+<script type="text/plain" id="preset-router-esm">import express, { Router } from 'express';
+
+// --- controllers/users.controller.js ---
+const users = [{ id: 1, name: 'Ada' }];
+
+const usersController = {
+  list(req, res) {
+    res.json(users);
+  },
+  get(req, res) {
+    const user = users.find((u) => u.id === Number(req.params.id));
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  },
+  create(req, res) {
+    const user = { id: users.length + 1, name: req.body?.name };
+    users.push(user);
+    res.status(201).json(user);
+  },
+};
+
+// --- routes/users.routes.js ---
+const usersRouter = Router();
+usersRouter.get('/', usersController.list);
+usersRouter.get('/:id', usersController.get);
+usersRouter.post('/', usersController.create);
+
+// --- app.js ---
+const app = express();
+app.use(express.json());
+
+// Mount the router: its '/' becomes '/api/users'
+app.use('/api/users', usersRouter);
+
+app.listen(3000, () => console.log('Listening on port 3000'));
+</script>
+<script type="text/plain" id="preset-middleware-cjs">const express = require('express');
+
+const app = express();
+
+// 1. Runs for every request
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    console.log(`${req.method} ${req.originalUrl} -> ${res.statusCode} (${Date.now() - start}ms)`);
+  });
+  next();
+});
+
+// 2. Adds data to req for later handlers
+app.use((req, res, next) => {
+  req.requestedAt = new Date().toISOString();
+  next();
+});
+
+// 3. Only for paths starting with /admin
+function requireApiKey(req, res, next) {
+  if (req.get('x-api-key') !== 'secret123') {
+    return res.status(401).json({ error: 'Invalid or missing API key' });
+  }
+  next();
+}
+app.use('/admin', requireApiKey);
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Public route', requestedAt: req.requestedAt });
+});
+
+app.get('/admin/stats', (req, res) => {
+  res.json({ users: 2, requestedAt: req.requestedAt });
+});
+
+// 404: no route matched
+app.use((req, res) => {
+  res.status(404).json({ error: `Not found: ${req.originalUrl}` });
+});
+
+app.listen(3000, () => console.log('Listening on port 3000'));
+</script>
+<script type="text/plain" id="preset-middleware-esm">import express from 'express';
+
+const app = express();
+
+// 1. Runs for every request
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    console.log(`${req.method} ${req.originalUrl} -> ${res.statusCode} (${Date.now() - start}ms)`);
+  });
+  next();
+});
+
+// 2. Adds data to req for later handlers
+app.use((req, res, next) => {
+  req.requestedAt = new Date().toISOString();
+  next();
+});
+
+// 3. Only for paths starting with /admin
+function requireApiKey(req, res, next) {
+  if (req.get('x-api-key') !== 'secret123') {
+    return res.status(401).json({ error: 'Invalid or missing API key' });
+  }
+  next();
+}
+app.use('/admin', requireApiKey);
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Public route', requestedAt: req.requestedAt });
+});
+
+app.get('/admin/stats', (req, res) => {
+  res.json({ users: 2, requestedAt: req.requestedAt });
+});
+
+// 404: no route matched
+app.use((req, res) => {
+  res.status(404).json({ error: `Not found: ${req.originalUrl}` });
+});
+
+app.listen(3000, () => console.log('Listening on port 3000'));
+</script>
+<script type="text/plain" id="preset-errors-cjs">const express = require('express');
+
+const app = express();
+
+// Pretend database call that fails
+async function findUsers() {
+  throw new Error('Database connection refused');
+}
+
+// Synchronous throw: Express 4 catches this
+app.get('/sync-error', (req, res) => {
+  throw new Error('Something broke synchronously');
+});
+
+// Async, done correctly for Express 4: try/catch + next(err)
+app.get('/async-caught', async (req, res, next) => {
+  try {
+    res.json(await findUsers());
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Async without try/catch: Express 4 never sees the error.
+// The request hangs. Send a request here and watch the terminal.
+app.get('/async-uncaught', async (req, res) => {
+  res.json(await findUsers());
+});
+
+// Error handler: four parameters, registered last
+app.use((err, req, res, next) => {
+  console.error('Error handler caught:', err.message);
+  res.status(err.status || 500).json({ error: err.message });
+});
+
+app.listen(3000, () => console.log('Listening on port 3000'));
+</script>
+<script type="text/plain" id="preset-errors-esm">import express from 'express';
+
+const app = express();
+
+// Pretend database call that fails
+async function findUsers() {
+  throw new Error('Database connection refused');
+}
+
+// Synchronous throw: caught
+app.get('/sync-error', (req, res) => {
+  throw new Error('Something broke synchronously');
+});
+
+// Async without try/catch: Express 5 forwards the rejection
+// to the error handler automatically.
+app.get('/async-uncaught', async (req, res) => {
+  res.json(await findUsers());
+});
+
+// A custom status on the error object
+app.get('/forbidden', async () => {
+  const err = new Error('You shall not pass');
+  err.status = 403;
+  throw err;
+});
+
+// Error handler: four parameters, registered last
+app.use((err, req, res, next) => {
+  console.error('Error handler caught:', err.message);
+  res.status(err.status || 500).json({ error: err.message });
+});
+
+app.listen(3000, () => console.log('Listening on port 3000'));
+</script>
+<script type="text/plain" id="preset-env-cjs">// Try commenting out the next line and running again
+require('dotenv').config();
+
+const express = require('express');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.get('/config', (req, res) => {
+  res.json({
+    port: PORT,
+    nodeEnv: process.env.NODE_ENV,
+    greeting: process.env.GREETING,
+    // Never send real secrets in a response; show only whether it's set
+    hasApiKey: Boolean(process.env.API_KEY),
+  });
+});
+
+app.get('/', (req, res) => {
+  res.send(process.env.GREETING || 'GREETING is not set');
+});
+
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT} in ${process.env.NODE_ENV} mode`);
+});
+</script>
+<script type="text/plain" id="preset-env-esm">// Try commenting out the next line and running again
+import 'dotenv/config';
+
+import express from 'express';
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.get('/config', (req, res) => {
+  res.json({
+    port: PORT,
+    nodeEnv: process.env.NODE_ENV,
+    greeting: process.env.GREETING,
+    // Never send real secrets in a response; show only whether it's set
+    hasApiKey: Boolean(process.env.API_KEY),
+  });
+});
+
+app.get('/', (req, res) => {
+  res.send(process.env.GREETING || 'GREETING is not set');
+});
+
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT} in ${process.env.NODE_ENV} mode`);
+});
+</script>
+
+  <script src="js/highlight.js"></script>
+  <script src="js/mini-express.js"></script>
+  <script src="js/playground.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
