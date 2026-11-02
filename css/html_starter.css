@@ -1,0 +1,168 @@
+/* 
+           ========================================
+           CSS VARIABLES (THEMING)
+           ========================================
+           These variables allow you to change the look of the 
+           entire site just by updating the values here!
+        */
+        :root {
+            --primary-color: #2563eb;       /* Main brand color (blue) */
+            --secondary-color: #f1f5f9;     /* Light background color */
+            --text-color: #334155;          /* Main text color */
+            --text-light: #64748b;          /* Lighter text for secondary info */
+            --background-color: #ffffff;    /* Page background */
+            --border-color: #e2e8f0;        /* Subtle border color */
+            --font-main: 'Segoe UI', system-ui, sans-serif;
+            --spacing-sm: 0.5rem;           /* Small spacing (8px) */
+            --spacing-md: 1rem;             /* Medium spacing (16px) */
+            --spacing-lg: 2rem;             /* Large spacing (32px) */
+            --radius: 8px;                  /* Rounded corners */
+        }
+
+        /* 
+           ========================================
+           RESET & GLOBAL STYLES
+           ========================================
+           This removes default browser margins and ensures 
+           padding doesn't increase the size of elements.
+        */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            color: var(--text-color);
+            background-color: var(--background-color);
+            line-height: 1.6; /* Makes text easier to read */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Ensures the footer stays at the bottom */
+        }
+
+        /* 
+           ========================================
+           HEADER & NAVIGATION
+           ========================================
+        */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: var(--spacing-lg);
+            text-align: center;
+        }
+
+        nav {
+            background-color: var(--text-color);
+            padding: var(--spacing-sm);
+            /* Flexbox is used here to center the navigation links */
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-lg); /* Space between links */
+            flex-wrap: wrap; /* Allows links to wrap on very small screens */
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius);
+            transition: background-color 0.3s ease; /* Smooth hover effect */
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 
+           ========================================
+           MAIN LAYOUT (CSS GRID)
+           ========================================
+        */
+        .container {
+            /* We use CSS Grid to create a 2-column layout on large screens */
+            display: grid;
+            grid-template-columns: 3fr 1fr; /* Main content takes 3 parts, aside takes 1 part */
+            gap: var(--spacing-lg);
+            max-width: 1200px; /* Prevents the site from getting too wide on huge monitors */
+            margin: var(--spacing-lg) auto; /* Centers the container */
+            padding: 0 var(--spacing-md);
+            flex: 1; /* Pushes the footer down */
+        }
+
+        /* 
+           ========================================
+           CONTENT AREAS (ARTICLE & ASIDE)
+           ========================================
+        */
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg); /* Space between multiple articles if added */
+        }
+
+        article {
+            background-color: white;
+            padding: var(--spacing-lg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        }
+
+        article h2 {
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-md);
+        }
+
+        article p {
+            margin-bottom: var(--spacing-md);
+        }
+
+        aside {
+            background-color: var(--secondary-color);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            height: fit-content; /* Prevents the aside from stretching vertically */
+        }
+
+        aside h3 {
+            margin-bottom: var(--spacing-md);
+            color: var(--text-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: var(--spacing-sm);
+        }
+
+        /* 
+           ========================================
+           FOOTER
+           ========================================
+        */
+        footer {
+            background-color: var(--text-color);
+            color: white;
+            text-align: center;
+            padding: var(--spacing-lg);
+            margin-top: auto; /* Pushes footer to the bottom of the page */
+        }
+
+        /* 
+           ========================================
+           RESPONSIVE DESIGN (MEDIA QUERIES)
+           ========================================
+           This code only runs when the screen is smaller than 768px (like tablets/phones)
+        */
+        @media (max-width: 768px) {
+            .container {
+                /* Change to a 1-column layout on small screens */
+                grid-template-columns: 1fr;
+            }
+            
+            nav {
+                flex-direction: column; /* Stack navigation links vertically */
+                align-items: center;
+            }
+        }

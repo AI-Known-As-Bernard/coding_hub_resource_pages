@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bcrypt &amp; JWT — reference</title>
+<meta name="description" content="Look-up reference for bcryptjs and jsonwebtoken: hashing passwords, signing and verifying tokens, and the errors you will meet.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/reference_styles.css">
+<style>
+  :root{ --accent:#6B3FA0; --accent-soft:#EDE6F6; }
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the reference</a>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol"><a href="./index.html">Coding Hub</a> &nbsp;/&nbsp; Reference &nbsp;/&nbsp; Node unit, Stage 2</p>
+  <h1>bcrypt <span class="lit">+</span> jwt</h1>
+  <p class="deck">How a password becomes something you can check but never read, and how a login becomes a token your API can trust. <strong>Use the filter to jump straight to what you need.</strong></p>
+
+  <div class="finder">
+    <label>
+      <span class="visually-hidden">Filter this page</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="filter" type="search" placeholder="salt, expiresIn, 401, compare&hellip;" autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="clear">Clear</button>
+  </div>
+  <p class="hits" id="hits" role="status"></p>
+</header>
+
+<nav class="contents" id="start">
+  <h2>On this page</h2>
+  <a href="#e1"><span>01</span> Hashing is not encryption</a>
+  <a href="#e2"><span>02</span> Installing, and the two functions</a>
+  <a href="#e3"><span>03</span> Salt rounds</a>
+  <a href="#e4"><span>04</span> Inside a bcrypt hash</a>
+  <a href="#e5"><span>05</span> Hashing on save</a>
+  <a href="#e6"><span>06</span> Checking a password</a>
+  <a href="#e7"><span>07</span> Keeping the hash out of responses</a>
+  <a href="#e8"><span>08</span> What a JWT is</a>
+  <a href="#e9"><span>09</span> Inside a token</a>
+  <a href="#e10"><span>10</span> Signing</a>
+  <a href="#e11"><span>11</span> Verifying</a>
+  <a href="#e12"><span>12</span> The Authorization header</a>
+  <a href="#e13"><span>13</span> Expiry</a>
+  <a href="#e14"><span>14</span> Errors you will meet</a>
+  <a href="#e15"><span>15</span> Security checklist</a>
+  <a href="#e16"><span>16</span> Every function, one table</a>
+</nav>
+
+<!-- ===================== PART ONE ===================== -->
+<section class="part">
+  <h2>Part one: passwords</h2>
+  <p>Your database will be copied one day. The only question is whether the copy is useful to whoever has it.</p>
+</section>
+
+<article class="entry" id="e1">
+  <div class="entry-text">
+    <h3><span class="num">01</span> Hashing is not encryption</h3>
+    <p>Encryption is two-way: with the key you can get the original back. Hashing is one-way, on purpose. Once a password is hashed there is no function anywhere that turns it back into the password.</p>
+    <p>That sounds useless until you notice what login actually needs. You never have to know the password. You only have to answer: <em>does this guess produce the same hash?</em></p>
+    <p>So after a leak, an attacker holds a pile of hashes and no way to read them back. bcrypt additionally makes each guess slow, so trying a dictionary against the hashes costs real time.</p>
+    <p class="warn"><strong>Never</strong> store a password as plain text, and never email one back to a user. If a site can tell you your forgotten password, it stored it wrong.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the whole idea</span></div>
+    <pre class="code" data-lang="js"><code>// Signing up
+hash("hunter2")  ->  "$2b$10$N9qo8uLO...Wq1u"   // store this
+
+// Logging in, later
+compare("hunter2", storedHash)   // true
+compare("hunter3", storedHash)   // false
+
+// What you can never do
+unhash(storedHash)               // no such function, by design</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e2">
+  <div class="entry-text">
+    <h3><span class="num">02</span> Installing, and the two functions</h3>
+    <p><code>bcryptjs</code> is pure JavaScript, so it installs on any machine without a compiler. The package called <code>bcrypt</code> builds native code and is faster, but it breaks on machines without build tools. Use <code>bcryptjs</code> for class.</p>
+    <p>It is a runtime dependency. Your server hashes on every signup and compares on every login, so it belongs in <code>dependencies</code>.</p>
+    <p>There are only two functions you need, and both return promises.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>Terminal</span></div>
+    <pre class="code" data-lang="bash"><code>npm install bcryptjs</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the two calls</span></div>
+    <pre class="code" data-lang="js"><code>const bcrypt = require('bcryptjs')
+
+// Turn a password into a hash. 10 is the cost.
+const hash = await bcrypt.hash('hunter2', 10)
+
+// Check a guess against a stored hash. Returns true or false.
+const ok = await bcrypt.compare(guess, hash)</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e3">
+  <div class="entry-text">
+    <h3><span class="num">03</span> Salt rounds</h3>
+    <p>The number you pass to <code>hash</code> is the <em>cost</em>, and it is an exponent: each step up doubles the work. It is slow deliberately. Slow is the security feature.</p>
+    <p>A <strong>salt</strong> is random data mixed in before hashing, and bcrypt generates a fresh one for every password. That is why two users with the same password get different hashes, and why a precomputed table of common passwords is useless against you.</p>
+    <p>You never manage the salt yourself. bcrypt generates it, uses it, and stores it inside the hash string.</p>
+    <p class="tip">Rough times on a classroom laptop. Your numbers will differ, but the doubling will not.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>cost vs time</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Cost</th><th>Roughly</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td><code>8</code></td><td>~25 ms</td><td>Too fast for real passwords</td></tr>
+          <tr><td><code>10</code></td><td>~65 ms</td><td>The common default. Use this.</td></tr>
+          <tr><td><code>12</code></td><td>~250 ms</td><td>Noticeably slower logins; fine for sensitive data</td></tr>
+          <tr><td><code>14</code></td><td>~1 s</td><td>Users will feel it on every login</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e4">
+  <div class="entry-text">
+    <h3><span class="num">04</span> Inside a bcrypt hash</h3>
+    <p>A bcrypt hash is not random noise. It is four fields packed into one string, separated by <code>$</code>, and the salt travels with it.</p>
+    <p>That packing is what makes <code>compare</code> possible. To check a guess, bcrypt reads the cost and salt out of the stored string, hashes the guess the same way, and compares the results.</p>
+    <p>Paste one of your own hashes in to see it split apart. Nothing leaves your browser.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>hash anatomy</span></div>
+    <div class="try">
+      <div>
+        <label for="hash-in">A bcrypt hash</label>
+        <input id="hash-in" type="text" spellcheck="false" value="$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy">
+      </div>
+      <div class="chips">
+        <button type="button" class="chip" data-hash="$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy">cost 10</button>
+        <button type="button" class="chip" data-hash="$2a$12$R9h/cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jWMUW">cost 12, $2a</button>
+        <button type="button" class="chip" data-hash="not-a-hash">a broken one</button>
+      </div>
+    </div>
+    <div class="anatomy" id="hash-anatomy"></div>
+  </div>
+</article>
+
+<article class="entry" id="e5">
+  <div class="entry-text">
+    <h3><span class="num">05</span> Hashing on save</h3>
+    <p>Do not hash in your controller. Put it on the model, in a <code>pre('save')</code> hook, and then no route can ever forget to do it.</p>
+    <p class="warn"><strong>The trap.</strong> That hook runs on <em>every</em> save. Without the <code>isModified</code> check, changing a user's name re-hashes the already-hashed password, and the account can never log in again. This bug is silent until someone tries to log in.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/models/user.model.js</span></div>
+    <pre class="code" data-lang="js"><code>const bcrypt = require('bcryptjs')
+
+userSchema.pre('save', async function hashPassword(){
+  // Only when the password itself changed. Without this line,
+  // saving any other field re-hashes the hash.
+  if(!this.isModified('password')) return
+
+  this.password = await bcrypt.hash(this.password, 10)
+})</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e6">
+  <div class="entry-text">
+    <h3><span class="num">06</span> Checking a password</h3>
+    <p>Put the comparison on the model too, as an instance method, so the controller reads like a sentence.</p>
+    <p>Two details that matter at login. The password field is normally hidden, so the login query has to ask for it back. And both failure cases — no such email, wrong password — must produce the <em>same</em> message, or your API becomes a tool for discovering which addresses have accounts.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>on the model</span></div>
+    <pre class="code" data-lang="js"><code>userSchema.methods.comparePassword = function (guess){
+  return bcrypt.compare(guess, this.password)
+}</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>in the login controller</span></div>
+    <pre class="code" data-lang="js"><code>// .select('+password') because the schema hides it by default
+const user = await User.findOne({ email }).select('+password')
+
+// One message for both failures, on purpose
+if(!user || !(await user.comparePassword(password))){
+  throw ApiError.unauthorized('Invalid email or password')
+}</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e7">
+  <div class="entry-text">
+    <h3><span class="num">07</span> Keeping the hash out of responses</h3>
+    <p>Two independent guards, because one of them will eventually be bypassed by a query that needs the hash.</p>
+    <p><code>select: false</code> keeps the field out of query results unless a query asks for it. The <code>toJSON</code> transform deletes it on the way out, which catches the login flow, where the document was deliberately loaded <em>with</em> the hash and then sent back in the response.</p>
+    <p class="tip">Test it the lazy way: search your JSON response for <code>$2</code>. Every bcrypt hash starts with it.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>both guards</span></div>
+    <pre class="code" data-lang="js"><code>password:{
+  type:String,
+  required:[true,'password required'],
+  minlength:[8,'password must be at least 8 characters'],
+  select:false                 // guard one: not loaded by default
+},
+
+// ...in the schema options
+toJSON:{
+  virtuals:true,
+  versionKey:false,
+  transform(doc, ret){
+    ret.id = ret._id
+    delete ret._id
+    delete ret.password        // guard two: never serialised
+    return ret
+  }
+}</code></pre>
+  </div>
+</article>
+
+<!-- ===================== PART TWO ===================== -->
+<section class="part">
+  <h2>Part two: tokens</h2>
+  <p>HTTP forgets you between requests. A token is how the next request proves it came from the same person as the last one.</p>
+</section>
+
+<article class="entry" id="e8">
+  <div class="entry-text">
+    <h3><span class="num">08</span> What a JWT is</h3>
+    <p>A JSON Web Token is three base64url chunks joined by dots: a header, a payload, and a signature made from the first two plus your secret.</p>
+    <p>The server does not store it. When a request arrives carrying a token, the server re-runs the signature with its secret. If it matches, the payload has not been tampered with, so the user id inside can be trusted without a lookup to "find the session". That is what stateless means.</p>
+    <p class="warn"><strong>Signed is not encrypted.</strong> Anyone holding a token can read its payload — try it in the next entry. Never put a password, an email you would not publish, or anything private inside one.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>what the three parts are for</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Part</th><th>Holds</th><th>Who can read it</th></tr></thead>
+        <tbody>
+          <tr><td><span class="flag flag-neutral">header</span></td><td>The algorithm, usually <code>HS256</code></td><td>Anyone</td></tr>
+          <tr><td><span class="flag flag-neutral">payload</span></td><td>Your claims: <code>sub</code>, <code>iat</code>, <code>exp</code></td><td>Anyone</td></tr>
+          <tr><td><span class="flag flag-neutral">signature</span></td><td>Proof it was made with your secret</td><td>Only checkable with the secret</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e9">
+  <div class="entry-text">
+    <h3><span class="num">09</span> Inside a token</h3>
+    <p>Paste a token from your own API. It is decoded in your browser and nothing is sent anywhere.</p>
+    <p>Notice what this proves: decoding needs no secret at all. Anyone who gets hold of a token can read every claim in it.</p>
+    <p class="tip">The standard claim names are short for a reason — they travel on every request. <code>sub</code> is the subject (who the token is about), <code>iat</code> is issued-at, <code>exp</code> is expiry. Both times are seconds since 1970, not milliseconds.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>token decoder</span></div>
+    <div class="try">
+      <div>
+        <label for="jwt-in">Paste a JWT</label>
+        <textarea id="jwt-in" rows="4" spellcheck="false">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YWQxNDBjNTUyYTI2MTViYTVmMmVmM2UiLCJyb2xlIjoidXNlciIsImlhdCI6MTc5MjA5ODUwMSwiZXhwIjoxNzkyNzAzMzAxfQ.w1cGu2iD50OXQzwlINBQvtpwBIjdgDm0Wlmh4QXvExg</textarea>
+      </div>
+      <div class="row">
+        <button type="button" class="btn" id="jwt-go">Decode</button>
+        <span class="legend">
+          <span><span class="swatch seg-0"></span><b>header</b></span>
+          <span><span class="swatch seg-1"></span><b>payload</b></span>
+          <span><span class="swatch seg-2"></span><b>signature</b></span>
+        </span>
+      </div>
+    </div>
+    <div class="anatomy" id="jwt-split"></div>
+    <pre class="out" id="jwt-out"></pre>
+  </div>
+</article>
+
+<article class="entry" id="e10">
+  <div class="entry-text">
+    <h3><span class="num">10</span> Signing</h3>
+    <p>Keep the payload small. The user's row can change at any moment, so the id is the only thing worth carrying; look the rest up when you need it.</p>
+    <p>The secret comes from the environment, never from the source file. A secret in your repository is a secret everyone with the repository has.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/utils/jwt.js</span></div>
+    <pre class="code" data-lang="js"><code>const jwt = require('jsonwebtoken')
+const { jwtSecret, jwtExpiresIn } = require('../config/env')
+
+function signToken(user){
+  // 'sub' is the standard claim for "who this token is about"
+  const payload = { sub: String(user._id), role: user.role }
+
+  return jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiresIn })
+}</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>Terminal — generating a real secret</span></div>
+    <pre class="code" data-lang="bash"><code>node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e11">
+  <div class="entry-text">
+    <h3><span class="num">11</span> Verifying</h3>
+    <p><code>jwt.verify</code> checks the signature and the expiry, and throws if either fails. Catch its errors and rethrow your own, so a bad token leaves your API as a clean 401 instead of an accidental 500.</p>
+    <p>Do not report <em>which</em> check failed to the client. Telling an attacker that the signature was close hands them a better next attempt.</p>
+    <p class="tip">There is also <code>jwt.decode()</code>, which reads the payload <strong>without checking the signature</strong>. It is for debugging only. Using it where you meant <code>verify</code> means anyone can forge any token.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/utils/jwt.js</span></div>
+    <pre class="code" data-lang="js"><code>function verifyToken(token){
+  try {
+    return jwt.verify(token, jwtSecret)
+  } catch (err) {
+    if(err.name === 'TokenExpiredError'){
+      throw ApiError.unauthorized('Token expired, please log in again')
+    }
+    // Forged signature, wrong secret, or plain garbage.
+    // One message for all of them.
+    throw ApiError.unauthorized('Invalid token')
+  }
+}</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e12">
+  <div class="entry-text">
+    <h3><span class="num">12</span> The Authorization header</h3>
+    <p>The token travels in a header on every request that needs it, in one fixed shape. The word <code>Bearer</code>, one space, then the token.</p>
+    <p>Your middleware reads it, verifies it, loads the user, and puts the <em>user document</em> on <code>req.user</code>. Load the user rather than trusting the payload: a token stays valid until it expires, so the account may have been deleted since it was issued.</p>
+    <p class="warn">Assigning the raw payload to <code>req.user</code> is a common shortcut and it breaks everything downstream, because the payload has <code>sub</code> and no <code>_id</code>. Records then save with a null owner and nothing errors.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the header</span></div>
+    <pre class="code" data-lang="none"><code>Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOi...</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/middleware/auth.js</span></div>
+    <pre class="code" data-lang="js"><code>const requireAuth = asyncHandler(async (req, res, next) =&gt; {
+  const header = req.get('authorization') || ''
+
+  if(!header.startsWith('Bearer ')){
+    throw ApiError.unauthorized('Missing or malformed Authorization header')
+  }
+
+  const payload = verifyToken(header.slice(7).trim())
+
+  // Load the user, do not trust the payload
+  const user = await User.findById(payload.sub)
+  if(!user) throw ApiError.unauthorized('This account no longer exists')
+
+  req.user = user      // the document, not the payload
+  next()               // only after req.user is set
+})</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e13">
+  <div class="entry-text">
+    <h3><span class="num">13</span> Expiry</h3>
+    <p>Every token should expire. A token with no expiry is a password that never changes and that you cannot revoke.</p>
+    <p>The awkward part of stateless auth: you cannot un-issue a token. Logging out deletes it from the client, but a copied token keeps working until <code>exp</code> passes. Short expiry limits the damage; that is the whole defence at this level.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>expiresIn accepts</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Value</th><th>Means</th><th>Fits</th></tr></thead>
+        <tbody>
+          <tr><td><code>'15m'</code></td><td>15 minutes</td><td>Banking, admin panels</td></tr>
+          <tr><td><code>'12h'</code></td><td>12 hours</td><td>A working day</td></tr>
+          <tr><td><code>'7d'</code></td><td>7 days</td><td>Class projects, a "remember me" app</td></tr>
+          <tr><td><code>3600</code></td><td>A bare number is <strong>seconds</strong></td><td>Easy to misread as ms. Prefer the strings.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e14">
+  <div class="entry-text">
+    <h3><span class="num">14</span> Errors you will meet</h3>
+    <p>Match the message to the cause before you change any code. Most of these are wiring, not logic.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>message &rarr; cause</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>What you see</th><th>What it means</th></tr></thead>
+        <tbody>
+          <tr><td><code>JsonWebTokenError: invalid signature</code></td><td>The token was signed with a different secret. Usually you changed <code>JWT_SECRET</code> after issuing it — log in again.</td></tr>
+          <tr><td><code>JsonWebTokenError: jwt malformed</code></td><td>Not three dot-separated parts. Often the quotes got copied with the token, or the word <code>Bearer</code> is missing.</td></tr>
+          <tr><td><code>TokenExpiredError</code></td><td>Past <code>exp</code>. Log in again for a fresh token.</td></tr>
+          <tr><td><code>secretOrPrivateKey must have a value</code></td><td><code>JWT_SECRET</code> is undefined — your <code>.env</code> is missing it, or it is read before <code>dotenv</code> loads.</td></tr>
+          <tr><td><code>Cannot read properties of undefined (reading '_id')</code></td><td><code>requireAuth</code> is not on that route, so <code>req.user</code> was never set.</td></tr>
+          <tr><td>Login always fails after a profile edit</td><td>The <code>pre('save')</code> hook is missing its <code>isModified</code> check and re-hashed the hash.</td></tr>
+          <tr><td>Records save with <code>ownerId: null</code></td><td><code>req.user</code> holds the token payload instead of the user document.</td></tr>
+          <tr><td><code>data and hash arguments required</code></td><td><code>bcrypt.compare</code> got <code>undefined</code> — the query did not <code>.select('+password')</code>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<!-- ===================== PART THREE ===================== -->
+<section class="part">
+  <h2>Part three: the rules</h2>
+  <p>Short lists. Check your project against them before you hand anything in.</p>
+</section>
+
+<article class="entry" id="e15">
+  <div class="entry-text">
+    <h3><span class="num">15</span> Security checklist</h3>
+    <p>None of these are advanced. All of them have been the cause of a real breach somewhere.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>do / never</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th></th><th>Rule</th></tr></thead>
+        <tbody>
+          <tr><td><span class="flag flag-no">do</span></td><td>Hash on the model, so no route can skip it</td></tr>
+          <tr><td><span class="flag flag-no">do</span></td><td>Keep the secret in <code>.env</code>, and commit <code>.env.example</code> instead</td></tr>
+          <tr><td><span class="flag flag-no">do</span></td><td>Give every token an expiry</td></tr>
+          <tr><td><span class="flag flag-no">do</span></td><td>Use one message for both login failures</td></tr>
+          <tr><td><span class="flag flag-no">do</span></td><td>Enforce a minimum password length in the schema</td></tr>
+          <tr><td><span class="flag flag-yes">never</span></td><td>Store or log a plain password, even while debugging</td></tr>
+          <tr><td><span class="flag flag-yes">never</span></td><td>Put anything private in a token payload</td></tr>
+          <tr><td><span class="flag flag-yes">never</span></td><td>Use <code>jwt.decode</code> where you meant <code>jwt.verify</code></td></tr>
+          <tr><td><span class="flag flag-yes">never</span></td><td>Commit a real secret. If you do, rotate it — deleting the file does not remove it from git history</td></tr>
+          <tr><td><span class="flag flag-yes">never</span></td><td>Write your own hashing. Use the library.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e16">
+  <div class="entry-text">
+    <h3><span class="num">16</span> Every function, one table</h3>
+    <p>The whole surface area of both libraries that this project uses.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>quick reference</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Call</th><th>Returns</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>bcrypt.hash(text, cost)</code></td><td>Promise&lt;string&gt;</td><td>Generates its own salt</td></tr>
+          <tr><td><code>bcrypt.compare(guess, hash)</code></td><td>Promise&lt;boolean&gt;</td><td>Reads the cost and salt out of <code>hash</code></td></tr>
+          <tr><td><code>bcrypt.hashSync(text, cost)</code></td><td>string</td><td>Blocks the event loop. Scripts only, never a route.</td></tr>
+          <tr><td><code>bcrypt.genSalt(cost)</code></td><td>Promise&lt;string&gt;</td><td>Rarely needed — <code>hash</code> does it for you</td></tr>
+          <tr><td><code>jwt.sign(payload, secret, opts)</code></td><td>string</td><td><code>opts.expiresIn</code> is the one you want</td></tr>
+          <tr><td><code>jwt.verify(token, secret)</code></td><td>payload object</td><td>Throws on a bad or expired token</td></tr>
+          <tr><td><code>jwt.decode(token)</code></td><td>payload object</td><td><strong>No signature check.</strong> Debugging only.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<p class="empty" hidden>No entry on this page mentions that. Try a shorter word, or clear the filter.</p>
+
+<footer class="foot">
+  <p><a href="./index.html">&larr; Back to Coding Hub</a></p>
+  <p>Pairs with the <a href="./nodejs-express-walkthrough.html">Node &amp; Express walkthrough</a>.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script src="./js/highlight.js"></script>
+<script src="./js/reference.js"></script>
+<script>
+/* ------------------------------------------------------------
+   Page-specific widgets: the bcrypt hash splitter and the JWT
+   decoder. Both are pure client-side string work — nothing is
+   sent anywhere, which is the point when a student pastes a
+   real token from their own project.
+------------------------------------------------------------- */
+(function () {
+  'use strict';
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  }
+
+  /* ---- bcrypt hash anatomy ---- */
+  var hashIn = document.getElementById('hash-in');
+  var hashOut = document.getElementById('hash-anatomy');
+
+  function drawHash() {
+    var value = hashIn.value.trim();
+    hashOut.textContent = '';
+
+    // $2b$10$<22 chars of salt><31 chars of digest>
+    var m = /^\$(2[abxy])\$(\d{2})\$([./A-Za-z0-9]{22})([./A-Za-z0-9]{31})$/.exec(value);
+
+    if (!m) {
+      var bad = el('p', 'legend');
+      bad.textContent = value
+        ? 'That is not a bcrypt hash. A real one is exactly 60 characters and starts with $2a$, $2b$ or $2y$.'
+        : 'Paste a hash above.';
+      hashOut.appendChild(bad);
+      return;
+    }
+
+    var row = el('div', 'seg-row');
+    [['$' + m[1] + '$', 0], [m[2], 1], ['$', -1], [m[3], 2], [m[4], 3]].forEach(function (p) {
+      row.appendChild(p[1] < 0 ? el('span', 'seg-dot', p[0]) : el('span', 'seg seg-' + p[1], p[0]));
+    });
+    hashOut.appendChild(row);
+
+    var legend = el('div', 'legend');
+    [
+      ['seg-0', 'algorithm', m[1] + ' — the bcrypt variant'],
+      ['seg-1', 'cost', m[2] + ' — ' + Math.pow(2, Number(m[2])).toLocaleString() + ' rounds'],
+      ['seg-2', 'salt', '22 characters, generated fresh for this password'],
+      ['seg-3', 'digest', '31 characters — the hash itself']
+    ].forEach(function (item) {
+      var s = el('span');
+      s.appendChild(el('span', 'swatch ' + item[0]));
+      s.appendChild(el('b', null, item[1] + ': '));
+      s.appendChild(document.createTextNode(item[2]));
+      legend.appendChild(s);
+    });
+    hashOut.appendChild(legend);
+
+    var note = el('p', 'legend');
+    note.appendChild(el('b', null, 'Total length: '));
+    note.appendChild(document.createTextNode(
+      value.length + ' characters. This is why a password column must hold at least 60.'));
+    hashOut.appendChild(note);
+  }
+
+  hashIn.addEventListener('input', drawHash);
+  document.querySelectorAll('.chip[data-hash]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      hashIn.value = b.getAttribute('data-hash');
+      drawHash();
+    });
+  });
+  drawHash();
+
+  /* ---- JWT decoder ---- */
+  var jwtIn = document.getElementById('jwt-in');
+  var jwtSplit = document.getElementById('jwt-split');
+  var jwtOut = document.getElementById('jwt-out');
+
+  function fromBase64Url(s) {
+    var t = s.replace(/-/g, '+').replace(/_/g, '/');
+    while (t.length % 4) t += '=';
+    var bin = atob(t);
+    var bytes = Uint8Array.from(bin, function (c) { return c.charCodeAt(0); });
+    return new TextDecoder().decode(bytes);
+  }
+
+  function stamp(seconds) {
+    if (typeof seconds !== 'number') return '';
+    var d = new Date(seconds * 1000);
+    var when = d.toLocaleString();
+    var delta = seconds * 1000 - Date.now();
+    var mins = Math.round(Math.abs(delta) / 60000);
+    var rel = delta > 0
+      ? 'in ' + (mins > 90 ? Math.round(mins / 60) + ' hours' : mins + ' minutes')
+      : (mins > 90 ? Math.round(mins / 60) + ' hours' : mins + ' minutes') + ' ago';
+    return when + '  (' + rel + ')';
+  }
+
+  function decode() {
+    var raw = jwtIn.value.trim().replace(/^Bearer\s+/i, '').replace(/^["']|["']$/g, '');
+    jwtSplit.textContent = '';
+    jwtOut.textContent = '';
+
+    if (!raw) { jwtOut.textContent = 'Paste a token first.'; return; }
+
+    var parts = raw.split('.');
+    if (parts.length !== 3) {
+      jwtOut.innerHTML = '<span class="err">jwt malformed</span>\n\nA token has exactly three parts separated by dots. ' +
+        'This one has ' + parts.length + '. Check you copied the whole thing, without the quotes.';
+      return;
+    }
+
+    var row = el('div', 'seg-row');
+    parts.forEach(function (p, i) {
+      if (i) row.appendChild(el('span', 'seg-dot', '.'));
+      row.appendChild(el('span', 'seg seg-' + i, p));
+    });
+    jwtSplit.appendChild(row);
+
+    var lines = [];
+    try {
+      var header = JSON.parse(fromBase64Url(parts[0]));
+      var payload = JSON.parse(fromBase64Url(parts[1]));
+
+      lines.push('HEADER');
+      lines.push(JSON.stringify(header, null, 2));
+      lines.push('');
+      lines.push('PAYLOAD');
+      lines.push(JSON.stringify(payload, null, 2));
+      lines.push('');
+
+      if (payload.iat) lines.push('iat  issued   ' + stamp(payload.iat));
+      if (payload.exp) {
+        lines.push('exp  expires  ' + stamp(payload.exp));
+        lines.push('');
+        lines.push(payload.exp * 1000 < Date.now()
+          ? 'This token has EXPIRED. jwt.verify would throw TokenExpiredError.'
+          : 'This token is still within its lifetime.');
+      }
+      lines.push('');
+      lines.push('Decoded without any secret. That is the point: a signature proves');
+      lines.push('a token was not altered, it does not keep anyone from reading it.');
+
+      jwtOut.textContent = lines.join('\n');
+    } catch (e) {
+      jwtOut.innerHTML = '<span class="err">Could not decode that.</span>\n\n' +
+        'The three parts are there, but one of them is not valid base64url JSON. ' +
+        'A character was probably lost in copying.';
+    }
+  }
+
+  document.getElementById('jwt-go').addEventListener('click', decode);
+  jwtIn.addEventListener('input', decode);
+  decode();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MongoDB &amp; Mongoose — reference</title>
+<meta name="description" content="Look-up reference for MongoDB and Mongoose: schemas, validators, queries, operators, options and the errors you will meet.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/reference_styles.css">
+<style>
+  :root{ --accent:#13715E; --accent-soft:#E2EFEB; }
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the reference</a>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol"><a href="./index.html">Coding Hub</a> &nbsp;/&nbsp; Reference &nbsp;/&nbsp; Node unit</p>
+  <h1>mongodb <span class="lit">&amp;</span> mongoose</h1>
+  <p class="deck">The database, and the library that puts rules in front of it. <strong>Filter the page to jump straight to an operator, a validator or an error.</strong></p>
+
+  <div class="finder">
+    <label>
+      <span class="visually-hidden">Filter this page</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="filter" type="search" placeholder="$gt, populate, CastError, lean&hellip;" autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="clear">Clear</button>
+  </div>
+  <p class="hits" id="hits" role="status"></p>
+</header>
+
+<nav class="contents" id="start">
+  <h2>On this page</h2>
+  <a href="#e1"><span>01</span> The vocabulary</a>
+  <a href="#e2"><span>02</span> Documents and _id</a>
+  <a href="#e3"><span>03</span> Connecting</a>
+  <a href="#e4"><span>04</span> Schema, model, document</a>
+  <a href="#e5"><span>05</span> Field types</a>
+  <a href="#e6"><span>06</span> Validators</a>
+  <a href="#e7"><span>07</span> Schema options</a>
+  <a href="#e8"><span>08</span> Virtuals</a>
+  <a href="#e9"><span>09</span> Methods, statics, hooks</a>
+  <a href="#e10"><span>10</span> Indexes</a>
+  <a href="#e11"><span>11</span> Create, read, update, delete</a>
+  <a href="#e12"><span>12</span> Filter operators</a>
+  <a href="#e13"><span>13</span> Shaping results</a>
+  <a href="#e14"><span>14</span> Updating safely</a>
+  <a href="#e15"><span>15</span> References and populate</a>
+  <a href="#e16"><span>16</span> Errors you will meet</a>
+  <a href="#e17"><span>17</span> Quick reference</a>
+</nav>
+
+<!-- ===================== PART ONE ===================== -->
+<section class="part">
+  <h2>Part one: the database</h2>
+  <p>MongoDB stores documents, not rows. Most of what feels strange about it comes from that one difference.</p>
+</section>
+
+<article class="entry" id="e1">
+  <div class="entry-text">
+    <h3><span class="num">01</span> The vocabulary</h3>
+    <p>If you have seen a spreadsheet or a SQL table, the mapping is close enough to get started with.</p>
+    <p>The real difference is the last row. A SQL table fixes its columns in advance for every row. A MongoDB collection does not: two documents side by side can hold different fields. That freedom is why Mongoose exists — it puts the structure back, in your code, where you can see it.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>if you know tables</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>SQL</th><th>MongoDB</th><th>In your code</th></tr></thead>
+        <tbody>
+          <tr><td>database</td><td>database</td><td>the end of your connection string</td></tr>
+          <tr><td>table</td><td>collection</td><td>created from a model, named as a lowercase plural</td></tr>
+          <tr><td>row</td><td>document</td><td>one object</td></tr>
+          <tr><td>column</td><td>field</td><td>one key on that object</td></tr>
+          <tr><td>primary key</td><td><code>_id</code></td><td>generated for you</td></tr>
+          <tr><td>schema, fixed by the database</td><td>no schema at all</td><td>the schema lives in Mongoose instead</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e2">
+  <div class="entry-text">
+    <h3><span class="num">02</span> Documents and <code>_id</code></h3>
+    <p>A document is close to a JSON object, with a few extra types — dates, and the <code>ObjectId</code> that every document gets as its <code>_id</code>.</p>
+    <p>An ObjectId is 24 hexadecimal characters, generated when the document is created. The first part of it is a timestamp, which is why sorting by <code>_id</code> is almost the same as sorting by creation time.</p>
+    <p class="tip">It is an object, not a string. <code>id === user._id</code> is <code>false</code> even when they look identical; compare with <code>String(user._id)</code> or <code>user._id.equals(id)</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>one document</span></div>
+    <pre class="code" data-lang="json"><code>{
+  "_id": "6ad140c552a2615ba5f2ef3f",
+  "title": "The Hobbit",
+  "author": "J.R.R. Tolkien",
+  "year": 1937,
+  "tags": ["fantasy", "classic"],
+  "inStock": true,
+  "createdAt": "2026-10-20T19:14:51.502Z"
+}</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e3">
+  <div class="entry-text">
+    <h3><span class="num">03</span> Connecting</h3>
+    <p>Connect once, when the server starts, and keep the connection. Do not connect inside a route handler.</p>
+    <p>Mongoose reconnects by itself after a network blip, which is convenient and also means a dropped connection is silent unless you listen for it. Attach the listeners so your terminal tells you.</p>
+    <p class="warn">If a query hangs for ten seconds and then throws about buffering, you are not connected. Mongoose queues queries while it waits for a connection that never arrives.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/config/database.js</span></div>
+    <pre class="code" data-lang="js"><code>const mongoose = require('mongoose')
+
+async function connectDatabase(uri){
+  // Strip query fields that are not in the schema instead of
+  // forwarding them to MongoDB
+  mongoose.set('strictQuery', true)
+
+  mongoose.connection.on('connected',    () =&gt; console.log('MongoDB connected'))
+  mongoose.connection.on('error',   (e) =&gt; console.log('MongoDB error:', e.message))
+  mongoose.connection.on('disconnected', () =&gt; console.log('MongoDB disconnected'))
+
+  await mongoose.connect(uri, {
+    // Fail fast rather than hanging for the 30s default
+    serverSelectionTimeoutMS: 10000
+  })
+}</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>connection states</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th><code>readyState</code></th><th>Means</th></tr></thead>
+        <tbody>
+          <tr><td><code>0</code></td><td>disconnected</td></tr>
+          <tr><td><code>1</code></td><td>connected — the one to check for in a health route</td></tr>
+          <tr><td><code>2</code></td><td>connecting</td></tr>
+          <tr><td><code>3</code></td><td>disconnecting</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<!-- ===================== PART TWO ===================== -->
+<section class="part">
+  <h2>Part two: schemas and models</h2>
+  <p>The schema is where your rules live. Everything you put here, you never have to check again in a controller.</p>
+</section>
+
+<article class="entry" id="e4">
+  <div class="entry-text">
+    <h3><span class="num">04</span> Schema, model, document</h3>
+    <p>Three words that get mixed up constantly, so here they are side by side.</p>
+    <p>A <strong>schema</strong> is the description: fields, types, rules. A <strong>model</strong> is the thing you call methods on, built from a schema and bound to a collection. A <strong>document</strong> is one record that came out of a model.</p>
+    <p class="tip">Model names are singular and capitalised: <code>Book</code>, not <code>books</code>. Mongoose lowercases and pluralises the name to find the collection, so <code>Book</code> reads and writes <code>books</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the three</span></div>
+    <pre class="code" data-lang="js"><code>// 1. Schema — the description
+const bookSchema = new mongoose.Schema({ title: String })
+
+// 2. Model — what you call methods on
+const Book = mongoose.model('Book', bookSchema)   // -> "books" collection
+
+// 3. Document — one record
+const book = await Book.findById(id)
+book.title               // a field
+book.save()              // documents have methods, models have their own</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e5">
+  <div class="entry-text">
+    <h3><span class="num">05</span> Field types</h3>
+    <p>The types you will actually use. A field can be written as a bare type when it has no other rules, or as an object once it does.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>types</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Type</th><th>Written as</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>String</td><td><code>String</code></td><td>Takes <code>trim</code>, <code>lowercase</code>, <code>uppercase</code></td></tr>
+          <tr><td>Number</td><td><code>Number</code></td><td><code>min</code> and <code>max</code> apply</td></tr>
+          <tr><td>Boolean</td><td><code>Boolean</code></td><td></td></tr>
+          <tr><td>Date</td><td><code>Date</code></td><td>Accepts a Date or an ISO string</td></tr>
+          <tr><td>Array</td><td><code>[String]</code></td><td>Defaults to <code>[]</code>, not <code>undefined</code></td></tr>
+          <tr><td>ObjectId</td><td><code>mongoose.Schema.Types.ObjectId</code></td><td>Use with <code>ref</code> to point at another model</td></tr>
+          <tr><td>Mixed</td><td><code>mongoose.Schema.Types.Mixed</code></td><td>No validation at all. Avoid.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>short form and long form</span></div>
+    <pre class="code" data-lang="js"><code>const bookSchema = new mongoose.Schema({
+  title: String,                      // short form, no rules
+
+  author: {                           // long form, once rules appear
+    type: String,
+    required: [true, 'author required'],
+    trim: true,
+    maxlength: [80, 'author cannot exceed 80 characters']
+  },
+
+  tags: [String],                     // array of strings
+  year: { type: Number, min: 1450 },
+  inStock: { type: Boolean, default: true }
+})</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e6">
+  <div class="entry-text">
+    <h3><span class="num">06</span> Validators</h3>
+    <p>Pass an array of <code>[rule, message]</code> and you control what the client is told. Pass the bare rule and you get Mongoose's own wording, which is rarely what you want in an API response.</p>
+    <p class="warn"><code>unique</code> is <strong>not</strong> a validator. It builds a database index, so a duplicate fails as a driver error with code <code>11000</code>, not a <code>ValidationError</code>. Your error handler has to catch it separately and turn it into a 409.</p>
+    <p class="tip">In an <code>enum</code> message, <code>{VALUE}</code> is replaced with what the client sent. Drop the closing brace and the message prints the literal text instead — an easy typo to stare past.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>validators</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Validator</th><th>Applies to</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>required</code></td><td>any</td><td><code>[true, 'title required']</code></td></tr>
+          <tr><td><code>minlength</code> / <code>maxlength</code></td><td>String</td><td><code>[60, 'too long']</code></td></tr>
+          <tr><td><code>min</code> / <code>max</code></td><td>Number, Date</td><td><code>[1, 'must be at least 1']</code></td></tr>
+          <tr><td><code>enum</code></td><td>String</td><td><code>{ values: [...], message: '{VALUE} is not allowed' }</code></td></tr>
+          <tr><td><code>match</code></td><td>String</td><td><code>[/^\S+@\S+$/, 'invalid email']</code></td></tr>
+          <tr><td><code>validate</code></td><td>any</td><td>Your own function returning true or false</td></tr>
+          <tr><td><code>unique</code></td><td>any</td><td><span class="flag flag-yes">index</span> not a validator — see above</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e7">
+  <div class="entry-text">
+    <h3><span class="num">07</span> Schema options</h3>
+    <p>The second argument to <code>new mongoose.Schema()</code>. Two of them earn their place in every model you write.</p>
+    <p><code>timestamps</code> adds and maintains <code>createdAt</code> and <code>updatedAt</code> with no further work. The <code>toJSON</code> transform decides what the outside world sees, which is where you rename <code>_id</code> to <code>id</code> and delete anything private.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the options block</span></div>
+    <pre class="code" data-lang="js"><code>const bookSchema = new mongoose.Schema({ /* fields */ }, {
+  timestamps: true,            // adds createdAt and updatedAt
+
+  toJSON: {
+    virtuals: true,            // include computed fields
+    versionKey: false,         // drop __v
+    transform(doc, ret){
+      ret.id = ret._id         // friendlier key name
+      delete ret._id
+      return ret
+    }
+  },
+
+  toObject: { virtuals: true }
+})</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e8">
+  <div class="entry-text">
+    <h3><span class="num">08</span> Virtuals</h3>
+    <p>A virtual is a field computed when you read it and never stored. Use one whenever a value can be derived from fields you already have, instead of saving a copy that can drift out of date.</p>
+    <p class="warn">Because a virtual is not in the database, <strong>you cannot query or sort on it</strong>. <code>find({ isOverdue: true })</code> silently matches nothing. Filtering on a derived value needs either a real stored field or an aggregation.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>a virtual</span></div>
+    <pre class="code" data-lang="js"><code>bookSchema.virtual('age').get(function (){
+  return new Date().getFullYear() - this.year
+})
+
+// Reading it
+book.age        // 89
+
+// It only appears in JSON when virtuals:true is set in toJSON</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e9">
+  <div class="entry-text">
+    <h3><span class="num">09</span> Methods, statics, hooks</h3>
+    <p>Three places to hang behaviour, distinguished by what they belong to.</p>
+    <p>A <strong>method</strong> runs on one document. A <strong>static</strong> runs on the model. A <strong>hook</strong> runs around an operation, which is where password hashing goes.</p>
+    <p class="tip">All three need <code>function</code>, not an arrow function. An arrow has no <code>this</code> of its own, so <code>this.title</code> is undefined and the whole thing quietly does nothing.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>all three</span></div>
+    <pre class="code" data-lang="js"><code>// Method — on one document
+bookSchema.methods.markBorrowed = function (){
+  this.inStock = false
+  return this
+}
+book.markBorrowed()
+
+// Static — on the model
+bookSchema.statics.findByAuthor = function (author){
+  return this.find({ author })
+}
+await Book.findByAuthor('Tolkien')
+
+// Hook — around an operation
+bookSchema.pre('save', function (){
+  if(this.isModified('title')) this.slug = slugify(this.title)
+})</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e10">
+  <div class="entry-text">
+    <h3><span class="num">10</span> Indexes</h3>
+    <p>An index is a sorted lookup kept beside the collection. Without one, finding a document means reading every document; with one, the database jumps straight there.</p>
+    <p>Index the fields you filter and sort on. Do not index everything — every index costs time on each write and space on disk.</p>
+    <p class="tip">In a compound index the field order matters. <code>{status: 1, location: 1}</code> helps a query on status alone, and a query on both, but not one on location alone.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>declaring indexes</span></div>
+    <pre class="code" data-lang="js"><code>// On the field
+email: { type: String, unique: true }
+ownerId: { type: ObjectId, ref: 'User', index: true }
+
+// On the schema. 1 is ascending, -1 descending.
+bookSchema.index({ status: 1, location: 1 })
+bookSchema.index({ createdAt: -1 })
+
+// Check what actually got built, in mongosh:
+//   db.books.getIndexes()</code></pre>
+  </div>
+</article>
+
+<!-- ===================== PART THREE ===================== -->
+<section class="part">
+  <h2>Part three: queries</h2>
+  <p>Everything that reads or writes. The operator playground below is the fastest way to get these into your head.</p>
+</section>
+
+<article class="entry" id="e11">
+  <div class="entry-text">
+    <h3><span class="num">11</span> Create, read, update, delete</h3>
+    <p>The methods you will use daily. All of them return promises, so all of them want <code>await</code>.</p>
+    <p class="warn">A find that matches nothing returns <code>[]</code>, but <code>findById</code> and <code>findOne</code> return <code>null</code>. Check for <code>null</code> before you read a property off the result, or you get <code>Cannot read properties of null</code> and a 500 where you wanted a 404.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the methods</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Call</th><th>Returns</th><th>Not found</th></tr></thead>
+        <tbody>
+          <tr><td><code>Model.create(obj)</code></td><td>the new document</td><td>&mdash;</td></tr>
+          <tr><td><code>Model.insertMany([...])</code></td><td>array of documents</td><td>&mdash;</td></tr>
+          <tr><td><code>Model.find(filter)</code></td><td>array</td><td><code>[]</code></td></tr>
+          <tr><td><code>Model.findOne(filter)</code></td><td>one document</td><td><code>null</code></td></tr>
+          <tr><td><code>Model.findById(id)</code></td><td>one document</td><td><code>null</code></td></tr>
+          <tr><td><code>Model.countDocuments(filter)</code></td><td>number</td><td><code>0</code></td></tr>
+          <tr><td><code>Model.findByIdAndUpdate(id, patch, opts)</code></td><td>document</td><td><code>null</code></td></tr>
+          <tr><td><code>Model.updateMany(filter, patch)</code></td><td>a result summary</td><td><code>matchedCount: 0</code></td></tr>
+          <tr><td><code>Model.findByIdAndDelete(id)</code></td><td>the deleted document</td><td><code>null</code></td></tr>
+          <tr><td><code>Model.deleteMany(filter)</code></td><td>a result summary</td><td><code>deletedCount: 0</code></td></tr>
+          <tr><td><code>doc.save()</code></td><td>the document</td><td>&mdash;</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e12">
+  <div class="entry-text">
+    <h3><span class="num">12</span> Filter operators</h3>
+    <p>A filter is an object. A bare value means equals; anything cleverer uses an operator starting with <code>$</code>.</p>
+    <p>Edit the filter and watch which books match. The matching below is a simplified version of what MongoDB does, built to make the operators visible — the real database does more, but these rules are the ones you will use.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>operator playground</span></div>
+    <div class="try">
+      <div class="chips">
+        <button type="button" class="chip" data-filter='{ "genre": "fantasy" }'>equals</button>
+        <button type="button" class="chip" data-filter='{ "year": { "$lt": 1950 } }'>$lt</button>
+        <button type="button" class="chip" data-filter='{ "year": { "$gte": 1950, "$lte": 2000 } }'>a range</button>
+        <button type="button" class="chip" data-filter='{ "genre": { "$in": ["sci-fi", "fantasy"] } }'>$in</button>
+        <button type="button" class="chip" data-filter='{ "genre": { "$ne": "fantasy" } }'>$ne</button>
+        <button type="button" class="chip" data-filter='{ "title": { "$regex": "the", "$options": "i" } }'>$regex</button>
+        <button type="button" class="chip" data-filter='{ "tags": "classic" }'>array holds</button>
+        <button type="button" class="chip" data-filter='{ "$or": [{ "year": { "$lt": 1900 } }, { "inStock": false }] }'>$or</button>
+        <button type="button" class="chip" data-filter='{ "series": { "$exists": false } }'>$exists</button>
+      </div>
+      <div>
+        <label for="mq-in">Filter object</label>
+        <textarea id="mq-in" rows="3" spellcheck="false">{ "year": { "$lt": 1950 } }</textarea>
+      </div>
+    </div>
+    <pre class="out" id="mq-out"></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>operators</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Operator</th><th>Matches when</th></tr></thead>
+        <tbody>
+          <tr><td><code>{ field: value }</code></td><td>equal — or, for an array field, the array contains the value</td></tr>
+          <tr><td><code>$eq</code> / <code>$ne</code></td><td>equal / not equal</td></tr>
+          <tr><td><code>$gt</code> <code>$gte</code> <code>$lt</code> <code>$lte</code></td><td>greater / less, with <code>e</code> for "or equal"</td></tr>
+          <tr><td><code>$in</code> / <code>$nin</code></td><td>the value is / is not in the given list</td></tr>
+          <tr><td><code>$exists</code></td><td>the field is present (<code>true</code>) or absent (<code>false</code>)</td></tr>
+          <tr><td><code>$regex</code></td><td>the string matches; add <code>$options: "i"</code> to ignore case</td></tr>
+          <tr><td><code>$or</code> / <code>$and</code></td><td>any / all of an array of filters match</td></tr>
+          <tr><td><code>$all</code></td><td>an array field holds every listed value</td></tr>
+          <tr><td><code>$size</code></td><td>an array field has exactly that many entries</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the sample collection</span></div>
+    <pre class="code" data-lang="json" id="mq-data"></pre>
+  </div>
+</article>
+
+<article class="entry" id="e13">
+  <div class="entry-text">
+    <h3><span class="num">13</span> Shaping results</h3>
+    <p>Chain these onto a query to decide how much comes back and in what order. Nothing runs until the query is awaited.</p>
+    <p>This is how pagination is built: <code>skip</code> steps over the pages before the one you want, <code>limit</code> takes one page. Always pair them with a <code>sort</code>, because without one the order is not guaranteed and the same record can appear on two pages.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>chainable</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Call</th><th>Does</th></tr></thead>
+        <tbody>
+          <tr><td><code>.sort({ createdAt: -1 })</code></td><td>Order results. <code>-1</code> descending, <code>1</code> ascending. Also takes <code>'-createdAt'</code>.</td></tr>
+          <tr><td><code>.skip(n)</code></td><td>Step over the first <code>n</code> matches</td></tr>
+          <tr><td><code>.limit(n)</code></td><td>Return at most <code>n</code></td></tr>
+          <tr><td><code>.select('title year')</code></td><td>Only these fields. <code>'-password'</code> excludes instead.</td></tr>
+          <tr><td><code>.select('+password')</code></td><td>Include a field the schema hid with <code>select: false</code></td></tr>
+          <tr><td><code>.lean()</code></td><td>Plain objects instead of documents. Faster, but no virtuals, no methods, no <code>save</code>.</td></tr>
+          <tr><td><code>.populate('ownerId')</code></td><td>Swap a reference for the document it points at</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>a paginated list</span></div>
+    <pre class="code" data-lang="js"><code>const page = 2, limit = 20
+const filter = { genre: 'fantasy' }
+
+// Both queries run together, and both use the same filter so the
+// count describes the filtered set rather than the whole collection
+const [books, total] = await Promise.all([
+  Book.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
+  Book.countDocuments(filter)
+])</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e14">
+  <div class="entry-text">
+    <h3><span class="num">14</span> Updating safely</h3>
+    <p>Two options on <code>findByIdAndUpdate</code> that are wrong by default and bite everyone once.</p>
+    <p><code>new: true</code> returns the document <em>after</em> the change. Without it you get the old one back and your API responds with stale data that looks like the update failed.</p>
+    <p><code>runValidators: true</code> runs your schema rules on the update. Without it, an update can write a value that <code>create</code> would have rejected, and your rules only apply to new records.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the two options</span></div>
+    <pre class="code" data-lang="js"><code>const book = await Book.findByIdAndUpdate(id, patch, {
+  new: true,            // return the updated document, not the old one
+  runValidators: true   // apply schema rules to this update too
+})
+
+if(!book) throw ApiError.notFound('Book not found')</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>update operators</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Operator</th><th>Does</th></tr></thead>
+        <tbody>
+          <tr><td><code>$set</code></td><td>Set fields. Applied automatically to a plain patch object.</td></tr>
+          <tr><td><code>$unset</code></td><td>Remove a field entirely</td></tr>
+          <tr><td><code>$inc</code></td><td>Add to a number (negative to subtract)</td></tr>
+          <tr><td><code>$push</code> / <code>$pull</code></td><td>Add to / remove from an array</td></tr>
+          <tr><td><code>$addToSet</code></td><td>Push only if not already there</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e15">
+  <div class="entry-text">
+    <h3><span class="num">15</span> References and populate</h3>
+    <p>Documents point at each other by storing an ObjectId plus a <code>ref</code> naming the model it belongs to. That is how a record remembers who owns it.</p>
+    <p><code>populate</code> swaps the id for the actual document when you read. It costs an extra query, so populate what a response needs and nothing more.</p>
+    <p class="tip">Pass a second argument to choose fields: <code>.populate('ownerId', 'name email')</code>. Without it you pull the whole user document into every row of a list.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>ref and populate</span></div>
+    <pre class="code" data-lang="js"><code>// In the schema
+ownerId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'User',
+  index: true
+}
+
+// Reading without populate
+book.ownerId        // ObjectId("6ad140c5...")
+
+// Reading with it
+const book = await Book.findById(id).populate('ownerId', 'name email')
+book.ownerId.name   // "Ada Lovelace"</code></pre>
+  </div>
+</article>
+
+<!-- ===================== PART FOUR ===================== -->
+<section class="part">
+  <h2>Part four: when it breaks</h2>
+  <p>Mongoose errors are specific. Read the name before you change anything.</p>
+</section>
+
+<article class="entry" id="e16">
+  <div class="entry-text">
+    <h3><span class="num">16</span> Errors you will meet</h3>
+    <p>The first four have a correct HTTP status that is not 500. If any of them reaches a client as a 500, your error handler is missing a branch.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>error &rarr; cause &rarr; status</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Error</th><th>Cause</th><th>Answer with</th></tr></thead>
+        <tbody>
+          <tr><td><code>CastError</code></td><td>A value will not convert — usually an id that is not 24 hex characters</td><td><code>400</code></td></tr>
+          <tr><td><code>ValidationError</code></td><td>A schema rule failed. <code>err.errors</code> holds one entry per bad field.</td><td><code>400</code></td></tr>
+          <tr><td><code>MongoServerError</code> code <code>11000</code></td><td>Duplicate value on a unique index</td><td><code>409</code></td></tr>
+          <tr><td>Result is <code>null</code></td><td>No document with that id</td><td><code>404</code></td></tr>
+          <tr><td><code>MongooseError: Operation buffering timed out</code></td><td>Never connected. The query waited for a connection that did not arrive.</td><td>fix the connection</td></tr>
+          <tr><td><code>ECONNREFUSED 127.0.0.1:27017</code></td><td>MongoDB is not running</td><td>start it</td></tr>
+          <tr><td><code>Cannot read properties of null</code></td><td>You used the result of <code>findById</code> without checking for <code>null</code></td><td><code>404</code></td></tr>
+          <tr><td><code>OverwriteModelError</code></td><td><code>mongoose.model()</code> called twice with the same name</td><td>import the model, do not redefine it</td></tr>
+          <tr><td>A field you sent is missing from the saved document</td><td>It is not in the schema, so it was stripped</td><td>add it to the schema</td></tr>
+          <tr><td><code>find({ someVirtual: true })</code> matches nothing</td><td>Virtuals are not in the database and cannot be queried</td><td>store the field, or aggregate</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>handling the first three</span></div>
+    <pre class="code" data-lang="js"><code>if(err.name === 'CastError'){
+  statusCode = 400
+  message = `Invalid ${err.path}: ${err.value}`
+}
+
+if(err.name === 'ValidationError'){
+  statusCode = 400
+  message = 'Validation failed'
+  details = Object.values(err.errors).map((e) =&gt; ({
+    field: e.path, message: e.message
+  }))
+}
+
+if(err.code === 11000){
+  statusCode = 409
+  message = `Duplicate value for: ${Object.keys(err.keyValue || {}).join(', ')}`
+}</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e17">
+  <div class="entry-text">
+    <h3><span class="num">17</span> Quick reference</h3>
+    <p>The commands worth keeping to hand, for when you want to look at the database directly rather than through your API.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>mongosh</span></div>
+    <pre class="code" data-lang="bash"><code># Is it running at all?
+mongosh --eval "db.runCommand({ping:1})"
+
+# Open a shell on your database
+mongosh mongodb://127.0.0.1:27017/your_db
+
+# Inside the shell
+show collections
+db.books.countDocuments()
+db.books.find({ genre: "fantasy" }).limit(5)
+db.books.findOne()
+db.books.getIndexes()
+db.books.deleteMany({})          # empties the collection, no undo</code></pre>
+  </div>
+</article>
+
+<p class="empty" hidden>No entry on this page mentions that. Try a shorter word, or clear the filter.</p>
+
+<footer class="foot">
+  <p><a href="./index.html">&larr; Back to Coding Hub</a></p>
+  <p>Pairs with the <a href="./nodejs-express-walkthrough.html">Node &amp; Express walkthrough</a>.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script src="./js/highlight.js"></script>
+<script src="./js/reference.js"></script>
+<script>
+/* ------------------------------------------------------------
+   The filter playground. A small, honest subset of MongoDB's
+   matching rules, run against a fixed sample collection so the
+   operators can be seen working. No database, no network.
+------------------------------------------------------------- */
+(function () {
+  'use strict';
+
+  var BOOKS = [
+    { title: 'The Hobbit',            genre: 'fantasy', year: 1937, pages: 310, inStock: true,  tags: ['fantasy', 'classic'] },
+    { title: 'Dune',                  genre: 'sci-fi',  year: 1965, pages: 412, inStock: true,  tags: ['classic', 'desert'] },
+    { title: 'Frankenstein',          genre: 'horror',  year: 1818, pages: 280, inStock: false, tags: ['classic', 'gothic'] },
+    { title: 'Neuromancer',           genre: 'sci-fi',  year: 1984, pages: 271, inStock: true,  tags: ['cyberpunk'] },
+    { title: 'The Left Hand of Darkness', genre: 'sci-fi', year: 1969, pages: 304, inStock: false, tags: ['classic'] },
+    { title: 'Piranesi',              genre: 'fantasy', year: 2020, pages: 245, inStock: true,  tags: ['modern'], series: 'none' }
+  ];
+
+  var dataEl = document.getElementById('mq-data');
+  var dataCode = dataEl.querySelector('code') || dataEl;
+  dataCode.textContent = JSON.stringify(BOOKS, null, 2);
+  if (window.Highlight) {
+    dataCode.innerHTML = window.Highlight.toHTML(dataCode.textContent, 'json');
+  }
+
+  function cmp(a, b) {
+    if (typeof a === 'string' && typeof b === 'string') return a < b ? -1 : a > b ? 1 : 0;
+    return a < b ? -1 : a > b ? 1 : 0;
+  }
+
+  // One field against one condition
+  function matchField(actual, cond) {
+    var isOperatorObject = cond && typeof cond === 'object' && !Array.isArray(cond) &&
+      Object.keys(cond).some(function (k) { return k.charAt(0) === '$'; });
+
+    if (!isOperatorObject) {
+      // A bare value. On an array field, "contains" rather than "equals".
+      if (Array.isArray(actual)) return actual.indexOf(cond) !== -1;
+      return actual === cond;
+    }
+
+    return Object.keys(cond).every(function (op) {
+      var want = cond[op];
+      switch (op) {
+        case '$eq':  return actual === want;
+        case '$ne':  return actual !== want;
+        case '$gt':  return actual !== undefined && cmp(actual, want) > 0;
+        case '$gte': return actual !== undefined && cmp(actual, want) >= 0;
+        case '$lt':  return actual !== undefined && cmp(actual, want) < 0;
+        case '$lte': return actual !== undefined && cmp(actual, want) <= 0;
+        case '$in':  return Array.isArray(actual)
+          ? actual.some(function (v) { return want.indexOf(v) !== -1; })
+          : want.indexOf(actual) !== -1;
+        case '$nin': return want.indexOf(actual) === -1;
+        case '$exists': return (actual !== undefined) === Boolean(want);
+        case '$all': return Array.isArray(actual) &&
+          want.every(function (v) { return actual.indexOf(v) !== -1; });
+        case '$size': return Array.isArray(actual) && actual.length === want;
+        case '$regex':
+          var flags = cond.$options || '';
+          return typeof actual === 'string' && new RegExp(want, flags).test(actual);
+        case '$options': return true;   // handled with $regex
+        default: throw new Error('This playground does not know ' + op);
+      }
+    });
+  }
+
+  function matches(doc, filter) {
+    return Object.keys(filter).every(function (key) {
+      if (key === '$or')  return filter.$or.some(function (f) { return matches(doc, f); });
+      if (key === '$and') return filter.$and.every(function (f) { return matches(doc, f); });
+      if (key === '$nor') return !filter.$nor.some(function (f) { return matches(doc, f); });
+      return matchField(doc[key], filter[key]);
+    });
+  }
+
+  var input = document.getElementById('mq-in');
+  var out = document.getElementById('mq-out');
+
+  function run() {
+    var text = input.value.trim();
+    if (!text) { out.textContent = 'Type a filter object above.'; return; }
+
+    var filter;
+    try {
+      filter = JSON.parse(text);
+    } catch (e) {
+      out.innerHTML = '<span class="err">That is not valid JSON.</span>\n\n' +
+        'In this box every key needs double quotes, including the operators: ' +
+        '<span class="ok">{ "year": { "$lt": 1950 } }</span>\n' +
+        'In your actual JavaScript the quotes on plain keys are optional.';
+      return;
+    }
+
+    var hits;
+    try {
+      hits = BOOKS.filter(function (b) { return matches(b, filter); });
+    } catch (e) {
+      out.innerHTML = '<span class="err">' + e.message + '</span>\n\n' +
+        'The table above lists the operators this playground supports.';
+      return;
+    }
+
+    var lines = [];
+    lines.push('Book.find(' + text.replace(/\s+/g, ' ') + ')');
+    lines.push('');
+    lines.push(hits.length + ' of ' + BOOKS.length + ' documents match');
+    lines.push('');
+    if (!hits.length) {
+      lines.push('Nothing matched. An empty result is a normal answer, not an error —');
+      lines.push('Model.find returns [] rather than null.');
+    } else {
+      hits.forEach(function (b) {
+        lines.push('  ' + b.title + '  ·  ' + b.genre + '  ·  ' + b.year +
+          '  ·  ' + (b.inStock ? 'in stock' : 'out'));
+      });
+    }
+    out.textContent = lines.join('\n');
+  }
+
+  input.addEventListener('input', run);
+  document.querySelectorAll('.chip[data-filter]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      input.value = b.getAttribute('data-filter');
+      run();
+    });
+  });
+  run();
+})();
+</script>
+</body>
+</html>

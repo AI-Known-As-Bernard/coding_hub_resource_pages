@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript basics — reference</title>
+<meta name="description" content="Look-up reference for everyday JavaScript: variables, operators, arrays and their methods, loops, objects and functions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/reference_styles.css">
+<style>
+  :root{ --accent:#B5720E; --accent-soft:#FAEEDA; }
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the reference</a>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol"><a href="./index.html">Coding Hub</a> &nbsp;/&nbsp; Reference</p>
+  <h1>javascript <span class="lit">basics</span></h1>
+  <p class="deck">Variables, operators, arrays, array methods, loops. The pieces you use in every program, in one place. <strong>Every example can be run and edited in the scratchpad below.</strong></p>
+
+  <div class="finder">
+    <label>
+      <span class="visually-hidden">Filter this page</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="filter" type="search" placeholder="reduce, splice, for of, truthy&hellip;" autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="clear">Clear</button>
+  </div>
+  <p class="hits" id="hits" role="status"></p>
+</header>
+
+<!-- ===================== SCRATCHPAD ===================== -->
+<article class="entry entry-wide" id="e0">
+  <div class="panel">
+    <div class="pane-label">
+      <span>scratchpad &mdash; nums = [5, 3, 8, 1, 9, 2] &nbsp;&middot;&nbsp; words = ['pear', 'fig', 'apple', 'date']</span>
+    </div>
+    <div class="try">
+      <div class="chips">
+        <button type="button" class="chip" data-run="nums.map(n =&gt; n * 2)">map</button>
+        <button type="button" class="chip" data-run="nums.filter(n =&gt; n &gt; 4)">filter</button>
+        <button type="button" class="chip" data-run="nums.reduce((total, n) =&gt; total + n, 0)">reduce</button>
+        <button type="button" class="chip" data-run="nums.find(n =&gt; n &gt; 4)">find</button>
+        <button type="button" class="chip" data-run="nums.sort()">sort (the trap)</button>
+        <button type="button" class="chip" data-run="nums.push(7)">push (mutates)</button>
+        <button type="button" class="chip" data-run="nums.slice(1, 3)">slice</button>
+        <button type="button" class="chip" data-run="nums.splice(1, 2)">splice (mutates)</button>
+        <button type="button" class="chip" data-run="words.join(' and ')">join</button>
+        <button type="button" class="chip" data-run="for (const n of nums) {&#10;  log(n * n)&#10;}">a for...of loop</button>
+      </div>
+      <div>
+        <label for="js-in">Type an expression, or several lines using <code>log(...)</code></label>
+        <textarea id="js-in" rows="4" spellcheck="false">nums.map(n =&gt; n * 2)</textarea>
+      </div>
+      <div class="row">
+        <button type="button" class="btn" id="js-go">Run</button>
+        <button type="button" class="btn btn-quiet" id="js-reset">Reset the arrays</button>
+      </div>
+    </div>
+    <pre class="out" id="js-out"></pre>
+  </div>
+</article>
+
+<nav class="contents" id="start">
+  <h2>On this page</h2>
+  <a href="#e1"><span>01</span> let, const, var</a>
+  <a href="#e2"><span>02</span> Types and typeof</a>
+  <a href="#e3"><span>03</span> Arithmetic</a>
+  <a href="#e4"><span>04</span> == versus ===</a>
+  <a href="#e5"><span>05</span> Truthy and falsy</a>
+  <a href="#e6"><span>06</span> Logical operators</a>
+  <a href="#e7"><span>07</span> Ternary and templates</a>
+  <a href="#e8"><span>08</span> Making and reading arrays</a>
+  <a href="#e9"><span>09</span> Adding and removing</a>
+  <a href="#e10"><span>10</span> Copying and slicing</a>
+  <a href="#e11"><span>11</span> Searching an array</a>
+  <a href="#e12"><span>12</span> map, filter, reduce</a>
+  <a href="#e13"><span>13</span> some, every, chaining</a>
+  <a href="#e14"><span>14</span> sort, and the trap</a>
+  <a href="#e15"><span>15</span> Mutating or not</a>
+  <a href="#e16"><span>16</span> The four loops</a>
+  <a href="#e17"><span>17</span> for...of vs for...in</a>
+  <a href="#e18"><span>18</span> forEach cannot break</a>
+  <a href="#e19"><span>19</span> Objects and destructuring</a>
+  <a href="#e20"><span>20</span> Functions and arrows</a>
+</nav>
+
+<!-- ===================== PART ONE ===================== -->
+<section class="part">
+  <h2>Part one: values and operators</h2>
+  <p>Where the surprises live. Most "impossible" bugs in a first year trace back to one of these seven entries.</p>
+</section>
+
+<article class="entry" id="e1">
+  <div class="entry-text">
+    <h3><span class="num">01</span> let, const, var</h3>
+    <p>Use <code>const</code> by default. Switch to <code>let</code> only when you genuinely reassign. Never write <code>var</code> in new code.</p>
+    <p class="warn"><code>const</code> means the <em>name</em> cannot be pointed at something else. It does not freeze the value. A <code>const</code> array can still be pushed to — that is why most arrays are declared <code>const</code> and still change.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the three</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th></th><th>Reassign?</th><th>Scope</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td><code>const</code></td><td><span class="flag flag-yes">no</span></td><td>the block</td><td>Default. Almost everything.</td></tr>
+          <tr><td><code>let</code></td><td><span class="flag flag-no">yes</span></td><td>the block</td><td>Counters, accumulators, anything that changes</td></tr>
+          <tr><td><code>var</code></td><td><span class="flag flag-no">yes</span></td><td>the whole function</td><td>Legacy. Leaks out of blocks.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>const is about the name</span></div>
+    <pre class="code" data-lang="js"><code>const total = 5
+total = 6              // TypeError: Assignment to constant variable
+
+const scores = [1, 2]
+scores.push(3)         // fine — the array changed, the name did not
+scores = [9]           // TypeError again</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e2">
+  <div class="entry-text">
+    <h3><span class="num">02</span> Types and typeof</h3>
+    <p>Seven types you will meet, plus the two famous oddities at the bottom of the table.</p>
+    <p class="tip"><code>typeof null</code> returning <code>'object'</code> is a bug from 1995 that can never be fixed without breaking the web. To test for an array, use <code>Array.isArray(x)</code> — <code>typeof</code> will not help you.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>typeof</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Value</th><th><code>typeof</code></th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td><code>'hello'</code></td><td><code>'string'</code></td><td></td></tr>
+          <tr><td><code>42</code>, <code>3.14</code>, <code>NaN</code></td><td><code>'number'</code></td><td>One number type. No separate int.</td></tr>
+          <tr><td><code>true</code></td><td><code>'boolean'</code></td><td></td></tr>
+          <tr><td><code>undefined</code></td><td><code>'undefined'</code></td><td>Declared, never given a value</td></tr>
+          <tr><td><code>{ a: 1 }</code></td><td><code>'object'</code></td><td></td></tr>
+          <tr><td><code>function(){}</code></td><td><code>'function'</code></td><td></td></tr>
+          <tr><td><code>Symbol()</code></td><td><code>'symbol'</code></td><td>Rare in everyday code</td></tr>
+          <tr><td><code>null</code></td><td><span class="flag flag-yes">'object'</span></td><td>A famous mistake. Test with <code>x === null</code>.</td></tr>
+          <tr><td><code>[1, 2]</code></td><td><span class="flag flag-yes">'object'</span></td><td>Test with <code>Array.isArray()</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>undefined vs null</span></div>
+    <pre class="code" data-lang="js"><code>let a                  // undefined — nobody has set it yet
+const b = null         // null — deliberately set to "nothing"
+
+// NaN is a number that means "not a valid number"
+Number('abc')          // NaN
+NaN === NaN            // false (!) — use Number.isNaN(x)</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e3">
+  <div class="entry-text">
+    <h3><span class="num">03</span> Arithmetic</h3>
+    <p>Nothing surprising except <code>+</code>, which both adds numbers and joins strings. One string anywhere in the expression and the whole thing becomes text.</p>
+    <p class="warn">This is why a form value needs <code>Number(...)</code> before arithmetic. Everything from an input, a URL or a query string arrives as a string, so <code>'5' + 1</code> is <code>'51'</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>operators</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Operator</th><th>Does</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><code>+ - * /</code></td><td>the usual</td><td><code>7 / 2</code> &rarr; <code>3.5</code></td></tr>
+          <tr><td><code>%</code></td><td>remainder</td><td><code>7 % 2</code> &rarr; <code>1</code>. Even test: <code>n % 2 === 0</code></td></tr>
+          <tr><td><code>**</code></td><td>power</td><td><code>2 ** 10</code> &rarr; <code>1024</code></td></tr>
+          <tr><td><code>++ --</code></td><td>add or subtract one</td><td><code>count++</code></td></tr>
+          <tr><td><code>+= -= *= /=</code></td><td>change in place</td><td><code>total += 5</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the + problem</span></div>
+    <pre class="code" data-lang="js"><code>2 + 3                  // 5
+'2' + 3                // '23'   <- a string got in
+'2' * 3                // 6      <- only + joins; the others convert
+
+Number('2') + 3        // 5      <- convert first, every time
+parseInt('42px', 10)   // 42     <- stops at the first non-digit</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e4">
+  <div class="entry-text">
+    <h3><span class="num">04</span> <code>==</code> versus <code>===</code></h3>
+    <p>Use <code>===</code>. Always. It compares value and type, and it never surprises you.</p>
+    <p><code>==</code> converts the two sides to a common type before comparing, by rules nobody remembers correctly. The results in the table are all real.</p>
+    <p class="tip">The one accepted use of <code>==</code> is <code>x == null</code>, which is true for both <code>null</code> and <code>undefined</code>. Even then, many teams ban it and write the check out in full.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>why ===</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Expression</th><th><code>==</code></th><th><code>===</code></th></tr></thead>
+        <tbody>
+          <tr><td><code>1 == '1'</code></td><td><span class="flag flag-yes">true</span></td><td><span class="flag flag-no">false</span></td></tr>
+          <tr><td><code>0 == ''</code></td><td><span class="flag flag-yes">true</span></td><td><span class="flag flag-no">false</span></td></tr>
+          <tr><td><code>0 == false</code></td><td><span class="flag flag-yes">true</span></td><td><span class="flag flag-no">false</span></td></tr>
+          <tr><td><code>null == undefined</code></td><td><span class="flag flag-yes">true</span></td><td><span class="flag flag-no">false</span></td></tr>
+          <tr><td><code>[] == false</code></td><td><span class="flag flag-yes">true</span></td><td><span class="flag flag-no">false</span></td></tr>
+          <tr><td><code>'' == '0'</code></td><td><span class="flag flag-no">false</span></td><td><span class="flag flag-no">false</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e5">
+  <div class="entry-text">
+    <h3><span class="num">05</span> Truthy and falsy</h3>
+    <p>Anywhere JavaScript wants a yes or no — an <code>if</code>, a <code>&amp;&amp;</code>, a <code>while</code> — a non-boolean gets treated as one.</p>
+    <p>There are exactly <strong>eight</strong> falsy values. Memorise the list; everything else in the language is truthy, including <code>[]</code>, <code>{}</code>, <code>'0'</code> and <code>'false'</code>.</p>
+    <p class="warn">The classic bug: <code>if (count)</code> is false when <code>count</code> is <code>0</code>, which is usually a real value you wanted to keep. Write <code>if (count !== undefined)</code> when zero is legitimate.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the complete falsy list</span></div>
+    <pre class="code" data-lang="js"><code>false
+0
+-0
+0n            // BigInt zero
+''            // empty string
+null
+undefined
+NaN
+
+// Everything else is truthy. Including these, which trip people up:
+[]            // truthy — an empty array is still an array
+{}            // truthy
+'0'           // truthy — a non-empty string
+'false'       // truthy
+function(){}  // truthy</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e6">
+  <div class="entry-text">
+    <h3><span class="num">06</span> Logical operators</h3>
+    <p><code>&amp;&amp;</code> and <code>||</code> do not return <code>true</code> or <code>false</code>. They return one of the operands, which is what makes the "default value" pattern work.</p>
+    <p><code>??</code> is the fix for <code>||</code>'s weakness: it only falls back on <code>null</code> and <code>undefined</code>, so a legitimate <code>0</code> or <code>''</code> survives.</p>
+    <p><code>?.</code> stops the whole expression and gives <code>undefined</code> rather than throwing when something in the chain is missing.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>operators</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Operator</th><th>Returns</th></tr></thead>
+        <tbody>
+          <tr><td><code>a &amp;&amp; b</code></td><td><code>a</code> if it is falsy, otherwise <code>b</code></td></tr>
+          <tr><td><code>a || b</code></td><td><code>a</code> if it is truthy, otherwise <code>b</code></td></tr>
+          <tr><td><code>a ?? b</code></td><td><code>b</code> only when <code>a</code> is <code>null</code> or <code>undefined</code></td></tr>
+          <tr><td><code>!a</code></td><td>the opposite, always a real boolean</td></tr>
+          <tr><td><code>a?.b</code></td><td><code>undefined</code> if <code>a</code> is null or undefined, instead of throwing</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>|| versus ??</span></div>
+    <pre class="code" data-lang="js"><code>const limit = input || 20      // 0 becomes 20  <- probably a bug
+const limit = input ?? 20      // 0 stays 0     <- probably what you meant
+
+// Optional chaining, for data that might not be there
+user?.address?.city            // undefined rather than a TypeError
+req.body?.name                 // handy when the body may be missing</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e7">
+  <div class="entry-text">
+    <h3><span class="num">07</span> Ternary and templates</h3>
+    <p>The ternary is an <code>if</code> that produces a value, so it can sit inside an assignment or a template.</p>
+    <p>Template literals use backticks and <code>${ }</code>. They beat <code>+</code> joining for anything with more than one slot, and they can span lines.</p>
+    <p class="tip">Do not nest ternaries more than one deep. A nested ternary is unreadable within a week — use an <code>if</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>both</span></div>
+    <pre class="code" data-lang="js"><code>// condition ? valueIfTrue : valueIfFalse
+const label = count === 1 ? 'item' : 'items'
+
+// Template literal — backticks, not quotes
+console.log(`You have ${count} ${label}`)
+
+// Any expression fits inside ${ }
+console.log(`Total: ${price * quantity}`)
+console.log(`${user.name} is ${user.age &gt;= 18 ? 'an adult' : 'a minor'}`)</code></pre>
+  </div>
+</article>
+
+<!-- ===================== PART TWO ===================== -->
+<section class="part">
+  <h2>Part two: arrays</h2>
+  <p>Run everything here in the scratchpad at the top of the page. It tells you whether the original array survived.</p>
+</section>
+
+<article class="entry" id="e8">
+  <div class="entry-text">
+    <h3><span class="num">08</span> Making and reading arrays</h3>
+    <p>Positions start at zero, so the last index is always <code>length - 1</code>.</p>
+    <p class="tip">A negative index is not an error, it is just a miss: <code>arr[-1]</code> gives <code>undefined</code>. Use <code>arr.at(-1)</code> for the last item.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>basics</span></div>
+    <pre class="code" data-lang="js"><code>const nums = [5, 3, 8, 1, 9, 2]
+
+nums[0]           // 5     first
+nums[2]           // 8
+nums.length       // 6
+nums[nums.length - 1]   // 2   last, the long way
+nums.at(-1)       // 2        last, the short way
+nums[99]          // undefined — no error, just nothing there
+
+nums[1] = 30      // replace in place
+Array.isArray(nums)     // true</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e9">
+  <div class="entry-text">
+    <h3><span class="num">09</span> Adding and removing</h3>
+    <p>These four all change the original array. Two work at the end, two at the front.</p>
+    <p class="tip">Working at the front costs more than working at the end, because every remaining item has to shift along. With a handful of items it does not matter; with a hundred thousand, it does.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>all four mutate</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Method</th><th>Does</th><th>Returns</th></tr></thead>
+        <tbody>
+          <tr><td><code>push(x)</code></td><td>add to the end</td><td>the new length</td></tr>
+          <tr><td><code>pop()</code></td><td>remove from the end</td><td>the removed item</td></tr>
+          <tr><td><code>unshift(x)</code></td><td>add to the front</td><td>the new length</td></tr>
+          <tr><td><code>shift()</code></td><td>remove from the front</td><td>the removed item</td></tr>
+          <tr><td><code>splice(i, n)</code></td><td>remove <code>n</code> items from index <code>i</code></td><td>the removed items</td></tr>
+          <tr><td><code>splice(i, 0, x)</code></td><td>insert <code>x</code> at index <code>i</code></td><td><code>[]</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>push returns a length, not the array</span></div>
+    <pre class="code" data-lang="js"><code>const nums = [5, 3, 8]
+
+const result = nums.push(7)
+result            // 4  <- the new LENGTH, a common surprise
+nums              // [5, 3, 8, 7]
+
+nums.pop()        // 7  <- the item itself
+nums              // [5, 3, 8]</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e10">
+  <div class="entry-text">
+    <h3><span class="num">10</span> Copying and slicing</h3>
+    <p><code>slice</code> takes a piece and leaves the original alone. <code>splice</code> cuts a piece out and changes it. One letter apart, opposite behaviour — this is the single most common array mix-up.</p>
+    <p class="warn">Assigning an array does <strong>not</strong> copy it: <code>const b = a</code> makes a second name for the same array, so changing <code>b</code> changes <code>a</code>. Use the spread operator to get a real copy.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>copies and pieces</span></div>
+    <pre class="code" data-lang="js"><code>const nums = [5, 3, 8, 1, 9]
+
+nums.slice(1, 3)       // [3, 8]   from 1 up to but not including 3
+nums.slice(2)          // [8, 1, 9]
+nums.slice(-2)         // [1, 9]   a negative start counts from the end
+nums                   // unchanged
+
+const copy = [...nums]           // a real copy
+const joined = [...nums, 100]    // copy plus one
+const merged = [...a, ...b]      // concat, written with spread
+
+const alias = nums               // NOT a copy — same array, two names
+alias.push(0)
+nums                             // also has the 0</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e11">
+  <div class="entry-text">
+    <h3><span class="num">11</span> Searching an array</h3>
+    <p>Four methods, and which one you want depends on whether you need a yes/no, a position, or the item.</p>
+    <p class="warn"><code>find</code> returns <code>undefined</code> when nothing matches, but <code>findIndex</code> and <code>indexOf</code> return <code>-1</code>. Checking <code>if (index)</code> after an <code>indexOf</code> is wrong twice over: <code>-1</code> is truthy, and a real match at position <code>0</code> is falsy.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>searching</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Method</th><th>Answers</th><th>If nothing matches</th></tr></thead>
+        <tbody>
+          <tr><td><code>includes(x)</code></td><td>is it in there?</td><td><code>false</code></td></tr>
+          <tr><td><code>indexOf(x)</code></td><td>at what position?</td><td><code>-1</code></td></tr>
+          <tr><td><code>find(fn)</code></td><td>the first item that passes</td><td><code>undefined</code></td></tr>
+          <tr><td><code>findIndex(fn)</code></td><td>the position of the first that passes</td><td><code>-1</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the -1 trap</span></div>
+    <pre class="code" data-lang="js"><code>const i = nums.indexOf(99)
+if (i) { }              // WRONG — -1 is truthy
+if (i !== -1) { }       // right
+
+const user = users.find(u =&gt; u.id === 3)
+if (!user) return null  // find gives undefined, so check for that</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e12">
+  <div class="entry-text">
+    <h3><span class="num">12</span> map, filter, reduce</h3>
+    <p>The three that replace most loops. None of them touch the original array; each returns something new.</p>
+    <p><strong>map</strong> gives an array of the same length with every item transformed. <strong>filter</strong> gives a shorter array of the items that passed a test. <strong>reduce</strong> boils the whole array down to one value.</p>
+    <p class="warn">Inside <code>map</code>, a <code>{</code> after the arrow starts a function body, so you need an explicit <code>return</code>. Forget it and you get an array of <code>undefined</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the three</span></div>
+    <pre class="code" data-lang="js"><code>const nums = [5, 3, 8, 1, 9, 2]
+
+// map — same length, each item changed
+nums.map(n =&gt; n * 2)                 // [10, 6, 16, 2, 18, 4]
+
+// filter — only the ones that pass
+nums.filter(n =&gt; n &gt; 4)              // [5, 8, 9]
+
+// reduce — everything down to one value.
+// (runningTotal, currentItem) and a starting value.
+nums.reduce((total, n) =&gt; total + n, 0)     // 28
+nums.reduce((max, n) =&gt; n &gt; max ? n : max)  // 9  (no start value: uses item 0)</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the missing return</span></div>
+    <pre class="code" data-lang="js"><code>nums.map(n =&gt; n * 2)            // [10, 6, ...]  implicit return
+nums.map(n =&gt; { n * 2 })        // [undefined, undefined, ...]
+nums.map(n =&gt; { return n * 2 }) // [10, 6, ...]  explicit, correct
+
+// Returning an object needs parentheses, or the { looks like a body
+users.map(u =&gt; ({ id: u.id }))</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e13">
+  <div class="entry-text">
+    <h3><span class="num">13</span> some, every, chaining</h3>
+    <p><code>some</code> asks whether at least one item passes; <code>every</code> asks whether all of them do. Both return a real boolean and both stop early once the answer is settled.</p>
+    <p>Because <code>map</code> and <code>filter</code> each return an array, they chain. Read a chain left to right as a sentence.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>tests and chains</span></div>
+    <pre class="code" data-lang="js"><code>nums.some(n =&gt; n &gt; 8)        // true  — at least one
+nums.every(n =&gt; n &gt; 0)       // true  — all of them
+
+// Chaining: filter first to do less work in the steps after it
+const total = books
+  .filter(b =&gt; b.inStock)
+  .map(b =&gt; b.price)
+  .reduce((sum, p) =&gt; sum + p, 0)
+
+// every on an empty array is true, some is false. Both are
+// correct and both have surprised people at 2am.
+[].every(n =&gt; n &gt; 100)       // true
+[].some(n =&gt; n &gt; 100)        // false</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e14">
+  <div class="entry-text">
+    <h3><span class="num">14</span> sort, and the trap</h3>
+    <p class="warn">With no arguments, <code>sort</code> converts every item to a <strong>string</strong> and sorts alphabetically. So <code>[10, 9, 100].sort()</code> gives <code>[10, 100, 9]</code>. It is not broken; it is doing exactly what it says.</p>
+    <p>For numbers, pass a compare function. It should return a negative number when <code>a</code> comes first, positive when <code>b</code> does, zero when the order does not matter — and <code>a - b</code> does all three at once.</p>
+    <p><code>sort</code> also mutates. Spread first if you need the original order kept.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>sorting</span></div>
+    <pre class="code" data-lang="js"><code>[10, 9, 100].sort()                 // [10, 100, 9]   alphabetical!
+[10, 9, 100].sort((a, b) =&gt; a - b)  // [9, 10, 100]   ascending
+[10, 9, 100].sort((a, b) =&gt; b - a)  // [100, 10, 9]   descending
+
+// Strings sort sensibly without a function, but capitals come first
+['pear', 'Fig', 'apple'].sort()     // ['Fig', 'apple', 'pear']
+['pear', 'Fig', 'apple'].sort((a, b) =&gt; a.localeCompare(b))
+
+// By a field
+books.sort((a, b) =&gt; a.year - b.year)
+books.sort((a, b) =&gt; a.title.localeCompare(b.title))
+
+// Keep the original
+const sorted = [...nums].sort((a, b) =&gt; a - b)</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e15">
+  <div class="entry-text">
+    <h3><span class="num">15</span> Mutating or not</h3>
+    <p>The table worth pinning up. Knowing which column a method is in explains most array bugs.</p>
+    <p>Try any of them in the scratchpad: it reports whether <code>nums</code> changed.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the master table</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Method</th><th>Original</th><th>Gives you</th></tr></thead>
+        <tbody>
+          <tr><td><code>push</code> <code>pop</code></td><td><span class="flag flag-yes">changed</span></td><td>length / the item</td></tr>
+          <tr><td><code>shift</code> <code>unshift</code></td><td><span class="flag flag-yes">changed</span></td><td>the item / length</td></tr>
+          <tr><td><code>splice</code></td><td><span class="flag flag-yes">changed</span></td><td>the removed items</td></tr>
+          <tr><td><code>sort</code> <code>reverse</code></td><td><span class="flag flag-yes">changed</span></td><td>the same array</td></tr>
+          <tr><td><code>fill</code></td><td><span class="flag flag-yes">changed</span></td><td>the same array</td></tr>
+          <tr><td><code>slice</code></td><td><span class="flag flag-no">safe</span></td><td>a new array</td></tr>
+          <tr><td><code>concat</code></td><td><span class="flag flag-no">safe</span></td><td>a new array</td></tr>
+          <tr><td><code>map</code> <code>filter</code></td><td><span class="flag flag-no">safe</span></td><td>a new array</td></tr>
+          <tr><td><code>reduce</code></td><td><span class="flag flag-no">safe</span></td><td>one value</td></tr>
+          <tr><td><code>find</code> <code>findIndex</code></td><td><span class="flag flag-no">safe</span></td><td>an item / an index</td></tr>
+          <tr><td><code>includes</code> <code>indexOf</code></td><td><span class="flag flag-no">safe</span></td><td>boolean / index</td></tr>
+          <tr><td><code>some</code> <code>every</code></td><td><span class="flag flag-no">safe</span></td><td>a boolean</td></tr>
+          <tr><td><code>join</code></td><td><span class="flag flag-no">safe</span></td><td>a string</td></tr>
+          <tr><td><code>flat</code></td><td><span class="flag flag-no">safe</span></td><td>a new array</td></tr>
+          <tr><td><code>toSorted</code> <code>toReversed</code></td><td><span class="flag flag-no">safe</span></td><td>a new array (newer JS)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<!-- ===================== PART THREE ===================== -->
+<section class="part">
+  <h2>Part three: loops</h2>
+  <p>Four ways to repeat, and one rule for choosing between them.</p>
+</section>
+
+<article class="entry" id="e16">
+  <div class="entry-text">
+    <h3><span class="num">16</span> The four loops</h3>
+    <p>A classic <code>for</code> when you need the index or you are counting. <code>for...of</code> for walking an array. <code>while</code> when you do not know in advance how many times. <code>do...while</code> when the body must run at least once.</p>
+    <p class="warn">A <code>while</code> whose condition never becomes false freezes the tab. If the page stops responding while you are testing a loop, that is what happened — close it and look at what is supposed to change the condition.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>all four</span></div>
+    <pre class="code" data-lang="js"><code>// for — three parts: start, keep going while, after each pass
+for (let i = 0; i &lt; nums.length; i++) {
+  console.log(i, nums[i])
+}
+
+// for...of — the values, no index bookkeeping
+for (const n of nums) {
+  console.log(n)
+}
+
+// while — condition checked before each pass
+let i = 0
+while (i &lt; nums.length) {
+  console.log(nums[i])
+  i++                       // forget this and the tab freezes
+}
+
+// do...while — body first, then the check. Runs at least once.
+let guess
+do {
+  guess = nextGuess()
+} while (!isCorrect(guess))</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e17">
+  <div class="entry-text">
+    <h3><span class="num">17</span> <code>for...of</code> vs <code>for...in</code></h3>
+    <p>One letter apart, and they do genuinely different things.</p>
+    <p><code>for...of</code> walks the <strong>values</strong> of an array. <code>for...in</code> walks the <strong>keys</strong> of an object — and on an array those keys are the indexes, delivered as <em>strings</em>.</p>
+    <p class="tip">Rule of thumb: <code>of</code> for arrays, <code>in</code> for objects. If you want the index of an array too, use <code>entries()</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the difference</span></div>
+    <pre class="code" data-lang="js"><code>const letters = ['a', 'b', 'c']
+
+for (const x of letters) console.log(x)    // 'a'  'b'  'c'
+for (const x in letters) console.log(x)    // '0'  '1'  '2'   strings!
+
+'0' + 1                                     // '01'  <- the bug this causes
+
+// Both at once
+for (const [i, letter] of letters.entries()) {
+  console.log(i, letter)                    // 0 'a'   1 'b'   2 'c'
+}
+
+// for...in is for objects
+const book = { title: 'Dune', year: 1965 }
+for (const key in book) console.log(key, book[key])</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e18">
+  <div class="entry-text">
+    <h3><span class="num">18</span> <code>forEach</code> cannot break</h3>
+    <p><code>forEach</code> runs a function once per item. It reads nicely, but it has two limits that matter.</p>
+    <p>You cannot <code>break</code> out of it — <code>return</code> inside only ends that one call, like <code>continue</code>. And it does not wait for <code>await</code>, so an async callback inside <code>forEach</code> fires everything off at once and moves on immediately.</p>
+    <p class="tip">When you might need to stop early, or you are awaiting anything, use <code>for...of</code>. It handles both.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>when forEach is wrong</span></div>
+    <pre class="code" data-lang="js"><code>// Cannot stop early
+nums.forEach(n =&gt; {
+  if (n &gt; 5) break      // SyntaxError: Illegal break statement
+})
+
+for (const n of nums) {
+  if (n &gt; 5) break      // works
+}
+
+// Does not wait
+items.forEach(async (item) =&gt; {
+  await save(item)      // all start at once; the loop is already done
+})
+
+for (const item of items) {
+  await save(item)      // one after another, properly awaited
+}</code></pre>
+  </div>
+</article>
+
+<!-- ===================== PART FOUR ===================== -->
+<section class="part">
+  <h2>Part four: objects and functions</h2>
+  <p>Enough to read the rest of the code you will meet this year.</p>
+</section>
+
+<article class="entry" id="e19">
+  <div class="entry-text">
+    <h3><span class="num">19</span> Objects and destructuring</h3>
+    <p>An object is named values. Reach them with a dot, or with brackets when the key is in a variable.</p>
+    <p>Destructuring pulls several properties out in one line, with defaults if they are missing. You will see it at the top of nearly every function that takes an options object.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>objects</span></div>
+    <pre class="code" data-lang="js"><code>const book = { title: 'Dune', year: 1965, tags: ['classic'] }
+
+book.title                 // 'Dune'
+book['title']              // same thing
+const key = 'year'
+book[key]                  // 1965  <- brackets when the key is a variable
+
+book.pages = 412           // add
+delete book.tags           // remove
+
+Object.keys(book)          // ['title', 'year', 'pages']
+Object.values(book)        // ['Dune', 1965, 412]
+Object.entries(book)       // [['title','Dune'], ...]</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>destructuring</span></div>
+    <pre class="code" data-lang="js"><code>const { title, year } = book            // two variables, one line
+const { pages = 0 } = book              // with a default if missing
+const { title: name } = book            // renamed to `name`
+
+const [first, second] = nums            // arrays too
+
+// The pattern you will see everywhere in Express
+const { page = 1, limit = 20 } = req.query
+
+// Spread, to copy an object with a change
+const updated = { ...book, year: 1966 }</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e20">
+  <div class="entry-text">
+    <h3><span class="num">20</span> Functions and arrows</h3>
+    <p>Three ways to write one. Arrow functions are shortest and are what you pass to <code>map</code>, <code>filter</code> and the rest.</p>
+    <p class="warn">Arrows have no <code>this</code> of their own. That is usually convenient, and it is exactly why a Mongoose schema method must use <code>function</code> — an arrow there leaves <code>this.title</code> undefined and the method silently does nothing.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>three ways</span></div>
+    <pre class="code" data-lang="js"><code>// Declaration — hoisted, usable before it is defined
+function double(n) { return n * 2 }
+
+// Expression
+const double = function (n) { return n * 2 }
+
+// Arrow — one expression, implicit return
+const double = n =&gt; n * 2
+
+// Arrow with a body needs an explicit return
+const double = (n) =&gt; {
+  return n * 2
+}
+
+// Default values, and the rest operator
+function greet(name = 'friend') { return `Hi ${name}` }
+function sum(...numbers) { return numbers.reduce((a, b) =&gt; a + b, 0) }
+sum(1, 2, 3)        // 6</code></pre>
+  </div>
+</article>
+
+<p class="empty" hidden>No entry on this page mentions that. Try a shorter word, or clear the filter.</p>
+
+<footer class="foot">
+  <p><a href="./index.html">&larr; Back to Coding Hub</a></p>
+  <p>Next: the <a href="./nodejs-express-walkthrough.html">Node &amp; Express walkthrough</a>.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script src="./js/highlight.js"></script>
+<script src="./js/reference.js"></script>
+<script>
+/* ------------------------------------------------------------
+   The scratchpad. Runs whatever the student types against two
+   fixed arrays, in their own browser, exactly as the console
+   would — then reports whether the arrays survived, which is
+   the part a console does not tell you.
+------------------------------------------------------------- */
+(function () {
+  'use strict';
+
+  var START_NUMS = [5, 3, 8, 1, 9, 2];
+  var START_WORDS = ['pear', 'fig', 'apple', 'date'];
+
+  var nums, words;
+  function reset() {
+    nums = START_NUMS.slice();
+    words = START_WORDS.slice();
+  }
+  reset();
+
+  var input = document.getElementById('js-in');
+  var out = document.getElementById('js-out');
+
+  function show(value, depth, seen) {
+    depth = depth || 0;
+    seen = seen || [];
+    if (value === null) return 'null';
+    if (value === undefined) return 'undefined';
+    var t = typeof value;
+    if (t === 'string') return "'" + value + "'";
+    if (t === 'number' || t === 'boolean' || t === 'bigint') return String(value);
+    if (t === 'function') return '[Function: ' + (value.name || 'anonymous') + ']';
+    if (value instanceof Error) return value.name + ': ' + value.message;
+    if (seen.indexOf(value) !== -1) return '[Circular]';
+    if (depth > 3) return Array.isArray(value) ? '[Array]' : '[Object]';
+    seen = seen.concat([value]);
+    if (Array.isArray(value)) {
+      if (!value.length) return '[]';
+      return '[ ' + value.map(function (v) { return show(v, depth + 1, seen); }).join(', ') + ' ]';
+    }
+    var keys = Object.keys(value);
+    if (!keys.length) return '{}';
+    return '{ ' + keys.map(function (k) {
+      return k + ': ' + show(value[k], depth + 1, seen);
+    }).join(', ') + ' }';
+  }
+
+  function run() {
+    var src = input.value.trim();
+    if (!src) { out.textContent = 'Type something above and press Run.'; return; }
+
+    var beforeNums = show(nums);
+    var beforeWords = show(words);
+
+    // One line with no semicolon reads as an expression; anything
+    // longer is treated as a body, where log() prints.
+    var isExpression = !/[;\n]/.test(src) &&
+      !/^(for|while|do|if|let|const|var|function|switch|return)\b/.test(src);
+    var body = isExpression ? 'return (' + src + ');' : src;
+
+    var logs = [];
+    function log() {
+      logs.push(Array.prototype.map.call(arguments, function (a) {
+        return typeof a === 'string' ? a : show(a);
+      }).join(' '));
+    }
+
+    var lines = [];
+    var value;
+    var threw = false;
+
+    try {
+      // eslint-disable-next-line no-new-func
+      var fn = new Function('nums', 'words', 'log', 'console', body);
+      value = fn(nums, words, log, { log: log });
+    } catch (e) {
+      threw = true;
+      lines.push('<span class="err">' + (e.name || 'Error') + ': ' +
+        String(e.message).replace(/</g, '&lt;') + '</span>');
+      if (/Illegal break/.test(e.message)) {
+        lines.push('');
+        lines.push('You cannot break out of forEach. Use for...of — see entry 18.');
+      }
+    }
+
+    if (logs.length) {
+      lines.push(logs.map(function (l) { return l.replace(/</g, '&lt;'); }).join('\n'));
+    }
+
+    if (!threw && value !== undefined) {
+      if (logs.length) lines.push('');
+      lines.push('<span class="ok">' + show(value).replace(/</g, '&lt;') + '</span>');
+    } else if (!threw && !logs.length) {
+      lines.push('<span class="dim">undefined — nothing was returned or logged</span>');
+    }
+
+    // The part a browser console will not tell you
+    var afterNums = show(nums);
+    var afterWords = show(words);
+    var changed = [];
+    if (afterNums !== beforeNums) changed.push(['nums', beforeNums, afterNums]);
+    if (afterWords !== beforeWords) changed.push(['words', beforeWords, afterWords]);
+
+    lines.push('');
+    if (changed.length) {
+      lines.push('<span class="err">The original array was changed.</span>');
+      changed.forEach(function (c) {
+        lines.push('  ' + c[0] + '  was  ' + c[1].replace(/</g, '&lt;'));
+        lines.push('  ' + c[0].replace(/./g, ' ') + '  now  ' + c[2].replace(/</g, '&lt;'));
+      });
+      lines.push('<span class="dim">  That is a mutating method. See entry 15.</span>');
+    } else {
+      lines.push('<span class="dim">nums and words are unchanged — nothing mutating ran.</span>');
+    }
+
+    out.innerHTML = lines.join('\n');
+  }
+
+  document.getElementById('js-go').addEventListener('click', run);
+  document.getElementById('js-reset').addEventListener('click', function () {
+    reset();
+    out.innerHTML = '<span class="dim">Arrays reset to their starting values.</span>';
+  });
+  input.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); run(); }
+  });
+  document.querySelectorAll('.chip[data-run]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      input.value = b.getAttribute('data-run');
+      run();
+    });
+  });
+
+  run();
+})();
+</script>
+</body>
+</html>

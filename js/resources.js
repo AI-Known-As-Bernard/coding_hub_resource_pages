@@ -214,5 +214,33 @@ const RESOURCES = [
     category: "reference",
     desc: "Plain definitions for the terms that get thrown around.",
     tags: ["glossary", "vocabulary", "definitions"]
+  },
+
+  {
+    title: "bcrypt & JWT",
+    url: "jwt-and-bcrypt-reference.html",
+    category: "reference",
+    desc: "Hashing passwords and signing tokens, with a live token decoder.",
+    tags: ["bcrypt", "jwt", "jsonwebtoken", "auth", "login", "password", "token", "401", "node"],
+    time: "16 entries",
+    isNew: true
+  },
+  {
+    title: "MongoDB & Mongoose",
+    url: "mongodb-and-mongoose-reference.html",
+    category: "reference",
+    desc: "Schemas, validators, queries and operators, plus the errors you will hit.",
+    tags: ["mongodb", "mongoose", "schema", "model", "query", "operators", "database", "node"],
+    time: "17 entries",
+    isNew: true
+  },
+  {
+    title: "JavaScript basics",
+    url: "javascript-basics-reference.html",
+    category: "reference",
+    desc: "Operators, arrays, array methods and loops, with a scratchpad that flags mutation.",
+    tags: ["array", "map", "filter", "reduce", "loop", "operators", "truthy", "sort", "javascript"],
+    time: "20 entries",
+    isNew: true
   }
 ];
