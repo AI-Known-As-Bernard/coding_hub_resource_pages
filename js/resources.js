@@ -259,5 +259,14 @@ const RESOURCES = [
     tags: ["array", "map", "filter", "reduce", "loop", "operators", "truthy", "sort", "javascript"],
     time: "20 entries",
     isNew: true
+  },
+  {
+    title: "Secure REST APIs",
+    url: "secure-api-reference.html",
+    category: "reference",
+    desc: "Resource design, users and roles, JWT auth, ownership checks, full CRUD, and the error handling and rate limiting that go with them.",
+    tags: ["api", "rest", "auth", "jwt", "roles", "admin", "crud", "pagination", "validation", "security", "express"],
+    time: "29 entries",
+    isNew: true
   }
 ];

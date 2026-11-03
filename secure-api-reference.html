@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Secure REST APIs — reference</title>
+<meta name="description" content="Building a production-grade REST API in Node and Express: resource design, users and roles, JWT auth, ownership checks, full CRUD, and the error handling, rate limiting and testing that go with them.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/reference_styles.css">
+<style>
+  :root{ --accent:#A6343D; --accent-soft:#F6E6E7; }
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the reference</a>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol"><a href="./index.html">Coding Hub</a> &nbsp;/&nbsp; Reference &nbsp;/&nbsp; Node unit</p>
+  <h1>secure <span class="lit">rest</span> apis</h1>
+  <p class="deck">Everything between "my routes work" and "I would put this on the internet": who you are, what you may touch, and what happens when it goes wrong. <strong>Use the filter to jump straight to what you need.</strong></p>
+
+  <div class="finder">
+    <label>
+      <span class="visually-hidden">Filter this page</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="filter" type="search" placeholder="401, ownership, pagination, bcrypt…" autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="clear">Clear</button>
+  </div>
+  <p class="hits" id="hits" role="status"></p>
+</header>
+
+<nav class="contents" id="start">
+  <h2>On this page</h2>
+  <a href="#e1"><span>01</span> What REST actually commits you to</a>
+  <a href="#e2"><span>02</span> Status codes that mean something</a>
+  <a href="#e3"><span>03</span> One shape for every response</a>
+  <a href="#e4"><span>04</span> The folder structure that scales</a>
+  <a href="#e5"><span>05</span> The model is your first validator</a>
+  <a href="#e6"><span>06</span> Validating input at the edge</a>
+  <a href="#e7"><span>07</span> Mass assignment: the bug that grants admin</a>
+  <a href="#e8"><span>08</span> Users, and the field you never store</a>
+  <a href="#e9"><span>09</span> Hashing on save</a>
+  <a href="#e10"><span>10</span> Signup</a>
+  <a href="#e11"><span>11</span> Login, and issuing a token</a>
+  <a href="#e12"><span>12</span> requireAuth: proving who you are</a>
+  <a href="#e13"><span>13</span> Role checks</a>
+  <a href="#e14"><span>14</span> Ownership: the record-level check</a>
+  <a href="#e15"><span>15</span> Filter by owner, do not fetch then reject</a>
+  <a href="#e16"><span>16</span> When 404 is the better answer than 403</a>
+  <a href="#e17"><span>17</span> Create</a>
+  <a href="#e18"><span>18</span> Read one</a>
+  <a href="#e19"><span>19</span> Read many: pagination, filtering, sorting</a>
+  <a href="#e20"><span>20</span> Update: PATCH, and why not PUT</a>
+  <a href="#e21"><span>21</span> Delete: hard and soft</a>
+  <a href="#e22"><span>22</span> Every error through one funnel</a>
+  <a href="#e23"><span>23</span> Async errors do not throw themselves</a>
+  <a href="#e24"><span>24</span> Rate limiting, starting with login</a>
+  <a href="#e25"><span>25</span> Helmet, CORS, and secrets</a>
+  <a href="#e26"><span>26</span> Logging you can use at 2am</a>
+  <a href="#e27"><span>27</span> Test the permission matrix, not the happy path</a>
+  <a href="#e28"><span>28</span> Pre-flight checklist</a>
+  <a href="#e29"><span>29</span> Check yourself: the permission matrix</a>
+</nav>
+
+<section class="part">
+  <h2>Part one: the surface</h2>
+  <p>Before a single route is written, decide what the API promises. Every decision here is one you will be living with when there are forty endpoints and you cannot remember why the odd one out is odd.</p>
+</section>
+
+<article class="entry" id="e1">
+  <div class="entry-text">
+    <h3><span class="num">01</span> What REST actually commits you to</h3>
+    <p>REST is not a library you install. It is an agreement about how URLs and HTTP verbs line up, and the whole value of it is that someone who has never seen your code can guess your endpoints correctly.</p>
+    <p>The agreement is short. A URL names a <em>thing</em> (a noun, plural). The verb says what you are doing to it. The verb is never in the URL.</p>
+    <p>Once you hold that line, the table on the right writes itself for every resource you ever add — plants, users, orders, anything.</p>
+    <p class="warn"><code>POST /createPlant</code> and <code>GET /deletePlant?id=3</code> both work, and both throw the agreement away. A <code>GET</code> must never change data: browsers, proxies and crawlers all assume they can replay a GET safely.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the whole agreement</span></div>
+    <pre class="code" data-lang="text"><code>GET    /api/plants        list them
+POST   /api/plants        create one
+GET    /api/plants/:id    read that one
+PATCH  /api/plants/:id    change part of that one
+DELETE /api/plants/:id    remove that one
+
+# the verb carries the action, so the URL never does
+POST   /api/plants/createPlant      &lt;- wrong
+GET    /api/plants/delete?id=3      &lt;- wrong, and dangerous</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>verb properties worth knowing</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Verb</th><th>Safe</th><th>Idempotent</th><th>Means</th></tr></thead>
+        <tbody><tr><td><code>GET</code></td><td>yes</td><td>yes</td><td>never changes anything</td></tr><tr><td><code>POST</code></td><td>no</td><td>no</td><td>twice creates two</td></tr><tr><td><code>PATCH</code></td><td>no</td><td>no*</td><td>partial change</td></tr><tr><td><code>PUT</code></td><td>no</td><td>yes</td><td>replace whole record</td></tr><tr><td><code>DELETE</code></td><td>no</td><td>yes</td><td>gone stays gone</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e2">
+  <div class="entry-text">
+    <h3><span class="num">02</span> Status codes that mean something</h3>
+    <p>The status code is the first thing a client reads, and for a lot of clients it is the <em>only</em> thing they read before deciding whether to show an error. Returning <code>200</code> with <code>{ error: ... }</code> in the body means every caller has to parse the body to find out it failed.</p>
+    <p>You need about eight codes. Learn these and you have covered almost every case you will hit.</p>
+    <p class="tip">The split that matters: <strong>4xx is the caller's fault</strong> and they can fix it by sending something different. <strong>5xx is your fault</strong> and the same request would have worked if your code were correct.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the eight that cover almost everything</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Code</th><th>Name</th><th>Use it when</th></tr></thead>
+        <tbody><tr><td><code>200</code></td><td>OK</td><td>read or update succeeded</td></tr><tr><td><code>201</code></td><td>Created</td><td>POST made a new record</td></tr><tr><td><code>204</code></td><td>No Content</td><td>delete succeeded, nothing to return</td></tr><tr><td><code>400</code></td><td>Bad Request</td><td>body failed validation</td></tr><tr><td><code>401</code></td><td>Unauthorized</td><td>no token, or token invalid</td></tr><tr><td><code>403</code></td><td>Forbidden</td><td>valid token, but not allowed</td></tr><tr><td><code>404</code></td><td>Not Found</td><td>no such record</td></tr><tr><td><code>409</code></td><td>Conflict</td><td>duplicate, e.g. email taken</td></tr><tr><td><code>422</code></td><td>Unprocessable</td><td>well-formed but semantically wrong</td></tr><tr><td><code>500</code></td><td>Server Error</td><td>your bug — never send on purpose</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>401 and 403 are not the same</span></div>
+    <pre class="code" data-lang="js"><code>// 401: I do not know who you are.
+//      Fix: log in and send a token.
+res.status(401).json({ error: 'Authentication required' })
+
+// 403: I know exactly who you are, and no.
+//      Fix: nothing the caller can do. Sending a
+//      different token for the same account won't help.
+res.status(403).json({ error: 'Admin access required' })</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e3">
+  <div class="entry-text">
+    <h3><span class="num">03</span> One shape for every response</h3>
+    <p>Pick one envelope and never deviate. Clients then write one unwrapping function instead of a special case per endpoint, and a typo in one controller cannot quietly change the contract.</p>
+    <p>The shape below separates the payload from everything about the payload. Lists get a <code>meta</code> block; single records do not; errors always have <code>error</code> and never have <code>data</code>.</p>
+    <p class="tip">Deciding this on day one costs five minutes. Retrofitting it across thirty endpoints after the front end is written costs a weekend.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the envelope</span></div>
+    <pre class="code" data-lang="json"><code>// one record
+{ "data": { "id": "6630...", "name": "Monstera" } }
+
+// a list, with everything the client needs to paginate
+{
+  "data": [ { "id": "6630...", "name": "Monstera" } ],
+  "meta": { "page": 1, "limit": 20, "total": 57, "pages": 3 }
+}
+
+// a failure: error present, data absent, always
+{
+  "error": "Validation failed",
+  "details": { "name": "Name is required" }
+}</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e4">
+  <div class="entry-text">
+    <h3><span class="num">04</span> The folder structure that scales</h3>
+    <p>Each layer gets one job, and layers only ever call downward. A route knows no database calls. A controller knows no SQL or Mongoose internals beyond the model it calls. A model knows nothing about HTTP — no <code>req</code>, no <code>res</code>, no status codes.</p>
+    <p>The payoff is testability. A service function that takes plain arguments and returns plain data can be tested without starting a server.</p>
+    <p class="warn">The usual slide is a controller that grows query logic until it is 200 lines. When a controller stops being readable at a glance, the query belongs in the model or a service.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/</span></div>
+    <pre class="code" data-lang="text"><code>src/
+  server.js              start listening, nothing else
+  app.js                 build the express app, mount middleware
+  config/
+    env.js               read + validate process.env once
+    db.js                connect to mongo
+  models/
+    user.model.js        schema, hooks, instance methods
+    plant.model.js
+  routes/
+    index.js             mount all routers under /api
+    auth.routes.js
+    plant.routes.js
+  controller/
+    auth.controller.js   req/res in, model calls out
+    plant.controller.js
+  middleware/
+    auth.js              requireAuth, requireRole
+    validate.js          body checking
+    errorHandler.js      the single funnel
+  utils/
+    ApiError.js          typed errors
+    asyncHandler.js      catches rejected promises</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>direction of calls</span></div>
+    <pre class="code" data-lang="text"><code>request
+   |
+   v
+route  --&gt; middleware --&gt; controller --&gt; model --&gt; database
+                              |
+                              v
+                          response
+
+# calls only ever go downward.
+# a model that imports res has the layers backwards.</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Part two: the data layer</h2>
+  <p>The database is the last place a bad value can be stopped, so it is the one place validation must not be optional. Everything above it is a convenience for the caller.</p>
+</section>
+
+<article class="entry" id="e5">
+  <div class="entry-text">
+    <h3><span class="num">05</span> The model is your first validator</h3>
+    <p>Put the real constraints in the schema. Not because callers are hostile — though some are — but because a bug in a controller, a script you run at the console, or a future endpoint you have not written yet all go through the model.</p>
+    <p><code>required</code>, <code>enum</code>, <code>min</code>, <code>maxlength</code>, <code>match</code> and <code>unique</code> cover most of it. Give each one a message, because the default Mongoose text is not something you want a user to read.</p>
+    <p class="tip"><code>unique: true</code> is not a validator — it builds a database index. It fails with a duplicate-key error (code <code>11000</code>), not a ValidationError, which is why the error handler later has a special branch for it.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/models/plant.model.js</span></div>
+    <pre class="code" data-lang="js"><code>const mongoose = require('mongoose')
+
+const plantSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'Name is required'],
+    trim: true,
+    maxlength: [80, 'Name cannot exceed 80 characters']
+  },
+  location: {
+    type: String,
+    enum: {
+      values: ['indoor', 'outdoor', 'greenhouse'],
+      message: '{VALUE} is not a supported location'
+    },
+    default: 'indoor'
+  },
+  wateringDays: {
+    type: Number,
+    min: [1, 'Must be at least 1 day'],
+    max: [365, 'Must be 365 days or fewer'],
+    default: 7
+  },
+  // Stamped from the token, never from the request body.
+  ownerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    index: true
+  }
+}, { timestamps: true })
+
+module.exports = mongoose.model('Plant', plantSchema)</code></pre>
+  </div>
+    <p class="warn">Watch the braces in <code>enum</code>. <code>message: '{VALUE is not supported'</code> — a missing closing brace — is valid JavaScript, so nothing warns you, and Mongoose silently stops substituting the value.</p>
+</article>
+
+<article class="entry" id="e6">
+  <div class="entry-text">
+    <h3><span class="num">06</span> Validating input at the edge</h3>
+    <p>Schema validation runs when you save. That is late: you have already built an object, and the error you get back is shaped for you, not for the caller. A small middleware that checks the body first gives a clean <code>400</code> with every problem at once.</p>
+    <p>Returning <em>all</em> the errors matters more than it sounds. An API that reports one missing field per request turns a five-field form into five round trips.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/middleware/validate.js</span></div>
+    <pre class="code" data-lang="js"><code>const ApiError = require('../utils/ApiError')
+
+// rules: { field: [ [testFn, message], ... ] }
+function validate (rules) {
+  return (req, res, next) =&gt; {
+    const details = {}
+
+    for (const [field, checks] of Object.entries(rules)) {
+      for (const [test, message] of checks) {
+        if (!test(req.body[field], req.body)) {
+          details[field] = message
+          break            // first failure per field is enough
+        }
+      }
+    }
+
+    if (Object.keys(details).length &gt; 0) {
+      return next(ApiError.badRequest('Validation failed', details))
+    }
+    next()
+  }
+}
+
+// Reusable predicates.
+const required = v =&gt; v !== undefined &amp;&amp; v !== null &amp;&amp; v !== ''
+const isString = v =&gt; typeof v === 'string'
+const maxLen = n =&gt; v =&gt; v === undefined || String(v).length &lt;= n
+const isEmail = v =&gt; typeof v === 'string' &amp;&amp; /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)
+const minLen = n =&gt; v =&gt; typeof v === 'string' &amp;&amp; v.length &gt;= n
+
+module.exports = { validate, required, isString, maxLen, isEmail, minLen }</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>using it on a route</span></div>
+    <pre class="code" data-lang="js"><code>const { validate, required, maxLen } = require('../middleware/validate')
+
+router.post('/',
+  requireAuth,
+  validate({
+    name: [[required, 'Name is required'],
+           [maxLen(80), 'Name cannot exceed 80 characters']]
+  }),
+  plantController.createPlant
+)</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e7">
+  <div class="entry-text">
+    <h3><span class="num">07</span> Mass assignment: the bug that grants admin</h3>
+    <p>This is the single most common way a student API gets taken over, and it does not look like a bug. It looks like clean, concise code.</p>
+    <p><code>new User(req.body)</code> builds a user out of whatever the caller sent. If the caller sent <code>{"role": "admin"}</code>, and <code>role</code> is a real field on your schema, they are now an admin. They did not break anything — they used your endpoint exactly as written.</p>
+    <p>The fix is to never hand the body to a model. Name the fields you accept. Anything you do not name cannot be set, including fields you add to the schema next month.</p>
+    <p class="warn">The same applies to <code>Object.assign(doc, req.body)</code> on update, and to <code>findByIdAndUpdate(id, req.body)</code>. All three are the same bug wearing different clothes.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the attack, and the fix</span></div>
+    <pre class="code" data-lang="js"><code>// VULNERABLE -------------------------------------------
+exports.signup = async (req, res) =&gt; {
+  const user = new User(req.body)
+  await user.save()
+  res.status(201).json({ data: user })
+}
+
+// POST /api/auth/signup
+// { "email": "a@b.c", "password": "pw", "role": "admin" }
+// -&gt; they are an admin. Your code did what you told it.
+
+
+// SAFE --------------------------------------------------
+exports.signup = async (req, res) =&gt; {
+  // Name every field you are willing to accept.
+  const user = new User({
+    email: req.body.email,
+    password: req.body.password,
+    name: req.body.name
+    // role is absent, so it falls back to the schema default
+  })
+  await user.save()
+  res.status(201).json({ data: user })
+}</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>a pick() helper, if you prefer</span></div>
+    <pre class="code" data-lang="js"><code>function pick (source, keys) {
+  const out = {}
+  for (const key of keys) {
+    if (source[key] !== undefined) out[key] = source[key]
+  }
+  return out
+}
+
+const CREATABLE = ['name', 'location', 'wateringDays']
+const plant = new Plant({
+  ...pick(req.body, CREATABLE),
+  ownerId: req.user._id        // from the token, never the body
+})</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Part three: who are you</h2>
+  <p>Authentication answers one question and no others: which account is making this request? Everything about permissions comes later, and mixing the two is how holes appear.</p>
+</section>
+
+<article class="entry" id="e8">
+  <div class="entry-text">
+    <h3><span class="num">08</span> Users, and the field you never store</h3>
+    <p>A user document holds a password <em>hash</em>. It never holds a password. Nothing in your system should be able to print one, email one back, or log one.</p>
+    <p>Two settings do most of the defensive work here. <code>select: false</code> on the hash keeps it out of every query result unless you ask for it explicitly, so it cannot be leaked by a controller that forgets to strip it. <code>role</code> with an <code>enum</code> and a safe default means the only way to become an admin is a deliberate database change.</p>
+    <p class="tip"><code>lowercase: true</code> on email prevents the duplicate-account bug where <code>Sam@x.com</code> and <code>sam@x.com</code> are two people.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/models/user.model.js</span></div>
+    <pre class="code" data-lang="js"><code>const mongoose = require('mongoose')
+const bcrypt = require('bcryptjs')
+
+const userSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
+    unique: true,
+    lowercase: true,
+    trim: true,
+    match: [/^[^@\s]+@[^@\s]+\.[^@\s]+$/, 'Email is not valid']
+  },
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    minlength: [8, 'Password must be at least 8 characters'],
+    select: false          // never comes back from a find()
+  },
+  name: { type: String, trim: true, maxlength: 80 },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'        // the only safe default
+  }
+}, { timestamps: true })
+
+module.exports = mongoose.model('User', userSchema)</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e9">
+  <div class="entry-text">
+    <h3><span class="num">09</span> Hashing on save</h3>
+    <p>Hash in a <code>pre('save')</code> hook rather than in the controller. Then it does not matter which code path creates or changes a user — a signup route, a password reset, a seed script — the hash happens.</p>
+    <p>The <code>isModified</code> guard is the part people miss. Without it, every save of an existing user re-hashes the already-hashed value, and the next login fails with no obvious cause.</p>
+    <p class="warn">Use <code>bcryptjs</code>, not <code>bcrypt</code>. The latter compiles native code and will not install on machines without build tools.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>hook and compare method</span></div>
+    <pre class="code" data-lang="js"><code>// Runs before every save. Arrow functions have no `this`,
+// so this callback must be a regular function.
+userSchema.pre('save', async function (next) {
+  // Only hash when the password actually changed.
+  if (!this.isModified('password')) return next()
+
+  this.password = await bcrypt.hash(this.password, 10)
+  next()
+})
+
+// Instance method: user.matchesPassword('guess')
+userSchema.methods.matchesPassword = function (plain) {
+  return bcrypt.compare(plain, this.password)
+}
+
+// Belt and braces: strip the hash from any JSON output,
+// even if someone selected it deliberately.
+userSchema.methods.toJSON = function () {
+  const obj = this.toObject()
+  delete obj.password
+  return obj
+}</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>why isModified matters</span></div>
+    <pre class="code" data-lang="js"><code>// Without the guard:
+user.name = 'New name'
+await user.save()
+// -&gt; password re-hashed: hash(hash(pw))
+// -&gt; every future login fails, and nothing logged an error</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e10">
+  <div class="entry-text">
+    <h3><span class="num">10</span> Signup</h3>
+    <p>Check for the duplicate before you create. You could let the unique index fail and catch error code <code>11000</code>, and your error handler should still cover that case, but an explicit check gives a clearer <code>409</code>.</p>
+    <p>Note what is <em>not</em> here: no <code>role</code> from the body, no token fields, no <code>_id</code>. Only the three things a new account legitimately supplies.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/controller/auth.controller.js</span></div>
+    <pre class="code" data-lang="js"><code>const User = require('../models/user.model')
+const ApiError = require('../utils/ApiError')
+const asyncHandler = require('../utils/asyncHandler')
+const { signToken } = require('../utils/jwt')
+
+exports.signup = asyncHandler(async (req, res) =&gt; {
+  const { email, password, name } = req.body
+
+  const existing = await User.findOne({ email: email.toLowerCase() })
+  if (existing) {
+    throw ApiError.conflict('That email is already registered')
+  }
+
+  // Named fields only. role is never read from the body.
+  const user = await User.create({ email, password, name })
+
+  res.status(201).json({
+    data: {
+      user: { id: user._id, email: user.email, role: user.role },
+      token: signToken(user)
+    }
+  })
+})</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e11">
+  <div class="entry-text">
+    <h3><span class="num">11</span> Login, and issuing a token</h3>
+    <p>The password field is <code>select: false</code>, so you have to ask for it with <code>.select('+password')</code>. Forgetting this gives a confusing bug: <code>user.password</code> is <code>undefined</code>, <code>bcrypt.compare</code> rejects, and every login fails even with the right password.</p>
+    <p>Give the same message for an unknown email and a wrong password. Different messages let anyone test which email addresses have accounts on your system.</p>
+    <p class="warn">Never put anything secret in a token. The payload is base64, not encryption — anyone can read it. Put the user id and the role in; put nothing else.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>login</span></div>
+    <pre class="code" data-lang="js"><code>exports.login = asyncHandler(async (req, res) =&gt; {
+  const { email, password } = req.body
+
+  // +password because the schema hides it by default.
+  const user = await User.findOne({ email: email.toLowerCase() })
+                         .select('+password')
+
+  // One message for both failures, so the endpoint cannot
+  // be used to discover which emails are registered.
+  if (!user || !(await user.matchesPassword(password))) {
+    throw ApiError.unauthorized('Email or password is incorrect')
+  }
+
+  res.json({
+    data: {
+      user: { id: user._id, email: user.email, role: user.role },
+      token: signToken(user)
+    }
+  })
+})</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/utils/jwt.js</span></div>
+    <pre class="code" data-lang="js"><code>const jwt = require('jsonwebtoken')
+const { JWT_SECRET, JWT_EXPIRES_IN } = require('../config/env')
+
+function signToken (user) {
+  return jwt.sign(
+    { sub: String(user._id), role: user.role },   // payload: public
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }                  // e.g. '7d'
+  )
+}
+
+function verifyToken (token) {
+  return jwt.verify(token, JWT_SECRET)   // throws if bad or expired
+}
+
+module.exports = { signToken, verifyToken }</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e12">
+  <div class="entry-text">
+    <h3><span class="num">12</span> requireAuth: proving who you are</h3>
+    <p>This middleware does three things in order: pull the token out of the header, verify the signature, and load the live user. The third step is the one people skip, and skipping it is why deleted or demoted accounts keep working until their token expires.</p>
+    <p>Attach the user <em>document</em> to <code>req.user</code>, not the raw token payload. If you attach the payload, <code>req.user._id</code> is <code>undefined</code> — the field is called <code>sub</code> — and every ownership check silently compares against nothing.</p>
+    <p class="warn">A token payload is not a user. <code>req.user = decoded</code> is the single most common cause of records saving with <code>ownerId: null</code> and no error anywhere.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/middleware/auth.js</span></div>
+    <pre class="code" data-lang="js"><code>const User = require('../models/user.model')
+const ApiError = require('../utils/ApiError')
+const asyncHandler = require('../utils/asyncHandler')
+const { verifyToken } = require('../utils/jwt')
+
+const requireAuth = asyncHandler(async (req, res, next) =&gt; {
+  // 1. Pull it out of: Authorization: Bearer &lt;token&gt;
+  const header = req.headers.authorization || ''
+  if (!header.startsWith('Bearer ')) {
+    throw ApiError.unauthorized('Authentication required')
+  }
+  const token = header.slice(7).trim()
+
+  // 2. Verify the signature and expiry.
+  let payload
+  try {
+    payload = verifyToken(token)
+  } catch (err) {
+    // Say which, so a client knows whether to refresh or re-login.
+    throw ApiError.unauthorized(
+      err.name === 'TokenExpiredError' ? 'Token expired' : 'Token is invalid'
+    )
+  }
+
+  // 3. Load the live user. Catches deleted accounts and
+  //    role changes made since the token was issued.
+  const user = await User.findById(payload.sub)
+  if (!user) throw ApiError.unauthorized('Account no longer exists')
+
+  req.user = user          // the document, not the payload
+  next()
+})
+
+module.exports = { requireAuth }</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the bug this prevents</span></div>
+    <pre class="code" data-lang="js"><code>// WRONG
+req.user = payload
+req.user._id      // undefined - the field is `sub`
+// -&gt; ownerId: null on every created record, no error
+
+// RIGHT
+req.user = await User.findById(payload.sub)
+req.user._id      // a real ObjectId
+req.user.role     // current role, not the one in the token</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Part four: what may you do</h2>
+  <p>Authorization is a separate question from identity, and it has two layers that are easy to confuse: what your role lets you do in general, and whether this particular record is yours.</p>
+</section>
+
+<article class="entry" id="e13">
+  <div class="entry-text">
+    <h3><span class="num">13</span> Role checks</h3>
+    <p>A role check is coarse: it asks whether this kind of user may use this kind of endpoint at all. It cannot answer whether a specific record belongs to them — that is the next entry.</p>
+    <p>Write it as a factory so the route reads like a sentence, and always put it <em>after</em> <code>requireAuth</code>. On its own it would read <code>req.user</code> before anything has set it.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>requireRole</span></div>
+    <pre class="code" data-lang="js"><code>// Usage: requireRole('admin') or requireRole('admin', 'moderator')
+function requireRole (...allowed) {
+  return (req, res, next) =&gt; {
+    // Guard against being mounted without requireAuth in front.
+    if (!req.user) {
+      return next(ApiError.unauthorized('Authentication required'))
+    }
+    if (!allowed.includes(req.user.role)) {
+      // 403, not 401: we know who they are, they just may not.
+      return next(ApiError.forbidden('Admin access required'))
+    }
+    next()
+  }
+}
+
+module.exports = { requireAuth, requireRole }</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>on a route</span></div>
+    <pre class="code" data-lang="js"><code>// order matters: identity first, then permission
+router.get('/users',
+  requireAuth,
+  requireRole('admin'),
+  adminController.listUsers
+)</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e14">
+  <div class="entry-text">
+    <h3><span class="num">14</span> Ownership: the record-level check</h3>
+    <p>Role checks let a user reach the endpoint. They do not stop user A editing user B's plant — both are logged-in users hitting the same route. That check can only happen after you have loaded the record, because until then you do not know who owns it.</p>
+    <p>Do it in one place. A helper that every controller calls is far harder to forget than four copies of the same <code>if</code>.</p>
+    <p class="tip">Admins pass the ownership check by rule, which is usually what you want: an admin fixing a student's record should not be blocked by it.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the check</span></div>
+    <pre class="code" data-lang="js"><code>// ObjectId !== string, so compare as strings.
+function ownsOrAdmin (user, doc) {
+  if (user.role === 'admin') return true
+  return String(doc.ownerId) === String(user._id)
+}
+
+// In a controller, after loading:
+const plant = await Plant.findById(req.params.id)
+if (!plant) throw ApiError.notFound('Plant not found')
+if (!ownsOrAdmin(req.user, plant)) {
+  throw ApiError.forbidden('You do not own this plant')
+}</code></pre>
+  </div>
+    <p class="warn"><code>plant.ownerId === req.user._id</code> is <strong>always false</strong>. Both are ObjectId objects, and <code>===</code> compares identity, not value. Wrap both in <code>String()</code>, or use <code>.equals()</code>.</p>
+</article>
+
+<article class="entry" id="e15">
+  <div class="entry-text">
+    <h3><span class="num">15</span> Filter by owner, do not fetch then reject</h3>
+    <p>For list endpoints there is a better move than loading everything and filtering afterwards: put the owner into the query. The database never returns rows the caller may not see, which is faster and removes a whole class of leak.</p>
+    <p>This also means an ordinary user asking for page 2 gets page 2 <em>of their own records</em>, with a correct total. Filtering after pagination gives short pages and a wrong count.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>scope the query, not the result</span></div>
+    <pre class="code" data-lang="js"><code>// Admins see everything; everyone else sees their own.
+const scope = req.user.role === 'admin'
+  ? {}
+  : { ownerId: req.user._id }
+
+const [items, total] = await Promise.all([
+  Plant.find(scope).skip(skip).limit(limit).sort(sort),
+  Plant.countDocuments(scope)
+])</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the wrong way</span></div>
+    <pre class="code" data-lang="js"><code>// Loads every plant in the database into memory,
+// then throws most of them away. Page counts are wrong,
+// and one slow day it falls over.
+const all = await Plant.find().skip(skip).limit(limit)
+const mine = all.filter(p =&gt; String(p.ownerId) === String(req.user._id))</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e16">
+  <div class="entry-text">
+    <h3><span class="num">16</span> When 404 is the better answer than 403</h3>
+    <p>Returning <code>403 Forbidden</code> for a record that exists but is not yours confirms that it exists. For most apps that is harmless. For anything where the identifiers are guessable or the existence of a record is itself private, it is a leak.</p>
+    <p>The alternative is to answer <code>404</code> for both cases: not found, and found but not yours. The caller cannot tell the difference, which is the point.</p>
+    <p class="tip">Pick one policy and apply it everywhere. A mixed API, where some endpoints 403 and others 404, leaks exactly the information you were trying to hide.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>which to send</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Situation</th><th>Leaky</th><th>Private</th></tr></thead>
+        <tbody><tr><td>No such record</td><td><code>404</code></td><td><code>404</code></td></tr><tr><td>Exists, not yours</td><td><code>403</code></td><td><code>404</code></td></tr><tr><td>Exists, yours</td><td><code>200</code></td><td><code>200</code></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Part five: full CRUD</h2>
+  <p>Five endpoints, each with the same three concerns: is the input acceptable, is this caller allowed, and what exactly goes back.</p>
+</section>
+
+<article class="entry" id="e17">
+  <div class="entry-text">
+    <h3><span class="num">17</span> Create</h3>
+    <p>Three things make a create endpoint correct. Accept only named fields. Stamp the owner from the token. Return <code>201</code> with the created record, so the client does not have to re-fetch to learn the generated id.</p>
+    <p>The guard at the top is worth keeping even once the route is right. If anyone ever mounts this controller without <code>requireAuth</code>, it fails immediately with a clear message instead of writing records with a null owner.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>createPlant</span></div>
+    <pre class="code" data-lang="js"><code>const CREATABLE = ['name', 'location', 'wateringDays']
+
+exports.createPlant = asyncHandler(async (req, res) =&gt; {
+  // Fails loudly if this route lost its requireAuth.
+  if (!req.user || !req.user._id) {
+    throw ApiError.unauthorized('Authentication required')
+  }
+
+  const plant = await Plant.create({
+    ...pick(req.body, CREATABLE),
+    ownerId: req.user._id        // from the token, never the body
+  })
+
+  res.status(201).json({ data: plant })
+})</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e18">
+  <div class="entry-text">
+    <h3><span class="num">18</span> Read one</h3>
+    <p>Load, check it exists, check the caller may see it, return it. The order matters: you cannot run the ownership check before the record is in hand.</p>
+    <p>An id that is not a valid ObjectId makes <code>findById</code> throw a <code>CastError</code> rather than return <code>null</code>. Let it reach the error handler, which turns it into a <code>400</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>getPlant</span></div>
+    <pre class="code" data-lang="js"><code>exports.getPlant = asyncHandler(async (req, res) =&gt; {
+  const plant = await Plant.findById(req.params.id)
+
+  if (!plant) throw ApiError.notFound('Plant not found')
+
+  if (!ownsOrAdmin(req.user, plant)) {
+    throw ApiError.forbidden('You do not own this plant')
+  }
+
+  res.json({ data: plant })
+})</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e19">
+  <div class="entry-text">
+    <h3><span class="num">19</span> Read many: pagination, filtering, sorting</h3>
+    <p>This is the endpoint that gets slow first, and the one most often left unbounded. Three rules keep it safe: always cap the page size, always whitelist what may be sorted on, and always run the count against the same filter as the query.</p>
+    <p>The sort whitelist is not fussiness. <code>sort(req.query.sort)</code> lets a caller sort on any field, including unindexed ones, which is a cheap way to make your database do expensive work.</p>
+    <p class="warn"><code>limit</code> straight from the query string means <code>?limit=1000000</code> is a valid request. Clamp it.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>listPlants</span></div>
+    <pre class="code" data-lang="js"><code>const SORTABLE = ['name', 'createdAt', 'wateringDays']
+const MAX_LIMIT = 100
+
+exports.listPlants = asyncHandler(async (req, res) =&gt; {
+  // --- paging, clamped -------------------------------
+  const page  = Math.max(1, parseInt(req.query.page, 10) || 1)
+  const limit = Math.min(MAX_LIMIT,
+                Math.max(1, parseInt(req.query.limit, 10) || 20))
+  const skip  = (page - 1) * limit
+
+  // --- filter: start from the caller's scope ---------
+  const filter = req.user.role === 'admin' ? {} : { ownerId: req.user._id }
+
+  if (req.query.location) filter.location = req.query.location
+  if (req.query.q) {
+    // Escape user input before it becomes a regex.
+    const safe = String(req.query.q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&amp;')
+    filter.name = new RegExp(safe, 'i')
+  }
+
+  // --- sort: whitelist only --------------------------
+  let sort = { createdAt: -1 }
+  if (req.query.sort) {
+    const desc  = req.query.sort.startsWith('-')
+    const field = desc ? req.query.sort.slice(1) : req.query.sort
+    if (SORTABLE.includes(field)) sort = { [field]: desc ? -1 : 1 }
+  }
+
+  const [items, total] = await Promise.all([
+    Plant.find(filter).sort(sort).skip(skip).limit(limit),
+    Plant.countDocuments(filter)      // same filter, or the count lies
+  ])
+
+  res.json({
+    data: items,
+    meta: { page, limit, total, pages: Math.ceil(total / limit) }
+  })
+})</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>query parameters</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Parameter</th><th>Example</th><th>Effect</th></tr></thead>
+        <tbody><tr><td><code>page</code></td><td><code>?page=2</code></td><td>1-based, defaults to 1</td></tr><tr><td><code>limit</code></td><td><code>?limit=50</code></td><td>capped at 100</td></tr><tr><td><code>sort</code></td><td><code>?sort=-createdAt</code></td><td><code>-</code> prefix for descending</td></tr><tr><td><code>location</code></td><td><code>?location=indoor</code></td><td>exact match</td></tr><tr><td><code>q</code></td><td><code>?q=fern</code></td><td>case-insensitive name search</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e20">
+  <div class="entry-text">
+    <h3><span class="num">20</span> Update: PATCH, and why not PUT</h3>
+    <p><code>PATCH</code> changes the fields you send. <code>PUT</code> replaces the whole record, which means any field the client omits should be cleared. Most clients do not expect that, so most APIs offer <code>PATCH</code> and leave <code>PUT</code> alone.</p>
+    <p>Use <code>runValidators: true</code> if you update through <code>findByIdAndUpdate</code> — schema validators do <em>not</em> run on update by default. The version below loads, mutates and saves instead, which runs validators and any <code>pre('save')</code> hooks, at the cost of one extra query.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>updatePlant</span></div>
+    <pre class="code" data-lang="js"><code>const UPDATABLE = ['name', 'location', 'wateringDays']
+
+exports.updatePlant = asyncHandler(async (req, res) =&gt; {
+  const plant = await Plant.findById(req.params.id)
+
+  if (!plant) throw ApiError.notFound('Plant not found')
+  if (!ownsOrAdmin(req.user, plant)) {
+    throw ApiError.forbidden('You do not own this plant')
+  }
+
+  // Only the whitelist. ownerId and role can never be reassigned.
+  for (const field of UPDATABLE) {
+    if (req.body[field] !== undefined) plant[field] = req.body[field]
+  }
+
+  await plant.save()        // runs validators and pre-save hooks
+  res.json({ data: plant })
+})</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the findByIdAndUpdate trap</span></div>
+    <pre class="code" data-lang="js"><code>// Validators are OFF by default on update.
+await Plant.findByIdAndUpdate(id, body)                      // no checks
+await Plant.findByIdAndUpdate(id, body, {
+  new: true,              // return the updated doc, not the old one
+  runValidators: true     // actually enforce the schema
+})
+
+// And this is still mass assignment if body is req.body.</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e21">
+  <div class="entry-text">
+    <h3><span class="num">21</span> Delete: hard and soft</h3>
+    <p>A hard delete removes the row. A soft delete sets a flag and leaves it there. Soft deletes are usually right for anything a user can destroy by accident, and they are the only way to answer "what happened to that record" later.</p>
+    <p>The cost of soft deletes is that <em>every</em> read must exclude them. Miss one query and deleted records reappear. A schema-level query helper keeps that honest.</p>
+    <p class="tip"><code>204 No Content</code> is the conventional response: success, and there is deliberately no body. Do not send <code>{ "data": null }</code> with a 200.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>hard delete</span></div>
+    <pre class="code" data-lang="js"><code>exports.deletePlant = asyncHandler(async (req, res) =&gt; {
+  const plant = await Plant.findById(req.params.id)
+
+  if (!plant) throw ApiError.notFound('Plant not found')
+  if (!ownsOrAdmin(req.user, plant)) {
+    throw ApiError.forbidden('You do not own this plant')
+  }
+
+  await plant.deleteOne()
+  res.status(204).send()       // no body, by convention
+})</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>soft delete</span></div>
+    <pre class="code" data-lang="js"><code>// 1. the schema gains a flag
+const plantSchema = new mongoose.Schema({
+  // ...the existing fields
+  deletedAt: { type: Date, default: null, index: true }
+})
+
+// 2. deleting sets it instead of removing the row
+exports.deletePlant = asyncHandler(async (req, res) =&gt; {
+  const plant = await Plant.findById(req.params.id)
+  if (!plant) throw ApiError.notFound('Plant not found')
+  if (!ownsOrAdmin(req.user, plant)) {
+    throw ApiError.forbidden('You do not own this plant')
+  }
+
+  plant.deletedAt = new Date()
+  await plant.save()
+  res.status(204).send()
+})
+
+// 3. and EVERY read must now exclude them
+Plant.find({ ...filter, deletedAt: null })</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Part six: the rest of the job</h2>
+  <p>What separates an assignment from something you would deploy. None of it is hard; all of it is noticed when missing.</p>
+</section>
+
+<article class="entry" id="e22">
+  <div class="entry-text">
+    <h3><span class="num">22</span> Every error through one funnel</h3>
+    <p>Scattered <code>res.status(...).json(...)</code> calls drift apart: different shapes, different wording, and eventually one that leaks a stack trace. Throw a typed error instead and let one handler decide what the client sees.</p>
+    <p>An Express error handler is identified by having <strong>four</strong> parameters. Write three and Express treats it as ordinary middleware and never calls it on an error — a genuinely confusing failure, because the code looks right.</p>
+    <p class="warn">Never send <code>err.stack</code> to a client in production. It describes your file layout and dependency versions.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/utils/ApiError.js</span></div>
+    <pre class="code" data-lang="js"><code>class ApiError extends Error {
+  constructor (status, message, details) {
+    super(message)
+    this.status = status
+    this.details = details
+    this.isOperational = true    // we threw this on purpose
+    Error.captureStackTrace(this, this.constructor)
+  }
+
+  static badRequest   (m, d) { return new ApiError(400, m, d) }
+  static unauthorized (m)    { return new ApiError(401, m) }
+  static forbidden    (m)    { return new ApiError(403, m) }
+  static notFound     (m)    { return new ApiError(404, m) }
+  static conflict     (m)    { return new ApiError(409, m) }
+}
+
+module.exports = ApiError</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/middleware/errorHandler.js</span></div>
+    <pre class="code" data-lang="js"><code>// FOUR parameters. Express checks arity to find this.
+function errorHandler (err, req, res, next) {
+  let status  = err.status || 500
+  let message = err.message || 'Something went wrong'
+  let details = err.details
+
+  // Mongoose: bad ObjectId in the URL
+  if (err.name === 'CastError') {
+    status = 400
+    message = `Invalid ${err.path}: ${err.value}`
+  }
+
+  // Mongoose: schema validation
+  if (err.name === 'ValidationError') {
+    status = 400
+    message = 'Validation failed'
+    details = Object.fromEntries(
+      Object.entries(err.errors).map(([k, v]) =&gt; [k, v.message])
+    )
+  }
+
+  // Mongo: unique index violation
+  if (err.code === 11000) {
+    status = 409
+    message = `That ${Object.keys(err.keyValue)[0]} is already taken`
+  }
+
+  // Log real failures; never log expected 4xx noise.
+  if (status &gt;= 500) console.error(err)
+
+  res.status(status).json({
+    error: message,
+    ...(details &amp;&amp; { details }),
+    ...(process.env.NODE_ENV !== 'production' &amp;&amp; { stack: err.stack })
+  })
+}
+
+module.exports = errorHandler</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e23">
+  <div class="entry-text">
+    <h3><span class="num">23</span> Async errors do not throw themselves</h3>
+    <p>An exception inside an <code>async</code> route handler becomes a rejected promise. Express 4 does not watch for that, so the request hangs until it times out — no error, no response, nothing in the log.</p>
+    <p>A one-function wrapper fixes it everywhere. Express 5 forwards rejections automatically, but wrapping is harmless there and keeps the code portable between the two.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/utils/asyncHandler.js</span></div>
+    <pre class="code" data-lang="js"><code>// Wraps an async handler so a rejected promise reaches next().
+const asyncHandler = fn =&gt; (req, res, next) =&gt;
+  Promise.resolve(fn(req, res, next)).catch(next)
+
+module.exports = asyncHandler</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>with and without</span></div>
+    <pre class="code" data-lang="js"><code>// Express 4, unwrapped: this request hangs forever.
+router.get('/:id', async (req, res) =&gt; {
+  const plant = await Plant.findById(req.params.id)  // throws
+  res.json({ data: plant })
+})
+
+// Wrapped: the rejection reaches the error handler.
+router.get('/:id', asyncHandler(async (req, res) =&gt; {
+  const plant = await Plant.findById(req.params.id)
+  res.json({ data: plant })
+}))</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e24">
+  <div class="entry-text">
+    <h3><span class="num">24</span> Rate limiting, starting with login</h3>
+    <p>Without a limit, an attacker can try passwords as fast as your server answers. bcrypt makes each attempt slow, which helps, but it does not stop a patient script.</p>
+    <p>Limit the auth routes hard and everything else gently. Keying the login limiter on email as well as IP stops one attacker working through many accounts from behind a single address.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>rate limits</span></div>
+    <pre class="code" data-lang="js"><code>const rateLimit = require('express-rate-limit')
+
+// Everything: generous.
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false
+})
+
+// Login: strict.
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  skipSuccessfulRequests: true,     // only failures count
+  message: { error: 'Too many attempts. Try again in 15 minutes.' }
+})
+
+app.use('/api', apiLimiter)
+router.post('/login', loginLimiter, authController.login)</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e25">
+  <div class="entry-text">
+    <h3><span class="num">25</span> Helmet, CORS, and secrets</h3>
+    <p>Three lines of setup that are invisible when present and obvious when missing. <code>helmet</code> sets a set of defensive response headers. <code>cors</code> decides which origins may call you — the default of <code>*</code> is for public read-only APIs, not one behind a login.</p>
+    <p>Secrets come from the environment and are validated at boot. A server that starts with <code>JWT_SECRET</code> undefined will sign tokens with <code>undefined</code> and verify them happily, which is no signature at all.</p>
+    <p class="warn"><code>.env</code> goes in <code>.gitignore</code> before the first commit. A secret that has ever been pushed is burned and must be rotated — deleting it in a later commit does not remove it from the history.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/app.js</span></div>
+    <pre class="code" data-lang="js"><code>const express = require('express')
+const helmet = require('helmet')
+const cors = require('cors')
+
+const app = express()
+
+app.use(helmet())
+app.use(cors({
+  origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+  credentials: true
+}))
+app.use(express.json({ limit: '10kb' }))   // cap the body size
+
+app.use('/api', require('./routes'))
+app.use(require('./middleware/notFound'))
+app.use(require('./middleware/errorHandler'))   // last, always
+
+module.exports = app</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>src/config/env.js</span></div>
+    <pre class="code" data-lang="js"><code>require('dotenv').config()
+
+const required = ['MONGODB_URI', 'JWT_SECRET']
+const missing = required.filter(k =&gt; !process.env[k])
+
+if (missing.length) {
+  // Fail at boot, loudly, not at the first request.
+  throw new Error(`Missing env vars: ${missing.join(', ')}`)
+}
+
+module.exports = {
+  PORT: process.env.PORT || 3000,
+  MONGODB_URI: process.env.MONGODB_URI,
+  JWT_SECRET: process.env.JWT_SECRET,
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
+  isProd: process.env.NODE_ENV === 'production'
+}</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e26">
+  <div class="entry-text">
+    <h3><span class="num">26</span> Logging you can use at 2am</h3>
+    <p>A log line is only worth writing if it helps you answer a question later. Method, path, status and duration answer most of them. Add a request id and you can follow one request through every line it produced.</p>
+    <p class="warn">Never log the body of a login request, an <code>Authorization</code> header, or a password field. Logs get shipped to third-party services and read by people who should not have credentials.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>request logging</span></div>
+    <pre class="code" data-lang="js"><code>const morgan = require('morgan')
+
+// Compact in production, readable in development.
+app.use(morgan(isProd ? 'combined' : 'dev'))</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>redacting, if you roll your own</span></div>
+    <pre class="code" data-lang="js"><code>const REDACT = ['password', 'token', 'authorization']
+
+function safeBody (body) {
+  const out = { ...body }
+  for (const key of REDACT) {
+    if (key in out) out[key] = '[redacted]'
+  }
+  return out
+}
+
+console.log(JSON.stringify({
+  method: req.method,
+  path: req.originalUrl,
+  status: res.statusCode,
+  ms: Date.now() - start,
+  body: safeBody(req.body)
+}))</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e27">
+  <div class="entry-text">
+    <h3><span class="num">27</span> Test the permission matrix, not the happy path</h3>
+    <p>The happy path is the part you already checked by hand. The cases that break in production are the ones nobody thought to try: another user's record, an expired token, a missing token, an admin override.</p>
+    <p>Write them as a table. Four lines of setup and the matrix tests itself.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>supertest</span></div>
+    <pre class="code" data-lang="js"><code>const request = require('supertest')
+const app = require('../src/app')
+
+describe('GET /api/plants/:id', () =&gt; {
+  test('owner gets 200', async () =&gt; {
+    await request(app).get(`/api/plants/${plantId}`)
+      .set('Authorization', `Bearer ${ownerToken}`)
+      .expect(200)
+  })
+
+  test('other user gets 403', async () =&gt; {
+    await request(app).get(`/api/plants/${plantId}`)
+      .set('Authorization', `Bearer ${otherToken}`)
+      .expect(403)
+  })
+
+  test('admin gets 200', async () =&gt; {
+    await request(app).get(`/api/plants/${plantId}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .expect(200)
+  })
+
+  test('no token gets 401', async () =&gt; {
+    await request(app).get(`/api/plants/${plantId}`).expect(401)
+  })
+
+  test('cannot set role at signup', async () =&gt; {
+    const res = await request(app).post('/api/auth/signup')
+      .send({ email: 'x@y.z', password: 'password1', role: 'admin' })
+      .expect(201)
+    expect(res.body.data.user.role).toBe('user')   // not admin
+  })
+})</code></pre>
+  </div>
+</article>
+
+<article class="entry entry-wide" id="e28">
+  <div class="entry-text">
+    <h3><span class="num">28</span> Pre-flight checklist</h3>
+    <p>Run down this list before you call an API finished. Every line is something that has gone wrong in a real project.</p>
+    <ul>
+      <li><code>.env</code> is in <code>.gitignore</code>, and was there before the first commit</li>
+      <li><code>JWT_SECRET</code> is long and random, and the server refuses to boot without it</li>
+      <li>No controller passes <code>req.body</code> straight to a model</li>
+      <li><code>role</code> cannot be set through signup or update</li>
+      <li>Every protected route has <code>requireAuth</code>, checked by reading the router file</li>
+      <li>Ownership is checked after loading, on read, update and delete</li>
+      <li>List endpoints clamp <code>limit</code> and whitelist <code>sort</code></li>
+      <li>The error handler takes four parameters</li>
+      <li>Stack traces never reach a production response</li>
+      <li>Login is rate limited</li>
+      <li>Passwords and tokens never appear in logs</li>
+      <li><code>404</code> and the error handler are mounted last, in that order</li>
+    </ul>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the finished surface</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Method</th><th>Path</th><th>Auth</th><th>Who</th></tr></thead>
+        <tbody><tr><td><code>POST</code></td><td><code>/api/auth/signup</code></td><td>none</td><td>anyone</td></tr><tr><td><code>POST</code></td><td><code>/api/auth/login</code></td><td>none</td><td>anyone</td></tr><tr><td><code>GET</code></td><td><code>/api/auth/me</code></td><td>token</td><td>self</td></tr><tr><td><code>GET</code></td><td><code>/api/plants</code></td><td>token</td><td>own, or all if admin</td></tr><tr><td><code>POST</code></td><td><code>/api/plants</code></td><td>token</td><td>any user</td></tr><tr><td><code>GET</code></td><td><code>/api/plants/:id</code></td><td>token</td><td>owner or admin</td></tr><tr><td><code>PATCH</code></td><td><code>/api/plants/:id</code></td><td>token</td><td>owner or admin</td></tr><tr><td><code>DELETE</code></td><td><code>/api/plants/:id</code></td><td>token</td><td>owner or admin</td></tr><tr><td><code>GET</code></td><td><code>/api/users</code></td><td>token</td><td>admin only</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry entry-wide" id="e29">
+  <div class="entry-text">
+    <h3><span class="num">29</span> Check yourself: the permission matrix</h3>
+    <p>Every combination below is a request someone will eventually make. Pick a role, a token, a record and an endpoint, and the panel shows which guard stops it and what the caller sees.</p>
+    <p>The decision runs in the same order your middleware does: <code>requireAuth</code>, then <code>requireRole</code>, then the ownership check inside the controller. The first one to object is the one that answers.</p>
+    <p class="tip">The combination worth sitting with is <strong>admin</strong> + <strong>someone else's</strong>. It returns <code>200</code>, and that is deliberate — but it means every admin account is a skeleton key, which is why admin is never the default role.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>try it</span></div>
+    <div class="try">
+      <p class="legend"><b>Role</b></p>
+      <div class="chips" data-group="role">
+        <button type="button" class="chip" data-v="user" aria-pressed="true">user</button>
+        <button type="button" class="chip" data-v="admin" aria-pressed="false">admin</button>
+      </div>
+
+      <p class="legend"><b>Token</b></p>
+      <div class="chips" data-group="token">
+        <button type="button" class="chip" data-v="valid" aria-pressed="true">valid</button>
+        <button type="button" class="chip" data-v="expired" aria-pressed="false">expired</button>
+        <button type="button" class="chip" data-v="none" aria-pressed="false">missing</button>
+      </div>
+
+      <p class="legend"><b>The record is</b></p>
+      <div class="chips" data-group="owner">
+        <button type="button" class="chip" data-v="own" aria-pressed="true">theirs</button>
+        <button type="button" class="chip" data-v="other" aria-pressed="false">someone else's</button>
+      </div>
+
+      <p class="legend"><b>Request</b></p>
+      <div class="chips" data-group="action">
+        <button type="button" class="chip" data-v="read" aria-pressed="true">GET /api/plants/:id</button>
+        <button type="button" class="chip" data-v="update" aria-pressed="false">PATCH /api/plants/:id</button>
+        <button type="button" class="chip" data-v="delete" aria-pressed="false">DELETE /api/plants/:id</button>
+        <button type="button" class="chip" data-v="create" aria-pressed="false">POST /api/plants</button>
+        <button type="button" class="chip" data-v="admin" aria-pressed="false">GET /api/users</button>
+      </div>
+
+      <div class="out" id="pm-out"></div>
+    </div>
+  </div>
+</article>
+
+
+<p class="empty" hidden>Nothing on this page mentions that. Try a shorter word, or clear the filter.</p>
+
+<footer class="foot">
+  <p><a href="./index.html">&larr; Back to Coding Hub</a></p>
+  <p>Node unit &nbsp;/&nbsp; builds on the bcrypt + jwt and MongoDB references.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script src="./js/highlight.js"></script>
+<script src="./js/reference.js"></script>
+<script>
+/* Permission matrix: works the same decision tree the middleware does,
+   in the same order, so the stop that fires is the one you would hit. */
+(function () {
+  var state = { role: 'user', token: 'valid', owner: 'own', action: 'read' };
+  var out = document.getElementById('pm-out');
+  if (!out) return;
+
+  var LABEL = {
+    read:   'GET /api/plants/:id',
+    update: 'PATCH /api/plants/:id',
+    delete: 'DELETE /api/plants/:id',
+    create: 'POST /api/plants',
+    admin:  'GET /api/users'
+  };
+
+  function decide (s) {
+    // 1. requireAuth - is there a usable token at all?
+    if (s.token === 'none') {
+      return { code: 401, ok: false, by: 'requireAuth',
+               why: 'No Authorization header, so there is nobody to check.',
+               body: '{ "error": "Authentication required" }' };
+    }
+    if (s.token === 'expired') {
+      return { code: 401, ok: false, by: 'requireAuth',
+               why: 'jwt.verify threw TokenExpiredError. Log in again.',
+               body: '{ "error": "Token expired" }' };
+    }
+
+    // 2. requireRole - coarse, endpoint-level permission.
+    if (s.action === 'admin' && s.role !== 'admin') {
+      return { code: 403, ok: false, by: 'requireRole(\'admin\')',
+               why: 'We know who they are. They are just not an admin.',
+               body: '{ "error": "Admin access required" }' };
+    }
+
+    // 3. Creating needs no record, so ownership never applies.
+    if (s.action === 'create') {
+      return { code: 201, ok: true, by: 'controller',
+               why: 'ownerId is stamped from req.user._id, not the body.',
+               body: '{ "data": { "id": "6630...", "ownerId": "<caller>" } }' };
+    }
+
+    if (s.action === 'admin') {
+      return { code: 200, ok: true, by: 'controller',
+               why: 'Role check passed, so the list is returned.',
+               body: '{ "data": [ ... ], "meta": { ... } }' };
+    }
+
+    // 4. ownsOrAdmin - the record-level check, after loading.
+    var allowed = (s.role === 'admin') || (s.owner === 'own');
+    if (!allowed) {
+      return { code: 403, ok: false, by: 'ownsOrAdmin',
+               why: 'Valid token, real record, but it belongs to someone else. ' +
+                    'Answer 404 instead if the record existing is itself private.',
+               body: '{ "error": "You do not own this plant" }' };
+    }
+
+    if (s.action === 'delete') {
+      return { code: 204, ok: true, by: 'controller',
+               why: s.role === 'admin' && s.owner === 'other'
+                 ? 'Admins pass the ownership check by rule.'
+                 : 'Caller owns the record.',
+               body: '(no body - 204 means deliberately empty)' };
+    }
+
+    return { code: 200, ok: true, by: 'controller',
+             why: s.role === 'admin' && s.owner === 'other'
+               ? 'Admins pass the ownership check by rule.'
+               : 'Caller owns the record.',
+             body: '{ "data": { "id": "6630...", "name": "Monstera" } }' };
+  }
+
+  function esc (s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function render () {
+    var r = decide(state);
+    var cls = r.ok ? 'ok' : 'err';
+    out.innerHTML =
+      '<p><span class="' + cls + '">' + r.code + '</span> &nbsp;' +
+        esc(LABEL[state.action]) + '</p>' +
+      '<p class="dim">stopped at: ' + esc(r.by) + '</p>' +
+      '<p>' + esc(r.why) + '</p>' +
+      '<pre class="code" data-lang="json"><code>' + esc(r.body) + '</code></pre>';
+
+    // Re-highlight the block we just injected. reference.js already ran,
+    // so paint this one the same way it paints the rest of the page.
+    var pre = out.querySelector('pre.code');
+    if (pre && window.Highlight) {
+      var codeEl = pre.querySelector('code');
+      codeEl.innerHTML = window.Highlight.toHTML(
+        codeEl.textContent, pre.getAttribute('data-lang') || 'js');
+    }
+  }
+
+  Array.prototype.forEach.call(
+    document.querySelectorAll('.try .chips[data-group]'),
+    function (group) {
+      group.addEventListener('click', function (e) {
+        var btn = e.target.closest('.chip');
+        if (!btn) return;
+        state[group.dataset.group] = btn.dataset.v;
+        Array.prototype.forEach.call(group.querySelectorAll('.chip'), function (b) {
+          b.setAttribute('aria-pressed', String(b === btn));
+        });
+        render();
+      });
+    }
+  );
+
+  render();
+})();
+</script>
+</body>
+</html>
