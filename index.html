@@ -19,7 +19,7 @@
 <header class="masthead">
   <div class="masthead-inner">
     <h1 class="wordmark" id="site-name">Coding Hub</h1>
-    <p class="tagline" id="site-tagline"></p>
+    <p class="tagline" id="site-tagline">Every guide, cheat sheet, and practice set for our class, in one place.</p>
 
     <search class="finder">
       <label class="finder-field">
@@ -44,11 +44,87 @@
   </div>
 </header>
 
-<main id="results" class="results"></main>
+<main id="results" class="results">
+  <!-- Fallback navigation. app.js replaces everything in here when it
+       loads, so this list is only visible if the scripts failed. Keep it
+       in step with js/resources.js when you add a page. -->
+  <div id="no-js-nav">
+    <section class="group" style="--accent:#2F6FED">
+      <div class="group-head">
+        <h2 class="group-name">Start here</h2>
+        <span class="group-count">3</span>
+      </div>
+      <ul class="group-list">
+        <li><a class="row" href="start/editor.html"><span class="row-title">Set up your editor</span><span class="row-path">start/editor.html</span><span class="row-desc">Install VS Code, pick a theme, and turn on the settings we use.</span></a></li>
+        <li><a class="row" href="start/handing-in.html"><span class="row-title">How to turn in work</span><span class="row-path">start/handing-in.html</span><span class="row-desc">Where files go, what to name them, and what counts as late.</span></a></li>
+        <li><a class="row" href="start/first-program.html"><span class="row-title">Your first program</span><span class="row-path">start/first-program.html</span><span class="row-desc">Write, save, and run a file from scratch without guessing.</span></a></li>
+      </ul>
+    </section>
+    <section class="group" style="--accent:#1C7C6B">
+      <div class="group-head">
+        <h2 class="group-name">Python</h2>
+        <span class="group-count">4</span>
+      </div>
+      <ul class="group-list">
+        <li><a class="row" href="python/variables.html"><span class="row-title">Variables and types</span><span class="row-path">python/variables.html</span><span class="row-desc">Storing values, naming them well, and what breaks when types mix.</span></a></li>
+        <li><a class="row" href="python/loops.html"><span class="row-title">Loops, step by step</span><span class="row-path">python/loops.html</span><span class="row-desc">for and while, with a trace of what happens on every pass.</span></a></li>
+        <li><a class="row" href="python/errors.html"><span class="row-title">Reading error messages</span><span class="row-path">python/errors.html</span><span class="row-desc">The five errors you will hit most, and what each one is telling you.</span></a></li>
+        <li><a class="row" href="python/functions.html"><span class="row-title">Functions</span><span class="row-path">python/functions.html</span><span class="row-desc">Writing your own, passing arguments, and returning a result.</span></a></li>
+      </ul>
+    </section>
+    <section class="group" style="--accent:#B03A8A">
+      <div class="group-head">
+        <h2 class="group-name">Web pages</h2>
+        <span class="group-count">5</span>
+      </div>
+      <ul class="group-list">
+        <li><a class="row" href="html-walkthrough.html"><span class="row-title">HTML structure</span><span class="row-path">html-walkthrough.html</span><span class="row-desc">The tags that hold a page together and how they nest.</span></a></li>
+        <li><a class="row" href="flexbox-and-grid-walkthrough.html"><span class="row-title">CSS layout</span><span class="row-path">flexbox-and-grid-walkthrough.html</span><span class="row-desc">Flexbox and grid, shown side by side on the same page.</span></a></li>
+        <li><a class="row" href="dom-reference.html"><span class="row-title">The DOM</span><span class="row-path">dom-reference.html</span><span class="row-desc">Respond to clicks, change the page, and read what a user typed.</span></a></li>
+        <li><a class="row" href="css-grid-walkthrough.html"><span class="row-title">CSS Grid</span><span class="row-path">css-grid-walkthrough.html</span><span class="row-desc">CSS Grid, from first line to last, with every property shown running.</span></a></li>
+        <li><a class="row" href="nodejs-express-walkthrough.html"><span class="row-title">Node.js &amp; Express</span><span class="row-path">nodejs-express-walkthrough.html</span><span class="row-desc">Node.js and Express from an empty folder, with Express 4 and 5 side by side.</span></a></li>
+      </ul>
+    </section>
+    <section class="group" style="--accent:#C2611A">
+      <div class="group-head">
+        <h2 class="group-name">Practice</h2>
+        <span class="group-count">2</span>
+      </div>
+      <ul class="group-list">
+        <li><a class="row" href="practice/set-01.html"><span class="row-title">Week 1–4 problem set</span><span class="row-path">practice/set-01.html</span><span class="row-desc">Twelve problems on variables, conditions, and loops.</span></a></li>
+        <li><a class="row" href="practice/debugging.html"><span class="row-title">Debugging drills</span><span class="row-path">practice/debugging.html</span><span class="row-desc">Broken programs to fix. The bug is always findable.</span></a></li>
+      </ul>
+    </section>
+    <section class="group" style="--accent:#6D4AC4">
+      <div class="group-head">
+        <h2 class="group-name">Tools</h2>
+        <span class="group-count">2</span>
+      </div>
+      <ul class="group-list">
+        <li><a class="row" href="tools/terminal.html"><span class="row-title">Terminal basics</span><span class="row-path">tools/terminal.html</span><span class="row-desc">Move between folders and run files without touching the mouse.</span></a></li>
+        <li><a class="row" href="tools/git.html"><span class="row-title">Git and GitHub</span><span class="row-path">tools/git.html</span><span class="row-desc">Save versions of your work and get it onto GitHub.</span></a></li>
+      </ul>
+    </section>
+    <section class="group" style="--accent:#4B5A6B">
+      <div class="group-head">
+        <h2 class="group-name">Reference</h2>
+        <span class="group-count">6</span>
+      </div>
+      <ul class="group-list">
+        <li><a class="row" href="reference/python-cheatsheet.html"><span class="row-title">Python cheat sheet</span><span class="row-path">reference/python-cheatsheet.html</span><span class="row-desc">One page. Every piece of syntax we have used this year.</span></a></li>
+        <li><a class="row" href="reference/shortcuts.html"><span class="row-title">Keyboard shortcuts</span><span class="row-path">reference/shortcuts.html</span><span class="row-desc">The shortcuts worth memorising, for Mac and Windows.</span></a></li>
+        <li><a class="row" href="reference/glossary.html"><span class="row-title">Words we use in class</span><span class="row-path">reference/glossary.html</span><span class="row-desc">Plain definitions for the terms that get thrown around.</span></a></li>
+        <li><a class="row" href="jwt-and-bcrypt-reference.html"><span class="row-title">bcrypt &amp; JWT</span><span class="row-path">jwt-and-bcrypt-reference.html</span><span class="row-desc">Hashing passwords and signing tokens, with a live token decoder.</span></a></li>
+        <li><a class="row" href="mongodb-and-mongoose-reference.html"><span class="row-title">MongoDB &amp; Mongoose</span><span class="row-path">mongodb-and-mongoose-reference.html</span><span class="row-desc">Schemas, validators, queries and operators, plus the errors you will hit.</span></a></li>
+        <li><a class="row" href="javascript-basics-reference.html"><span class="row-title">JavaScript basics</span><span class="row-path">javascript-basics-reference.html</span><span class="row-desc">Operators, arrays, array methods and loops, with a scratchpad that flags mutation.</span></a></li>
+      </ul>
+    </section>
+  </div>
+</main>
 
 <footer class="footer">
-  <p id="site-footer"></p>
-  <p class="footer-meta">Last updated <span id="site-updated"></span></p>
+  <p id="site-footer">Built for Period 3. Something broken or missing? Tell me in class.</p>
+  <p class="footer-meta">Last updated <span id="site-updated">September 2026</span></p>
 </footer>
 
 <script src="./js/resources.js"></script>

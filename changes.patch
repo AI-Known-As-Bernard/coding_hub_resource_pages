@@ -1,0 +1,100 @@
+diff --git a/js/highlight.js b/js/highlight.js
+index b65d5e3..f5f11b3 100644
+--- a/js/highlight.js
++++ b/js/highlight.js
+@@ -116,7 +116,41 @@
+     [function (t, src, pos) { return atLineStart(src, pos) ? 'comment' : ''; }, /#[^\n]*/y]
+   ];
+ 
+-  var LANGS = { js: JS_RULES, json: JSON_RULES, bash: BASH_RULES, env: ENV_RULES, text: TEXT_RULES };
++  /* Python. Added for the python/, practice/ and reference/ pages.
++     Purely additive: no existing page asks for data-lang="py". */
++  var PY_KEYWORDS = new Set([
++    'def', 'return', 'if', 'elif', 'else', 'for', 'while', 'in', 'not', 'and',
++    'or', 'is', 'import', 'from', 'as', 'class', 'try', 'except', 'finally',
++    'raise', 'with', 'lambda', 'pass', 'break', 'continue', 'global',
++    'nonlocal', 'yield', 'assert', 'del', 'await', 'async'
++  ]);
++  var PY_LITERALS = new Set(['True', 'False', 'None', 'self']);
++  var PY_BUILTINS = new Set([
++    'print', 'len', 'range', 'int', 'str', 'float', 'list', 'dict', 'set',
++    'tuple', 'input', 'type', 'sum', 'min', 'max', 'sorted', 'reversed',
++    'enumerate', 'zip', 'abs', 'round', 'bool', 'open', 'isinstance',
++    'format', 'any', 'all', 'map', 'filter'
++  ]);
++
++  var PY_RULES = [
++    ['comment', /#[^\n]*/y],
++    // Triple-quoted first, so a docstring is not read as two empty strings
++    ['string', /[fFrRbB]{0,2}(?:'''[\s\S]*?'''|"""[\s\S]*?""")/y],
++    ['string', /[fFrRbB]{0,2}(?:'(?:\\.|[^\\'\n])*'|"(?:\\.|[^\\"\n])*")/y],
++    ['number', /\b\d+(?:\.\d+)?\b/y],
++    [function (word, src, pos) {
++      if (PY_KEYWORDS.has(word)) return 'keyword';
++      if (PY_LITERALS.has(word)) return 'literal';
++      if (PY_BUILTINS.has(word)) return 'builtin';
++      if (/^\s*\(/.test(src.slice(pos + word.length))) return 'fn';
++      return '';
++    }, /[A-Za-z_][\w]*/y]
++  ];
++
++  var LANGS = {
++    js: JS_RULES, json: JSON_RULES, bash: BASH_RULES,
++    env: ENV_RULES, text: TEXT_RULES, py: PY_RULES
++  };
+ 
+   function toHTML(src, lang) {
+     var rules = LANGS[lang];
+diff --git a/js/resources.js b/js/resources.js
+index 873d11e..70e79c7 100644
+--- a/js/resources.js
++++ b/js/resources.js
+@@ -138,7 +138,7 @@ const RESOURCES = [
+ 
+   {
+     title: "HTML structure",
+-    url: "web/html.html",
++    url: "html-walkthrough.html",
+     category: "web",
+     desc: "The tags that hold a page together and how they nest.",
+     tags: ["tags", "elements", "markup"],
+@@ -146,18 +146,35 @@ const RESOURCES = [
+   },
+   {
+     title: "CSS layout",
+-    url: "web/css-layout.html",
++    url: "flexbox-and-grid-walkthrough.html",
+     category: "web",
+     desc: "Flexbox and grid, shown side by side on the same page.",
+     tags: ["flexbox", "grid", "styling", "responsive"],
+     time: "20 min"
+   },
+   {
+-    title: "JavaScript in the browser",
+-    url: "web/javascript.html",
++    title: "The DOM",
++    url: "dom-reference.html",
+     category: "web",
+     desc: "Respond to clicks, change the page, and read what a user typed.",
+-    tags: ["dom", "events", "click", "interactive"]
++    tags: ["dom", "events", "click", "interactive", "queryselector", "classlist"],
++    time: "22 entries"
++  },
++  {
++    title: "CSS Grid",
++    url: "css-grid-walkthrough.html",
++    category: "web",
++    desc: "CSS Grid, from first line to last, with every property shown running.",
++    tags: ["grid", "columns", "rows", "layout", "fr"],
++    time: "20 min"
++  },
++  {
++    title: "Node.js & Express",
++    url: "nodejs-express-walkthrough.html",
++    category: "web",
++    desc: "Node.js and Express from an empty folder, with Express 4 and 5 side by side.",
++    tags: ["node", "express", "npm", "server", "api", "backend"],
++    time: "16 lessons"
+   },
+ 
+   {

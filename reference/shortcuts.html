@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keyboard shortcuts — Coding Hub</title>
+<meta name="description" content="The shortcuts worth memorising, for Mac and Windows.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/reference_styles.css">
+<style>
+  :root{ --accent:#4B5A6B; --accent-soft:#E8EBEE; }
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the contents</a>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol"><a href="../index.html">Coding Hub</a> &nbsp;/&nbsp; Reference</p>
+  <h1>keyboard <span class="lit">shortcuts</span></h1>
+  <p class="deck">The ones worth memorising, in VS Code, the browser and the terminal. <strong>Learn five a week rather than all of them at once.</strong></p>
+
+  <div class="finder">
+    <label>
+      <span class="visually-hidden">Filter this page</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="filter" type="search" placeholder="comment, palette, devtools, multi-cursor…" autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="clear">Clear</button>
+  </div>
+  <p class="hits" id="hits" role="status"></p>
+</header>
+
+<nav class="contents" id="start">
+  <h2>On this page</h2>
+  <a href="#e1"><span>01</span> The five to learn first</a>
+  <a href="#e2"><span>02</span> Moving around</a>
+  <a href="#e3"><span>03</span> Editing</a>
+  <a href="#e4"><span>04</span> Multi-cursor, properly</a>
+  <a href="#e5"><span>05</span> Devtools</a>
+  <a href="#e6"><span>06</span> Terminal keys</a>
+  <a href="#e7"><span>07</span> Rebinding</a>
+</nav>
+
+<section class="part">
+  <h2>How to use this</h2>
+  <p>Mac uses &#8984; where Windows and Linux use Ctrl. Where they differ, both are given.</p>
+</section>
+
+<article class="entry" id="e1">
+  <div class="entry-text">
+    <h3><span class="num">01</span> The five to learn first</h3>
+    <p>If you learn nothing else on this page, learn these. Each one replaces something you currently do with the mouse several times an hour.</p>
+    <p class="tip">Pick one, use it deliberately for a day even when the mouse would be faster, and it becomes automatic. Then pick the next.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>start here</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Windows / Linux</th><th>Mac</th><th>Does</th></tr></thead>
+        <tbody><tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td><kbd>&#8984;</kbd>+<kbd>S</kbd></td><td>Save. Most &ldquo;it did not change&rdquo; bugs are an unsaved file.</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>/</kbd></td><td><kbd>&#8984;</kbd>+<kbd>/</kbd></td><td>Comment or uncomment the line</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd></td><td><kbd>&#8984;</kbd>+<kbd>Z</kbd></td><td>Undo. <kbd>Shift</kbd> as well to redo.</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd></td><td><kbd>&#8984;</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd></td><td>Command palette — every command, searchable</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>`</kbd></td><td><kbd>&#8984;</kbd>+<kbd>`</kbd></td><td>Show or hide the terminal</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<section class="part">
+  <h2>VS Code</h2>
+  <p>The editor you will spend the most hours in.</p>
+</section>
+
+<article class="entry" id="e2">
+  <div class="entry-text">
+    <h3><span class="num">02</span> Moving around</h3>
+    <p>Opening a file by name is the one that changes how you work: stop hunting the sidebar and just type three letters of the filename.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>navigation</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Windows / Linux</th><th>Mac</th><th>Does</th></tr></thead>
+        <tbody><tr><td><kbd>Ctrl</kbd>+<kbd>P</kbd></td><td><kbd>&#8984;</kbd>+<kbd>P</kbd></td><td>Open a file by typing part of its name</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd></td><td><kbd>&#8984;</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd></td><td>Search every file in the project</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>G</kbd></td><td><kbd>Ctrl</kbd>+<kbd>G</kbd></td><td>Go to a line number</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>Home</kbd></td><td><kbd>&#8984;</kbd>+<kbd>&uarr;</kbd></td><td>Top of the file</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>&larr;</kbd></td><td><kbd>&#8997;</kbd>+<kbd>&larr;</kbd></td><td>Jump one word left</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>B</kbd></td><td><kbd>&#8984;</kbd>+<kbd>B</kbd></td><td>Show or hide the sidebar</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>Tab</kbd></td><td><kbd>Ctrl</kbd>+<kbd>Tab</kbd></td><td>Switch between open files</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e3">
+  <div class="entry-text">
+    <h3><span class="num">03</span> Editing</h3>
+    <p>The line commands are the ones that feel like magic the first time. You will never select-cut-click-paste a line again.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>editing</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Windows / Linux</th><th>Mac</th><th>Does</th></tr></thead>
+        <tbody><tr><td><kbd>Alt</kbd>+<kbd>&uarr;</kbd> / <kbd>&darr;</kbd></td><td><kbd>&#8997;</kbd>+<kbd>&uarr;</kbd> / <kbd>&darr;</kbd></td><td>Move the line up or down</td></tr><tr><td><kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>&darr;</kbd></td><td><kbd>Shift</kbd>+<kbd>&#8997;</kbd>+<kbd>&darr;</kbd></td><td>Duplicate the line</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd></td><td><kbd>&#8984;</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd></td><td>Delete the line</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>Enter</kbd></td><td><kbd>&#8984;</kbd>+<kbd>Enter</kbd></td><td>New line below, from anywhere on the line</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>D</kbd></td><td><kbd>&#8984;</kbd>+<kbd>D</kbd></td><td>Select the next copy of the word — press again for more</td></tr><tr><td><kbd>Alt</kbd>+click</td><td><kbd>&#8997;</kbd>+click</td><td>Put a second cursor there. Type in both at once.</td></tr><tr><td><kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>F</kbd></td><td><kbd>Shift</kbd>+<kbd>&#8997;</kbd>+<kbd>F</kbd></td><td>Reformat the file</td></tr><tr><td><kbd>F2</kbd></td><td><kbd>F2</kbd></td><td>Rename a variable everywhere at once</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e4">
+  <div class="entry-text">
+    <h3><span class="num">04</span> Multi-cursor, properly</h3>
+    <p>The one worth practising deliberately. <kbd>Ctrl</kbd>+<kbd>D</kbd> selects the word your cursor is in; press it again and it adds the next occurrence, with a cursor on each.</p>
+    <p>Rename three variables, add a comma to ten lines, wrap five strings in quotes — all in one go. Press <kbd>Esc</kbd> to drop back to one cursor.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>one Ctrl+D per line, then type once</span></div>
+    <pre class="code" data-lang="none"><code>Before:                        After:
+  fern                           "fern",
+  cactus                         "cactus",
+  ivy                            "ivy",
+
+Select the first word, Ctrl+D twice, then type the quotes.</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Browser</h2>
+  <p>For when the page is the thing you are debugging.</p>
+</section>
+
+<article class="entry" id="e5">
+  <div class="entry-text">
+    <h3><span class="num">05</span> Devtools</h3>
+    <p><kbd>F12</kbd> opens the browser's developer tools. The Console tab is where <code>console.log</code> output and JavaScript errors appear — check it before concluding that nothing happened.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>browser</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Windows / Linux</th><th>Mac</th><th>Does</th></tr></thead>
+        <tbody><tr><td><kbd>F12</kbd></td><td><kbd>&#8984;</kbd>+<kbd>&#8997;</kbd>+<kbd>I</kbd></td><td>Open devtools</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd></td><td><kbd>&#8984;</kbd>+<kbd>&#8997;</kbd>+<kbd>C</kbd></td><td>Inspect — click an element to find its markup</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>J</kbd></td><td><kbd>&#8984;</kbd>+<kbd>&#8997;</kbd>+<kbd>J</kbd></td><td>Straight to the Console</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>R</kbd></td><td><kbd>&#8984;</kbd>+<kbd>R</kbd></td><td>Reload</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd></td><td><kbd>&#8984;</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd></td><td>Hard reload, ignoring the cache</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>F</kbd></td><td><kbd>&#8984;</kbd>+<kbd>F</kbd></td><td>Find on the page</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Terminal</h2>
+  <p>Mostly the same everywhere.</p>
+</section>
+
+<article class="entry" id="e6">
+  <div class="entry-text">
+    <h3><span class="num">06</span> Terminal keys</h3>
+    <p>These work in nearly every terminal, on every system, including the one inside VS Code.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>terminal</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Key</th><th>Does</th></tr></thead>
+        <tbody><tr><td><kbd>Tab</kbd></td><td>Complete the filename you are typing</td></tr><tr><td><kbd>&uarr;</kbd> / <kbd>&darr;</kbd></td><td>Walk back through your command history</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>C</kbd></td><td>Stop whatever is running</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>L</kbd></td><td>Clear the screen</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>A</kbd> / <kbd>Ctrl</kbd>+<kbd>E</kbd></td><td>Start / end of the line</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>R</kbd></td><td>Search your history</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>D</kbd></td><td>Close the terminal, or exit Python's REPL</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Making your own</h2>
+  <p>When a command has no shortcut.</p>
+</section>
+
+<article class="entry" id="e7">
+  <div class="entry-text">
+    <h3><span class="num">07</span> Rebinding</h3>
+    <p>Every command in VS Code can be bound to a key. Open the keyboard shortcuts editor with <kbd>Ctrl</kbd>+<kbd>K</kbd> then <kbd>Ctrl</kbd>+<kbd>S</kbd>, search for the command, and click the pencil.</p>
+    <p class="tip">If a shortcut on this page does nothing, something else has claimed it — an extension, or the operating system. The shortcuts editor shows the conflict.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>searching the palette instead</span></div>
+    <pre class="code" data-lang="none"><code>Ctrl+Shift+P, then type a few letters of what you want:
+
+  format      -&gt;  Format Document
+  reload      -&gt;  Developer: Reload Window
+  settings    -&gt;  Preferences: Open User Settings (JSON)
+  theme       -&gt;  Preferences: Color Theme
+
+The palette shows the shortcut beside each command, which is
+how most people learn them.</code></pre>
+  </div>
+</article>
+
+
+<p class="empty" hidden>Nothing on this page mentions that. Try a shorter word, or clear the filter.</p>
+
+<footer class="foot">
+  <p><a href="../index.html">&larr; Back to Coding Hub</a></p>
+  <p>Setup: <a href="../start/editor.html">Set up your editor</a>.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script src="../js/highlight.js"></script>
+<script src="../js/reference.js"></script>
+</body>
+</html>

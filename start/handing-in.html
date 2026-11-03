@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to turn in work — Coding Hub</title>
+<meta name="description" content="Where files go, what to name them, and what counts as late.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/reference_styles.css">
+<style>
+  :root{ --accent:#2F6FED; --accent-soft:#E4ECFD; }
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the contents</a>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol"><a href="../index.html">Coding Hub</a> &nbsp;/&nbsp; Start here</p>
+  <h1>how to <span class="lit">turn in</span> work</h1>
+  <p class="deck">Where files go, what to name them, and what counts as late. <strong>Read this once properly and you will never lose marks on process.</strong></p>
+
+  <div class="finder">
+    <label>
+      <span class="visually-hidden">Filter this page</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="filter" type="search" placeholder="naming, late, resubmit, zip…" autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="clear">Clear</button>
+  </div>
+  <p class="hits" id="hits" role="status"></p>
+</header>
+
+<nav class="contents" id="start">
+  <h2>On this page</h2>
+  <a href="#e1"><span>01</span> Name files the way the assignment says</a>
+  <a href="#e2"><span>02</span> The entry file is always index.html</a>
+  <a href="#e3"><span>03</span> Check your links before you submit</a>
+  <a href="#e4"><span>04</span> What to hand in</a>
+  <a href="#e5"><span>05</span> Zipping a folder</a>
+  <a href="#e6"><span>06</span> Never include node_modules</a>
+  <a href="#e7"><span>07</span> What counts as late, and resubmitting</a>
+</nav>
+
+<section class="part">
+  <h2>Before you submit</h2>
+  <p>Most lost marks are process, not code.</p>
+</section>
+
+<article class="entry" id="e1">
+  <div class="entry-text">
+    <h3><span class="num">01</span> Name files the way the assignment says</h3>
+    <p>Names are how I find your work among thirty others. A file called <code>Untitled-1.html</code> or <code>final FINAL v2.html</code> costs you time and me patience.</p>
+    <p>Three rules that apply to every file you hand in:</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>naming</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Rule</th><th>Yes</th><th>No</th></tr></thead>
+        <tbody><tr><td>Lowercase only</td><td><code>portfolio.html</code></td><td><code>Portfolio.HTML</code></td></tr><tr><td>Hyphens, never spaces</td><td><code>plant-tracker.js</code></td><td><code>plant tracker.js</code></td></tr><tr><td>No version numbers in the name</td><td><code>index.html</code></td><td><code>index-final-v3.html</code></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e2">
+  <div class="entry-text">
+    <h3><span class="num">02</span> The entry file is always index.html</h3>
+    <p>A web project opens at <code>index.html</code>. That is a rule of the web, not a preference of mine: a browser pointed at a folder looks for that exact name.</p>
+    <p>If your main page is called <code>home.html</code> or <code>Portfolio.html</code>, the link I open shows a file listing or a 404, and your project reads as broken before I have seen a line of it.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>a project folder ready to hand in</span></div>
+    <pre class="code" data-lang="none"><code>plant-tracker/
+|- index.html          &lt;- the entry point, this exact name
+|- css/
+|   +- styles.css
+|- js/
+|   +- app.js
+|- images/
+|   +- fern.jpg
++- README.md           &lt;- what it is and how to run it</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e3">
+  <div class="entry-text">
+    <h3><span class="num">03</span> Check your links before you submit</h3>
+    <p>Links that work on your machine often break for everyone else, and there are only two causes. Both are easy to check.</p>
+    <p class="warn"><strong>Capitalisation.</strong> Windows and Mac treat <code>Fern.jpg</code> and <code>fern.jpg</code> as the same file. The web server does not. A capital letter in the wrong place is the single most common reason images vanish once work is handed in.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>paths</span></div>
+    <pre class="code" data-lang="none"><code>src="images/fern.jpg"        &lt;- relative. Travels with the folder.
+src="/images/fern.jpg"       &lt;- starts at the site root. Often breaks.
+src="C:/Users/you/fern.jpg"  &lt;- your hard drive. Never works for anyone else.
+
+href="../index.html"         &lt;- up one folder, then index.html</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Submitting</h2>
+  <p>The mechanics.</p>
+</section>
+
+<article class="entry" id="e4">
+  <div class="entry-text">
+    <h3><span class="num">04</span> What to hand in</h3>
+    <p>Unless the assignment says otherwise, submit the <strong>whole project folder</strong>, not loose files. A single <code>.html</code> file with no stylesheet is not the project.</p>
+    <p>[Set out here whether you want a zip, a repository link, or both.]</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>by assignment type</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Type of work</th><th>Hand in</th></tr></thead>
+        <tbody><tr><td>A single exercise</td><td>The one file, named as the assignment says</td></tr><tr><td>A multi-file project</td><td>The folder, zipped — or a repository link</td></tr><tr><td>Anything using Git</td><td>The repository link. Do not also zip it.</td></tr><tr><td>A written answer</td><td>[Your preferred format goes here]</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e5">
+  <div class="entry-text">
+    <h3><span class="num">05</span> Zipping a folder</h3>
+    <p>Zip the folder itself, not the files inside it. Selecting the contents and zipping those produces an archive that explodes loose files over whoever opens it.</p>
+    <p class="tip">Open your own zip before you submit it. You should see one folder, and that folder should contain <code>index.html</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>how</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>System</th><th>Steps</th></tr></thead>
+        <tbody><tr><td>Windows</td><td>Right-click the folder &gt; Send to &gt; Compressed (zipped) folder</td></tr><tr><td>Mac</td><td>Right-click the folder &gt; Compress</td></tr><tr><td>Terminal</td><td><code>zip -r plant-tracker.zip plant-tracker</code></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e6">
+  <div class="entry-text">
+    <h3><span class="num">06</span> Never include node_modules</h3>
+    <p>If your project uses npm, the <code>node_modules</code> folder holds tens of thousands of files that are not yours and that anyone can rebuild with one command.</p>
+    <p>Zipping it turns a 40&nbsp;KB submission into a 200&nbsp;MB one. Add a <code>.gitignore</code> before your first commit and the problem never comes up.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>.gitignore</span></div>
+    <pre class="code" data-lang="none"><code>node_modules/
+.env
+.DS_Store
+*.log</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Deadlines</h2>
+  <p>Set by me; the mechanics are the same every time.</p>
+</section>
+
+<article class="entry" id="e7">
+  <div class="entry-text">
+    <h3><span class="num">07</span> What counts as late, and resubmitting</h3>
+    <p>[Replace this section with your own late and resubmission policy.]</p>
+    <p>Whatever the policy says, two things are always true. A submission is timestamped when it uploads, not when you finished working — leave a margin. And a file that will not open counts as not submitted, which is why the checklist below exists.</p>
+    <p class="tip">Something went wrong and you cannot submit? Tell me <em>before</em> the deadline, not after. A message beforehand is a conversation; the same message afterwards is an excuse.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>before you click submit</span></div>
+    <div class="try">
+      <ul class="checklist">
+        <li><label><input type="checkbox"> <span>The entry file is called <code>index.html</code></span></label></li>
+        <li><label><input type="checkbox"> <span>Every filename is lowercase with hyphens, no spaces</span></label></li>
+        <li><label><input type="checkbox"> <span>You opened the project from the folder and every image loaded</span></label></li>
+        <li><label><input type="checkbox"> <span>Every link goes somewhere real</span></label></li>
+        <li><label><input type="checkbox"> <span><code>node_modules</code> is not in the submission</span></label></li>
+        <li><label><input type="checkbox"> <span>You opened your own zip and it contains one folder</span></label></li>
+        <li><label><input type="checkbox"> <span>Your name is in the README or a comment at the top</span></label></li>
+      </ul>
+    </div>
+  </div>
+</article>
+
+
+<p class="empty" hidden>Nothing on this page mentions that. Try a shorter word, or clear the filter.</p>
+
+<footer class="foot">
+  <p><a href="../index.html">&larr; Back to Coding Hub</a></p>
+  <p>See also: <a href="../tools/git.html">Git and GitHub</a>.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script src="../js/highlight.js"></script>
+<script src="../js/reference.js"></script>
+</body>
+</html>

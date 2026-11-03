@@ -116,7 +116,41 @@
     [function (t, src, pos) { return atLineStart(src, pos) ? 'comment' : ''; }, /#[^\n]*/y]
   ];
 
-  var LANGS = { js: JS_RULES, json: JSON_RULES, bash: BASH_RULES, env: ENV_RULES, text: TEXT_RULES };
+  /* Python. Added for the python/, practice/ and reference/ pages.
+     Purely additive: no existing page asks for data-lang="py". */
+  var PY_KEYWORDS = new Set([
+    'def', 'return', 'if', 'elif', 'else', 'for', 'while', 'in', 'not', 'and',
+    'or', 'is', 'import', 'from', 'as', 'class', 'try', 'except', 'finally',
+    'raise', 'with', 'lambda', 'pass', 'break', 'continue', 'global',
+    'nonlocal', 'yield', 'assert', 'del', 'await', 'async'
+  ]);
+  var PY_LITERALS = new Set(['True', 'False', 'None', 'self']);
+  var PY_BUILTINS = new Set([
+    'print', 'len', 'range', 'int', 'str', 'float', 'list', 'dict', 'set',
+    'tuple', 'input', 'type', 'sum', 'min', 'max', 'sorted', 'reversed',
+    'enumerate', 'zip', 'abs', 'round', 'bool', 'open', 'isinstance',
+    'format', 'any', 'all', 'map', 'filter'
+  ]);
+
+  var PY_RULES = [
+    ['comment', /#[^\n]*/y],
+    // Triple-quoted first, so a docstring is not read as two empty strings
+    ['string', /[fFrRbB]{0,2}(?:'''[\s\S]*?'''|"""[\s\S]*?""")/y],
+    ['string', /[fFrRbB]{0,2}(?:'(?:\\.|[^\\'\n])*'|"(?:\\.|[^\\"\n])*")/y],
+    ['number', /\b\d+(?:\.\d+)?\b/y],
+    [function (word, src, pos) {
+      if (PY_KEYWORDS.has(word)) return 'keyword';
+      if (PY_LITERALS.has(word)) return 'literal';
+      if (PY_BUILTINS.has(word)) return 'builtin';
+      if (/^\s*\(/.test(src.slice(pos + word.length))) return 'fn';
+      return '';
+    }, /[A-Za-z_][\w]*/y]
+  ];
+
+  var LANGS = {
+    js: JS_RULES, json: JSON_RULES, bash: BASH_RULES,
+    env: ENV_RULES, text: TEXT_RULES, py: PY_RULES
+  };
 
   function toHTML(src, lang) {
     var rules = LANGS[lang];

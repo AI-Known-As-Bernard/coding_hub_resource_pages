@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git and GitHub — Coding Hub</title>
+<meta name="description" content="Save versions of your work and get it onto GitHub.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/reference_styles.css">
+<style>
+  :root{ --accent:#6D4AC4; --accent-soft:#ECE7F8; }
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the contents</a>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol"><a href="../index.html">Coding Hub</a> &nbsp;/&nbsp; Tools</p>
+  <h1>git <span class="lit">&amp;</span> github</h1>
+  <p class="deck">Save versions of your work, and get it onto GitHub where I can see it. <strong>Entries 4 and 5 are the loop you will run dozens of times a term.</strong></p>
+
+  <div class="finder">
+    <label>
+      <span class="visually-hidden">Filter this page</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="filter" type="search" placeholder="commit, push, clone, gitignore…" autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="clear">Clear</button>
+  </div>
+  <p class="hits" id="hits" role="status"></p>
+</header>
+
+<nav class="contents" id="start">
+  <h2>On this page</h2>
+  <a href="#e1"><span>01</span> Git is not GitHub</a>
+  <a href="#e2"><span>02</span> Set your name once</a>
+  <a href="#e3"><span>03</span> Starting a repository</a>
+  <a href="#e4"><span>04</span> status, add, commit</a>
+  <a href="#e5"><span>05</span> Writing a commit message</a>
+  <a href="#e6"><span>06</span> Pushing to GitHub</a>
+  <a href="#e7"><span>07</span> .gitignore</a>
+  <a href="#e8"><span>08</span> README.md</a>
+  <a href="#e9"><span>09</span> Commit often, in small pieces</a>
+  <a href="#e10"><span>10</span> Undoing</a>
+  <a href="#e11"><span>11</span> Errors you will meet</a>
+  <a href="#e12"><span>12</span> The whole loop on one card</a>
+</nav>
+
+<section class="part">
+  <h2>The idea</h2>
+  <p>Two different things with similar names.</p>
+</section>
+
+<article class="entry" id="e1">
+  <div class="entry-text">
+    <h3><span class="num">01</span> Git is not GitHub</h3>
+    <p><strong>Git</strong> is a program on your computer that records snapshots of a folder. It works with no internet and no account.</p>
+    <p><strong>GitHub</strong> is a website that stores copies of Git projects so you can share them, hand them in, and get them back if your laptop dies.</p>
+    <p>You can use Git without GitHub. You cannot sensibly use GitHub without Git.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the vocabulary</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Word</th><th>Means</th></tr></thead>
+        <tbody><tr><td>repository, repo</td><td>A folder Git is tracking</td></tr><tr><td>commit</td><td>One saved snapshot, with a message saying what changed</td></tr><tr><td>staging area</td><td>The list of changes that will go into the next commit</td></tr><tr><td>push</td><td>Send your commits up to GitHub</td></tr><tr><td>pull</td><td>Bring commits down from GitHub</td></tr><tr><td>clone</td><td>Download a repo for the first time</td></tr><tr><td>remote</td><td>The GitHub copy. Usually nicknamed <code>origin</code>.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e2">
+  <div class="entry-text">
+    <h3><span class="num">02</span> Set your name once</h3>
+    <p>Every commit records who made it. Set this once per computer, before your first commit, or your history is attributed to nobody.</p>
+    <p class="tip">Use the same email as your GitHub account and your commits will link to your profile.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>Terminal</span></div>
+    <pre class="code" data-lang="bash"><code>git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+
+# Check it took
+git config --global --list
+
+# Make 'main' the default branch name for new repos
+git config --global init.defaultBranch main</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>The everyday loop</h2>
+  <p>status, add, commit, push. In that order, every time.</p>
+</section>
+
+<article class="entry" id="e3">
+  <div class="entry-text">
+    <h3><span class="num">03</span> Starting a repository</h3>
+    <p>Two ways in. Either you have a folder and want to track it, or the project is already on GitHub and you want a copy.</p>
+    <p class="warn">Create the <code>.gitignore</code> <em>before</em> your first commit. Committing <code>node_modules</code> once leaves it in the history even after you delete it.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>Terminal</span></div>
+    <pre class="code" data-lang="bash"><code># A: a folder you already have
+cd my-project
+git init
+
+# B: a project already on GitHub
+git clone https://github.com/someone/their-project.git
+cd their-project</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e4">
+  <div class="entry-text">
+    <h3><span class="num">04</span> status, add, commit</h3>
+    <p><code>git status</code> is the command to run constantly. It tells you what has changed, what is staged, and usually what to type next.</p>
+    <p>Staging is the step people find odd at first. It lets you choose which changes go into a commit, so one commit can be one idea even when you have edited five files.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>Terminal</span></div>
+    <pre class="code" data-lang="bash"><code>git status                  # what has changed? run this often
+
+git add index.html          # stage one file
+git add css/               # stage a folder
+git add .                   # stage everything changed
+
+git commit -m "Add the plant card layout"
+
+git log --oneline           # the history, one line per commit
+git diff                    # what changed but is not staged yet</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e5">
+  <div class="entry-text">
+    <h3><span class="num">05</span> Writing a commit message</h3>
+    <p>A message is read by someone trying to find when something broke — usually you, in three weeks. <code>update</code> and <code>stuff</code> tell that person nothing.</p>
+    <p>Write what the commit <em>does</em>, in the present tense, in under about fifty characters. A good test: the message should finish the sentence &ldquo;Applying this commit will…&rdquo;</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>messages</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Good</th><th>Useless</th></tr></thead>
+        <tbody><tr><td><code>Add watering form to the plant page</code></td><td><code>update</code></td></tr><tr><td><code>Fix total not resetting between orders</code></td><td><code>fixed bug</code></td></tr><tr><td><code>Move styles out of index.html</code></td><td><code>changes</code></td></tr><tr><td><code>Add .gitignore for node_modules</code></td><td><code>asdf</code></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e6">
+  <div class="entry-text">
+    <h3><span class="num">06</span> Pushing to GitHub</h3>
+    <p>Make an empty repository on GitHub — no README, no .gitignore, or you will have to merge before your first push. Then connect your folder to it and push.</p>
+    <p>After the first time, <code>git push</code> on its own is enough.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>Terminal</span></div>
+    <pre class="code" data-lang="bash"><code># Once, to connect the folder to the GitHub repo
+git remote add origin https://github.com/you/my-project.git
+git branch -M main
+git push -u origin main
+
+# Every time after that
+git push
+
+# Check what it is connected to
+git remote -v</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Keeping it clean</h2>
+  <p>Two files and one habit.</p>
+</section>
+
+<article class="entry" id="e7">
+  <div class="entry-text">
+    <h3><span class="num">07</span> .gitignore</h3>
+    <p>Some files should never be committed: installed packages, secrets, and whatever your operating system scatters about. A <code>.gitignore</code> file at the top of the repo lists them, one pattern per line.</p>
+    <p class="warn"><code>.gitignore</code> only affects files Git is <em>not already tracking</em>. If you committed something by mistake, add it to the file and then run <code>git rm -r --cached &lt;name&gt;</code> before committing again.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>.gitignore</span></div>
+    <pre class="code" data-lang="none"><code># Installed packages - rebuilt with npm install
+node_modules/
+
+# Secrets. Commit .env.example instead.
+.env
+
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# Operating system and editor
+.DS_Store
+Thumbs.db
+.vscode/</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e8">
+  <div class="entry-text">
+    <h3><span class="num">08</span> README.md</h3>
+    <p>The first thing anyone sees on GitHub, and the first thing I read when marking. It should answer three questions: what is this, how do I run it, and what can it do.</p>
+    <p>It is written in Markdown — <code>#</code> for headings, <code>-</code> for bullets, backticks for code.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>README.md</span></div>
+    <pre class="code" data-lang="none"><code># Plant Tracker
+
+A web app for tracking when houseplants need watering.
+Built for Period 3, unit 4.
+
+## Running it
+
+1. `npm install`
+2. Copy `.env.example` to `.env` and fill in the values
+3. `npm run dev`
+4. Open http://localhost:3000
+
+## What it does
+
+- Add a plant with a watering interval
+- See which plants are overdue
+- Mark a plant as watered</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e9">
+  <div class="entry-text">
+    <h3><span class="num">09</span> Commit often, in small pieces</h3>
+    <p>A commit per feature beats one enormous commit at the end. Small commits are easier to describe, and when something breaks you can see exactly which change did it.</p>
+    <p class="tip">A reasonable rhythm: commit whenever you have something that works, even if it is small. &ldquo;It runs and does one more thing than before&rdquo; is a perfectly good reason to commit.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>a healthy history</span></div>
+    <pre class="code" data-lang="none"><code>$ git log --oneline
+a3f21c9 Add overdue badge to plant cards
+8e4b012 Store last watered date on each plant
+1d93f7a Add the plant list layout
+4c0a88e Add .gitignore
+9fe1234 Initial commit</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>When it goes wrong</h2>
+  <p>Undoing things, carefully.</p>
+</section>
+
+<article class="entry" id="e10">
+  <div class="entry-text">
+    <h3><span class="num">10</span> Undoing</h3>
+    <p>Git can undo nearly anything, but the commands differ by how far along the change is. Find your situation in the table and use that line only.</p>
+    <p class="warn"><code>git reset --hard</code> throws away uncommitted work permanently. Do not reach for it because a forum post said so — be sure you know what you are discarding.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>undoing</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Situation</th><th>Command</th></tr></thead>
+        <tbody><tr><td>Changed a file, want the last committed version back</td><td><code>git restore file.html</code></td></tr><tr><td>Staged something by mistake</td><td><code>git restore --staged file.html</code></td></tr><tr><td>Commit message has a typo (not pushed yet)</td><td><code>git commit --amend -m "Better message"</code></td></tr><tr><td>Want to undo the last commit, keep the changes</td><td><code>git reset --soft HEAD~1</code></td></tr><tr><td>Want to see an old version</td><td><code>git log --oneline</code> then <code>git show &lt;hash&gt;</code></td></tr><tr><td>Everything is a mess and nothing is pushed</td><td>Copy your folder elsewhere first, <em>then</em> experiment</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e11">
+  <div class="entry-text">
+    <h3><span class="num">11</span> Errors you will meet</h3>
+    <p>Git's messages are unusually good: most of them suggest the fix on the next line.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>message to cause</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>What you see</th><th>Means</th></tr></thead>
+        <tbody><tr><td><code>not a git repository</code></td><td>You are not inside a repo. <code>cd</code> into it, or <code>git init</code>.</td></tr><tr><td><code>nothing to commit, working tree clean</code></td><td>Nothing changed since the last commit. Often an unsaved file.</td></tr><tr><td><code>Updates were rejected</code></td><td>GitHub has commits you do not. <code>git pull</code> first, then push.</td></tr><tr><td><code>Please tell me who you are</code></td><td>Run the two <code>git config --global</code> lines in entry 2.</td></tr><tr><td><code>Authentication failed</code></td><td>GitHub stopped accepting passwords. Use a personal access token, or set up SSH.</td></tr><tr><td><code>fatal: remote origin already exists</code></td><td>Already connected. <code>git remote set-url origin &lt;url&gt;</code> to change it.</td></tr><tr><td>A text editor opened and you are stuck</td><td>It wants a commit message. Write one, then <kbd>Esc</kbd> <code>:wq</code> <kbd>Enter</kbd> in vim.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e12">
+  <div class="entry-text">
+    <h3><span class="num">12</span> The whole loop on one card</h3>
+    <p>Print this, or learn it. It is most of what you need.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>Terminal</span></div>
+    <pre class="code" data-lang="bash"><code># Once per project
+git init
+git remote add origin https://github.com/you/project.git
+
+# Every working session
+git status
+git add .
+git commit -m "What this change does"
+git push
+
+# Starting on another machine
+git clone https://github.com/you/project.git
+
+# Catching up before you start work
+git pull</code></pre>
+  </div>
+</article>
+
+
+<p class="empty" hidden>Nothing on this page mentions that. Try a shorter word, or clear the filter.</p>
+
+<footer class="foot">
+  <p><a href="../index.html">&larr; Back to Coding Hub</a></p>
+  <p>Needs the <a href="./terminal.html">terminal</a>.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script src="../js/highlight.js"></script>
+<script src="../js/reference.js"></script>
+</body>
+</html>

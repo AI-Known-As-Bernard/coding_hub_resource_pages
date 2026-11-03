@@ -138,7 +138,7 @@ const RESOURCES = [
 
   {
     title: "HTML structure",
-    url: "web/html.html",
+    url: "html-walkthrough.html",
     category: "web",
     desc: "The tags that hold a page together and how they nest.",
     tags: ["tags", "elements", "markup"],
@@ -146,18 +146,35 @@ const RESOURCES = [
   },
   {
     title: "CSS layout",
-    url: "web/css-layout.html",
+    url: "flexbox-and-grid-walkthrough.html",
     category: "web",
     desc: "Flexbox and grid, shown side by side on the same page.",
     tags: ["flexbox", "grid", "styling", "responsive"],
     time: "20 min"
   },
   {
-    title: "JavaScript in the browser",
-    url: "web/javascript.html",
+    title: "The DOM",
+    url: "dom-reference.html",
     category: "web",
     desc: "Respond to clicks, change the page, and read what a user typed.",
-    tags: ["dom", "events", "click", "interactive"]
+    tags: ["dom", "events", "click", "interactive", "queryselector", "classlist"],
+    time: "22 entries"
+  },
+  {
+    title: "CSS Grid",
+    url: "css-grid-walkthrough.html",
+    category: "web",
+    desc: "CSS Grid, from first line to last, with every property shown running.",
+    tags: ["grid", "columns", "rows", "layout", "fr"],
+    time: "20 min"
+  },
+  {
+    title: "Node.js & Express",
+    url: "nodejs-express-walkthrough.html",
+    category: "web",
+    desc: "Node.js and Express from an empty folder, with Express 4 and 5 side by side.",
+    tags: ["node", "express", "npm", "server", "api", "backend"],
+    time: "16 lessons"
   },
 
   {
@@ -241,15 +258,6 @@ const RESOURCES = [
     desc: "Operators, arrays, array methods and loops, with a scratchpad that flags mutation.",
     tags: ["array", "map", "filter", "reduce", "loop", "operators", "truthy", "sort", "javascript"],
     time: "20 entries",
-    isNew: true
-  },
-  {
-    title: "The DOM",
-    url: "dom-reference.html",
-    category: "reference",
-    desc: "Finding, changing and creating elements, plus events, with a live selector playground.",
-    tags: ["dom", "queryselector", "classlist", "dataset", "events", "listener", "delegation", "innerhtml"],
-    time: "22 entries",
     isNew: true
   }
 ];
