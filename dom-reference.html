@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The DOM — reference</title>
+<meta name="description" content="Look-up reference for the Document Object Model: finding elements, changing them, creating and removing nodes, and handling events.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/reference_styles.css">
+<style>
+  :root{ --accent:#2049A8; --accent-soft:#E3EAF8; }
+
+  /* The sample document both playgrounds work on. Scoped so the
+     student's selectors cannot reach the rest of this page. */
+  .stage{padding:.9rem;background:#fff;border-bottom:1px solid var(--rule)}
+  .stage ul{list-style:none;margin:0;padding:0;display:grid;gap:.5rem}
+  .stage li{
+    display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;
+    border:1px solid var(--rule);border-radius:3px;padding:.5rem .65rem;
+    font-family:var(--sans);font-size:var(--s0);background:var(--plate);
+  }
+  .stage h3{font-family:var(--sans);font-size:var(--s1);font-weight:600;margin:0}
+  .stage .tag{
+    font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);
+    border:1px solid var(--rule);border-radius:2px;padding:.1rem .35rem;background:#fff;
+  }
+  .stage .thirsty{border-color:var(--warn);background:#FBF0E8}
+  .stage button{
+    margin-left:auto;font-family:var(--sans);font-size:11px;cursor:pointer;
+    border:1px solid var(--rule);border-radius:2px;padding:.2rem .5rem;background:#fff;
+  }
+  .stage button:disabled{opacity:.45;cursor:not-allowed}
+  /* The match marker. A data attribute, not a class, so that a
+     student typing a class selector never matches the marker. */
+  .stage [data-dom-hit]{
+    outline:2px solid var(--accent);outline-offset:1px;
+    background:var(--accent-soft) !important;
+  }
+  .stage [data-dom-first]{outline-color:#B4531A;outline-width:3px}
+  .stage-note{font-family:var(--sans);font-size:11px;color:var(--ink-soft);margin:.6rem 0 0}
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the reference</a>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol"><a href="./index.html">Coding Hub</a> &nbsp;/&nbsp; Reference</p>
+  <h1>the <span class="lit">dom</span></h1>
+  <p class="deck">Finding elements, changing them, making new ones, and responding to clicks. <strong>Both playgrounds below run on the same little document, so you can see every method work.</strong></p>
+
+  <div class="finder">
+    <label>
+      <span class="visually-hidden">Filter this page</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="filter" type="search" placeholder="classList, dataset, delegation, null&hellip;" autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="clear">Clear</button>
+  </div>
+  <p class="hits" id="hits" role="status"></p>
+</header>
+
+<!-- ===================== SELECTOR PLAYGROUND ===================== -->
+<article class="entry entry-wide" id="e0">
+  <div class="panel">
+    <div class="pane-label"><span>selector playground &mdash; type a CSS selector, watch what it picks</span></div>
+    <div class="stage" id="sel-stage"></div>
+    <div class="try">
+      <div class="chips">
+        <button type="button" class="chip" data-sel=".plant">.plant</button>
+        <button type="button" class="chip" data-sel=".thirsty">.thirsty</button>
+        <button type="button" class="chip" data-sel="#list">#list</button>
+        <button type="button" class="chip" data-sel="li .name">li .name</button>
+        <button type="button" class="chip" data-sel="#list &gt; li">#list &gt; li</button>
+        <button type="button" class="chip" data-sel="[data-id=&quot;2&quot;]">[data-id="2"]</button>
+        <button type="button" class="chip" data-sel="button:disabled">button:disabled</button>
+        <button type="button" class="chip" data-sel=".plant:not(.thirsty)">:not()</button>
+        <button type="button" class="chip" data-sel="li:first-child .name">:first-child</button>
+        <button type="button" class="chip" data-sel=".tag, .name">a, b</button>
+      </div>
+      <div>
+        <label for="sel-in">CSS selector</label>
+        <input id="sel-in" type="text" spellcheck="false" value=".plant">
+      </div>
+    </div>
+    <pre class="out" id="sel-out"></pre>
+  </div>
+</article>
+
+<nav class="contents" id="start">
+  <h2>On this page</h2>
+  <a href="#e1"><span>01</span> The DOM is not your HTML</a>
+  <a href="#e2"><span>02</span> Nodes and the tree</a>
+  <a href="#e3"><span>03</span> When your script runs</a>
+  <a href="#e4"><span>04</span> querySelector</a>
+  <a href="#e5"><span>05</span> The getElementBy family</a>
+  <a href="#e6"><span>06</span> NodeList is not an array</a>
+  <a href="#e7"><span>07</span> Moving around the tree</a>
+  <a href="#e8"><span>08</span> textContent vs innerHTML</a>
+  <a href="#e9"><span>09</span> Attributes vs properties</a>
+  <a href="#e10"><span>10</span> classList</a>
+  <a href="#e11"><span>11</span> style and CSS variables</a>
+  <a href="#e12"><span>12</span> dataset</a>
+  <a href="#e13"><span>13</span> Creating elements</a>
+  <a href="#e14"><span>14</span> Inserting</a>
+  <a href="#e15"><span>15</span> Removing and cloning</a>
+  <a href="#e16"><span>16</span> Building many rows</a>
+  <a href="#e17"><span>17</span> addEventListener</a>
+  <a href="#e18"><span>18</span> The event object</a>
+  <a href="#e19"><span>19</span> Event delegation</a>
+  <a href="#e20"><span>20</span> Forms and inputs</a>
+  <a href="#e21"><span>21</span> Errors you will meet</a>
+  <a href="#e22"><span>22</span> Quick reference</a>
+</nav>
+
+<!-- ===================== PART ONE ===================== -->
+<section class="part">
+  <h2>Part one: what the DOM is</h2>
+  <p>Three ideas. Get these and the rest of the page is just method names.</p>
+</section>
+
+<article class="entry" id="e1">
+  <div class="entry-text">
+    <h3><span class="num">01</span> The DOM is not your HTML</h3>
+    <p>Your <code>.html</code> file is text. The browser reads it once and builds a <strong>live tree of objects</strong> in memory. That tree is the Document Object Model, and it is what JavaScript talks to.</p>
+    <p>Two consequences that explain a lot of confusion:</p>
+    <ul>
+      <li>Changing the DOM never changes your file. Reload and your edits are gone.</li>
+      <li>The browser repairs broken markup while building the tree, so what you inspect can differ from what you typed.</li>
+    </ul>
+    <p class="tip">"View source" shows the file the server sent. The Elements tab in devtools shows the live DOM. When they disagree, something changed the tree after loading — usually your own script.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>text in, tree out</span></div>
+    <pre class="code" data-lang="none"><code>Your file                     The tree the browser builds
+
+&lt;ul id="list"&gt;                 ul#list
+  &lt;li class="plant"&gt;            └── li.plant
+    &lt;h3&gt;Fern&lt;/h3&gt;                   └── h3
+  &lt;/li&gt;                                └── "Fern"   (a text node)
+&lt;/ul&gt;</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e2">
+  <div class="entry-text">
+    <h3><span class="num">02</span> Nodes and the tree</h3>
+    <p>Everything in the tree is a <strong>node</strong>. Elements are nodes, but so is every piece of text, and so is every comment.</p>
+    <p>That is why there are two sets of navigation properties. The <code>child<em>Nodes</em></code> set counts text and comments; the <code>child<em>ren</em></code> set skips them and gives you elements only.</p>
+    <p class="warn">Whitespace between tags is a text node. <code>list.childNodes.length</code> on a nicely indented list counts the newlines too, which is almost never what you want. Reach for the element versions.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>nodes vs elements</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Counts everything</th><th>Elements only</th></tr></thead>
+        <tbody>
+          <tr><td><code>childNodes</code></td><td><code>children</code></td></tr>
+          <tr><td><code>firstChild</code></td><td><code>firstElementChild</code></td></tr>
+          <tr><td><code>lastChild</code></td><td><code>lastElementChild</code></td></tr>
+          <tr><td><code>nextSibling</code></td><td><code>nextElementSibling</code></td></tr>
+          <tr><td><code>previousSibling</code></td><td><code>previousElementSibling</code></td></tr>
+          <tr><td><code>parentNode</code></td><td><code>parentElement</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e3">
+  <div class="entry-text">
+    <h3><span class="num">03</span> When your script runs</h3>
+    <p class="warn">The single most common beginner bug: a <code>&lt;script&gt;</code> in the <code>&lt;head&gt;</code> runs <em>before</em> the body exists, so every <code>querySelector</code> returns <code>null</code>.</p>
+    <p>Three fixes. The first is the modern answer, the second is the old reliable one, and the third is what you use when you cannot move the tag.</p>
+    <p class="tip"><code>defer</code> also keeps your scripts in order and lets the HTML carry on parsing. Prefer it to <code>async</code> for anything that touches the page.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>three ways</span></div>
+    <pre class="code" data-lang="none"><code>&lt;!-- 1. Best: defer, in the head --&gt;
+&lt;script src="app.js" defer&gt;&lt;/script&gt;
+
+&lt;!-- 2. Also fine: last thing before &lt;/body&gt; --&gt;
+&lt;script src="app.js"&gt;&lt;/script&gt;
+
+&lt;!-- 3. When the tag cannot move: wait for the event --&gt;</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>app.js</span></div>
+    <pre class="code" data-lang="js"><code>document.addEventListener('DOMContentLoaded', () =&gt; {
+  // The tree is built. Safe to query now.
+  const list = document.querySelector('#list')
+})
+
+// DOMContentLoaded fires when the HTML is parsed.
+// 'load' waits for images and stylesheets too — usually later than you need.</code></pre>
+  </div>
+</article>
+
+<!-- ===================== PART TWO ===================== -->
+<section class="part">
+  <h2>Part two: finding things</h2>
+  <p>Try every selector in this part in the playground at the top of the page.</p>
+</section>
+
+<article class="entry" id="e4">
+  <div class="entry-text">
+    <h3><span class="num">04</span> querySelector</h3>
+    <p>Two methods, any CSS selector you can write in a stylesheet. These are the ones to use.</p>
+    <p><code>querySelector</code> returns the <strong>first</strong> match or <code>null</code>. <code>querySelectorAll</code> returns a NodeList of every match, which is empty rather than null when nothing matches.</p>
+    <p class="warn">Forgetting the <code>.</code> or <code>#</code> is the classic slip: <code>querySelector('plant')</code> looks for a <code>&lt;plant&gt;</code> tag and quietly gives you <code>null</code>.</p>
+    <p class="tip">You can call them on an element, not just <code>document</code>, and the search is then limited to inside it: <code>card.querySelector('.name')</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the two</span></div>
+    <pre class="code" data-lang="js"><code>document.querySelector('.plant')        // first match, or null
+document.querySelectorAll('.plant')     // all matches, maybe empty
+
+// Any CSS selector works
+document.querySelector('#list &gt; li:first-child')
+document.querySelectorAll('[data-id="2"]')
+document.querySelectorAll('button:disabled')
+document.querySelectorAll('.plant:not(.thirsty)')
+
+// Scoped to one element
+const card = document.querySelector('.plant')
+card.querySelector('.name')             // only inside that card</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e5">
+  <div class="entry-text">
+    <h3><span class="num">05</span> The getElementBy family</h3>
+    <p>Older methods you will meet in existing code and tutorials. They still work; you rarely need them now.</p>
+    <p class="warn">The big difference is that <code>getElementsByClassName</code> and <code>getElementsByTagName</code> return <strong>live</strong> collections that update themselves as the page changes. Removing items inside a <code>for</code> loop over a live collection skips half of them, because the collection shrinks while you count up through it.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>old and new</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Older</th><th>Returns</th><th>Modern equivalent</th></tr></thead>
+        <tbody>
+          <tr><td><code>getElementById('list')</code></td><td>element or null</td><td><code>querySelector('#list')</code></td></tr>
+          <tr><td><code>getElementsByClassName('plant')</code></td><td><span class="flag flag-yes">live</span> collection</td><td><code>querySelectorAll('.plant')</code></td></tr>
+          <tr><td><code>getElementsByTagName('li')</code></td><td><span class="flag flag-yes">live</span> collection</td><td><code>querySelectorAll('li')</code></td></tr>
+          <tr><td><code>getElementsByName('email')</code></td><td><span class="flag flag-yes">live</span> collection</td><td><code>querySelectorAll('[name="email"]')</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>no # or . on getElementById</span></div>
+    <pre class="code" data-lang="js"><code>document.getElementById('list')     // no '#' — just the id
+document.querySelector('#list')     // '#' required here</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e6">
+  <div class="entry-text">
+    <h3><span class="num">06</span> NodeList is not an array</h3>
+    <p>A NodeList looks like an array — it has a <code>length</code> and you can index it — but it is missing most array methods.</p>
+    <p><code>forEach</code> happens to work on a NodeList. <code>map</code>, <code>filter</code> and <code>reduce</code> do not. Spread it into a real array when you need those.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>converting</span></div>
+    <pre class="code" data-lang="js"><code>const items = document.querySelectorAll('.plant')
+
+items.length                      // works
+items[0]                          // works
+items.forEach(el =&gt; ...)          // works
+items.map(el =&gt; el.textContent)   // TypeError: items.map is not a function
+
+const real = [...items]           // now a real array
+real.map(el =&gt; el.textContent)    // works
+Array.from(items)                 // the same thing, older spelling
+
+// Count matches without converting
+document.querySelectorAll('.thirsty').length</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e7">
+  <div class="entry-text">
+    <h3><span class="num">07</span> Moving around the tree</h3>
+    <p>Once you have one element you can walk to its relatives without another query.</p>
+    <p><code>closest</code> is the one worth memorising: it walks <em>upward</em> looking for the nearest ancestor that matches, including the element itself. It is how a click on a button finds the card it belongs to.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>navigation</span></div>
+    <pre class="code" data-lang="js"><code>const name = document.querySelector('.name')
+
+name.parentElement                 // the li
+name.closest('li')                 // nearest matching ancestor — the li
+name.closest('.plant')             // same li here
+name.nextElementSibling            // the .tag beside it
+
+const list = document.querySelector('#list')
+list.children                      // the three li elements
+list.firstElementChild             // the first li
+list.children.length               // 3
+
+// The pattern you will use constantly
+button.closest('li').remove()      // delete the whole card the button sits in</code></pre>
+  </div>
+</article>
+
+<!-- ===================== PART THREE ===================== -->
+<section class="part">
+  <h2>Part three: reading and changing</h2>
+  <p>You have an element. Now change what it says, what it looks like, and what it carries.</p>
+</section>
+
+<article class="entry" id="e8">
+  <div class="entry-text">
+    <h3><span class="num">08</span> textContent vs innerHTML</h3>
+    <p>Three properties that look interchangeable and are not.</p>
+    <p class="warn"><strong>Use <code>textContent</code> for text.</strong> <code>innerHTML</code> parses whatever you give it as markup, so text that came from a user can inject tags and scripts into your page. That is the XSS bug, and it is the most common security hole in beginner front-end code.</p>
+    <p class="tip"><code>innerText</code> is aware of CSS: it skips hidden elements and collapses whitespace the way the screen shows it. It also forces the browser to recalculate layout, so it is slower in a loop.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the three</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Property</th><th>Gives you</th><th>Use for</th></tr></thead>
+        <tbody>
+          <tr><td><code>textContent</code></td><td>all text, including hidden</td><td><span class="flag flag-no">default</span> reading and writing text</td></tr>
+          <tr><td><code>innerText</code></td><td>text as rendered on screen</td><td>when hidden elements must be skipped</td></tr>
+          <tr><td><code>innerHTML</code></td><td>the markup inside</td><td>markup <strong>you</strong> wrote, never user text</td></tr>
+          <tr><td><code>outerHTML</code></td><td>the element and its markup</td><td>inspecting, replacing the element itself</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>why it matters</span></div>
+    <pre class="code" data-lang="js"><code>const name = document.querySelector('.name')
+
+name.textContent = 'Fern'               // safe, always
+name.innerHTML = '&lt;em&gt;Fern&lt;/em&gt;'        // fine — markup you wrote
+
+// Now imagine `typed` came from an input box
+const typed = '&lt;img src=x onerror="steal()"&gt;'
+name.innerHTML = typed                  // the script runs. XSS.
+name.textContent = typed                // shows the characters. Safe.</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e9">
+  <div class="entry-text">
+    <h3><span class="num">09</span> Attributes vs properties</h3>
+    <p>An attribute is what you wrote in the HTML. A property is what lives on the live object. They start out matching and then drift apart.</p>
+    <p>Type into a text box and its <code>value</code> <em>property</em> changes, but the <code>value</code> <em>attribute</em> still holds whatever the HTML said. For form state — <code>value</code>, <code>checked</code>, <code>disabled</code> — always read the property.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>which to use</span></div>
+    <pre class="code" data-lang="js"><code>const input = document.querySelector('input')
+
+input.value                      // what is in the box RIGHT NOW  <- use this
+input.getAttribute('value')      // what the HTML said at load
+
+input.checked = true             // property: a real boolean
+input.disabled = false
+
+// Attributes are for things with no property, and for custom ones
+el.getAttribute('href')
+el.setAttribute('aria-expanded', 'true')
+el.removeAttribute('disabled')
+el.hasAttribute('data-id')       // true / false</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e10">
+  <div class="entry-text">
+    <h3><span class="num">10</span> classList</h3>
+    <p>Never build a class string by hand. <code>classList</code> has a method for every case and cannot clobber the classes you did not mean to touch.</p>
+    <p class="warn"><code>el.className = 'active'</code> replaces <em>every</em> class on the element. One careless assignment and the styling that was already there is gone.</p>
+    <p class="tip">Changing a class is almost always better than changing <code>style</code> directly: the look stays in your stylesheet, where you can see it all at once.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>classList</span></div>
+    <pre class="code" data-lang="js"><code>el.classList.add('thirsty')
+el.classList.remove('thirsty')
+el.classList.toggle('thirsty')          // on if off, off if on
+el.classList.toggle('thirsty', isDry)   // force it on or off
+el.classList.contains('thirsty')        // true / false
+el.classList.replace('thirsty', 'healthy')
+
+el.classList.add('a', 'b', 'c')         // several at once
+
+// Everything at once, the dangerous way
+el.className = 'thirsty'                // wipes all other classes</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e11">
+  <div class="entry-text">
+    <h3><span class="num">11</span> style and CSS variables</h3>
+    <p><code>el.style</code> reaches only the inline <code>style</code> attribute. Reading it gives you nothing for rules that came from your stylesheet, which surprises people.</p>
+    <p>Property names become camelCase: <code>background-color</code> is <code>backgroundColor</code>. Values are strings, and lengths need their units or nothing happens.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>style</span></div>
+    <pre class="code" data-lang="js"><code>el.style.color = 'red'
+el.style.backgroundColor = '#eee'       // camelCase, not background-color
+el.style.width = '200px'                // units required
+el.style.width = 200                    // silently does nothing
+
+el.style.display = 'none'               // hide
+el.style.display = ''                   // back to whatever the CSS says
+
+// Reading the computed value — what is ACTUALLY applied
+getComputedStyle(el).color              // 'rgb(255, 0, 0)'
+
+// CSS custom properties need the long form
+el.style.setProperty('--accent', '#2049A8')
+getComputedStyle(el).getPropertyValue('--accent')</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e12">
+  <div class="entry-text">
+    <h3><span class="num">12</span> dataset</h3>
+    <p>Any attribute beginning <code>data-</code> is yours to invent, and all of them show up on <code>el.dataset</code>.</p>
+    <p>This is how an element remembers which record it represents — the database id on a card, so a click handler knows what to delete.</p>
+    <p class="warn">Dataset values are always <strong>strings</strong>. <code>el.dataset.id</code> on <code>data-id="2"</code> gives <code>'2'</code>, so comparing with <code>=== 2</code> is false. Convert with <code>Number()</code>.</p>
+    <p class="tip">The name converts: <code>data-plant-id</code> becomes <code>dataset.plantId</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>dataset</span></div>
+    <pre class="code" data-lang="js"><code>// &lt;li data-id="2" data-plant-name="Monstera"&gt;
+
+el.dataset.id                 // '2'      a string, always
+el.dataset.plantName          // 'Monstera'   data-plant-name
+Number(el.dataset.id)         // 2        now a number
+
+el.dataset.id = 7             // sets data-id="7"
+delete el.dataset.id          // removes the attribute
+
+// The pattern it exists for
+const id = Number(button.closest('li').dataset.id)
+await fetch(`/api/v1/plants/${id}`, { method: 'DELETE' })</code></pre>
+  </div>
+</article>
+
+<!-- ===================== PART FOUR ===================== -->
+<section class="part">
+  <h2>Part four: making and removing</h2>
+  <p>The scratchpad below runs real code against the same sample document and shows you the markup that comes out.</p>
+</section>
+
+<article class="entry entry-wide" id="e13">
+  <div class="entry-text">
+    <h3><span class="num">13</span> Creating elements</h3>
+    <p>Three steps, always in this order: make it, fill it, put it somewhere. An element you create exists in memory but appears nowhere until you insert it.</p>
+    <p>Run any of these in the scratchpad and watch the markup underneath change.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>dom scratchpad &mdash; <code>document</code> here is scoped to the sample below</span></div>
+    <div class="stage" id="run-stage"></div>
+    <div class="try">
+      <div class="chips">
+        <button type="button" class="chip" data-run="document.querySelector('.name').textContent = 'Renamed'">textContent</button>
+        <button type="button" class="chip" data-run="document.querySelectorAll('.plant').forEach(el =&gt; el.classList.add('thirsty'))">classList.add</button>
+        <button type="button" class="chip" data-run="document.querySelector('.plant').classList.toggle('thirsty')">toggle</button>
+        <button type="button" class="chip" data-run="const li = document.createElement('li')&#10;li.className = 'plant card'&#10;li.textContent = 'Aloe'&#10;document.querySelector('#list').append(li)">create + append</button>
+        <button type="button" class="chip" data-run="document.querySelector('.plant').remove()">remove</button>
+        <button type="button" class="chip" data-run="const first = document.querySelector('.plant')&#10;log(first.dataset.id, typeof first.dataset.id)">dataset</button>
+        <button type="button" class="chip" data-run="log(document.querySelectorAll('.plant').length)">count</button>
+        <button type="button" class="chip" data-run="const el = document.querySelector('.tag')&#10;log(el.closest('li').dataset.id)">closest</button>
+        <button type="button" class="chip" data-run="document.querySelector('#list').innerHTML = ''">empty the list</button>
+      </div>
+      <div>
+        <label for="run-in">Code &mdash; <code>document</code> is the sample, <code>log(...)</code> prints</label>
+        <textarea id="run-in" rows="5" spellcheck="false">const li = document.createElement('li')
+li.className = 'plant card'
+li.textContent = 'Aloe'
+document.querySelector('#list').append(li)</textarea>
+      </div>
+      <div class="row">
+        <button type="button" class="btn" id="run-go">Run</button>
+        <button type="button" class="btn btn-quiet" id="run-reset">Reset the document</button>
+      </div>
+    </div>
+    <pre class="out" id="run-out"></pre>
+  </div>
+</article>
+
+<article class="entry" id="e14">
+  <div class="entry-text">
+    <h3><span class="num">14</span> Inserting</h3>
+    <p><code>append</code> and <code>prepend</code> cover almost everything. They take several things at once and accept plain strings, which become text nodes safely.</p>
+    <p class="tip">The old <code>appendChild</code> still works but takes exactly one node and no strings. There is no reason to reach for it in new code.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>where things go</span></div>
+    <pre class="code" data-lang="js"><code>parent.append(el)           // inside, at the end
+parent.prepend(el)          // inside, at the start
+el.before(other)            // outside, just before el
+el.after(other)             // outside, just after el
+
+parent.append(a, b, 'text') // several at once; strings are safe text
+
+// Precise placement with one call
+el.insertAdjacentElement('beforebegin', other)
+el.insertAdjacentHTML('beforeend', '&lt;span&gt;hi&lt;/span&gt;')
+
+//   beforebegin  &lt;div&gt;  afterbegin ... beforeend  &lt;/div&gt;  afterend</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e15">
+  <div class="entry-text">
+    <h3><span class="num">15</span> Removing and cloning</h3>
+    <p><code>remove()</code> takes the element out of the tree. The object still exists in memory as long as a variable points at it, so you can put it back.</p>
+    <p class="warn"><code>cloneNode(false)</code> copies only the element. <code>cloneNode(true)</code> copies everything inside it, which is nearly always what you want. Neither copies event listeners.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>removing, replacing, copying</span></div>
+    <pre class="code" data-lang="js"><code>el.remove()                     // take it out
+
+parent.replaceChildren()        // empty the parent, cleanly
+parent.innerHTML = ''           // same effect, older habit
+
+el.replaceWith(other)           // swap one element for another
+
+const copy = el.cloneNode(true) // deep copy, contents included
+const shell = el.cloneNode(false) // the element only, empty
+// Listeners are never copied — attach them again</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e16">
+  <div class="entry-text">
+    <h3><span class="num">16</span> Building many rows</h3>
+    <p>Appending inside a loop touches the live page on every pass, and the browser may recalculate layout each time. For a handful of rows it does not matter; for hundreds it does.</p>
+    <p>A <strong>DocumentFragment</strong> is a lightweight holding box that is not part of the page. Fill it, then insert it once. Appending a fragment moves its children in and leaves the fragment empty.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>one insert instead of many</span></div>
+    <pre class="code" data-lang="js"><code>const list = document.querySelector('#list')
+const frag = document.createDocumentFragment()
+
+for (const plant of plants) {
+  const li = document.createElement('li')
+  li.className = 'plant card'
+  li.dataset.id = plant.id
+  li.textContent = plant.nickname    // safe: text, not markup
+  frag.append(li)                    // off-page, cheap
+}
+
+list.append(frag)                    // one touch of the live page</code></pre>
+  </div>
+</article>
+
+<!-- ===================== PART FIVE ===================== -->
+<section class="part">
+  <h2>Part five: events</h2>
+  <p>Making the page respond. One method, and two patterns worth knowing well.</p>
+</section>
+
+<article class="entry" id="e17">
+  <div class="entry-text">
+    <h3><span class="num">17</span> addEventListener</h3>
+    <p>Element, event name, function. The name has no <code>on</code> prefix: <code>'click'</code>, not <code>'onclick'</code>.</p>
+    <p class="warn">Pass the function, do not call it. <code>addEventListener('click', handleClick)</code> is right; <code>handleClick()</code> runs it immediately and registers whatever it returned.</p>
+    <p class="tip">To remove a listener later you need the <em>same function reference</em>, so an inline arrow function can never be removed. Name it, or use <code>{ once: true }</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>listening</span></div>
+    <pre class="code" data-lang="js"><code>button.addEventListener('click', handleClick)      // right
+button.addEventListener('click', handleClick())    // wrong — calls it now
+
+button.addEventListener('click', (event) =&gt; {
+  console.log('clicked', event.target)
+})
+
+button.addEventListener('click', run, { once: true })   // fires once
+button.removeEventListener('click', run)                // same reference needed</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>events worth knowing</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Event</th><th>Fires when</th></tr></thead>
+        <tbody>
+          <tr><td><code>click</code></td><td>clicked, or activated by keyboard on a real button</td></tr>
+          <tr><td><code>input</code></td><td>the value changes, on every keystroke</td></tr>
+          <tr><td><code>change</code></td><td>the value changed and the field lost focus</td></tr>
+          <tr><td><code>submit</code></td><td>a form is submitted — listen on the <code>&lt;form&gt;</code></td></tr>
+          <tr><td><code>keydown</code></td><td>a key goes down; <code>event.key</code> is <code>'Enter'</code>, <code>'Escape'</code>…</td></tr>
+          <tr><td><code>DOMContentLoaded</code></td><td>the HTML is parsed and the tree is ready</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e18">
+  <div class="entry-text">
+    <h3><span class="num">18</span> The event object</h3>
+    <p>Your handler receives an object describing what happened.</p>
+    <p class="warn"><code>target</code> is what was actually clicked, which may be a child. <code>currentTarget</code> is the element the listener is attached to. Click the text inside a button and <code>target</code> can be that text's element, not the button — this is the source of a great many "why didn't it work" moments.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the useful properties</span></div>
+    <pre class="code" data-lang="js"><code>function handle(event){
+  event.target           // the deepest element that was clicked
+  event.currentTarget    // the element this listener is on
+  event.type             // 'click'
+  event.key              // on keyboard events: 'Enter', 'Escape', 'a'
+
+  event.preventDefault()   // stop the browser's default action
+  event.stopPropagation()  // stop it travelling up to ancestors
+}
+
+// The one you will use most: stop a form reloading the page
+form.addEventListener('submit', (event) =&gt; {
+  event.preventDefault()
+  // ...now send it with fetch instead
+})</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e19">
+  <div class="entry-text">
+    <h3><span class="num">19</span> Event delegation</h3>
+    <p>Events travel upward from the element that was hit, through every ancestor. That is called bubbling, and you can use it.</p>
+    <p>Instead of a listener on every button, put <strong>one</strong> on the container and work out what was clicked. This is faster, and — the real reason — it keeps working for elements you add later, which a per-button listener never does.</p>
+    <p class="tip"><code>closest</code> is the other half of the pattern: it turns "whatever got clicked" into "the button, if the click was anywhere inside one".</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>one listener for a whole list</span></div>
+    <pre class="code" data-lang="js"><code>const list = document.querySelector('#list')
+
+list.addEventListener('click', (event) =&gt; {
+  // Was the click inside a .water button?
+  const button = event.target.closest('.water')
+  if (!button) return               // clicked elsewhere; ignore
+
+  const card = button.closest('li')
+  const id = Number(card.dataset.id)
+
+  card.classList.remove('thirsty')
+  console.log('watering plant', id)
+})
+
+// New cards appended later are handled too, with no extra wiring.</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e20">
+  <div class="entry-text">
+    <h3><span class="num">20</span> Forms and inputs</h3>
+    <p>Listen for <code>submit</code> on the form, not <code>click</code> on the button. Submit also fires when someone presses Enter in a field, which a click listener misses.</p>
+    <p class="warn">An input's <code>value</code> is always a <strong>string</strong>, even on <code>type="number"</code>. Convert before arithmetic or you get <code>'5' + 1 === '51'</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>a form handler</span></div>
+    <pre class="code" data-lang="js"><code>const form = document.querySelector('#add-plant')
+
+form.addEventListener('submit', async (event) =&gt; {
+  event.preventDefault()              // or the page reloads
+
+  const nickname = form.nickname.value.trim()   // by name attribute
+  const days = Number(form.days.value)          // string -&gt; number
+
+  if (!nickname) return
+
+  // Everything at once, for a form with many fields
+  const data = Object.fromEntries(new FormData(form))
+
+  await fetch('/api/v1/plants', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nickname, wateringIntervalDays: days })
+  })
+
+  form.reset()
+})</code></pre>
+  </div>
+</article>
+
+<!-- ===================== PART SIX ===================== -->
+<section class="part">
+  <h2>Part six: when it breaks</h2>
+  <p>Four messages account for most DOM bugs in a first year.</p>
+</section>
+
+<article class="entry" id="e21">
+  <div class="entry-text">
+    <h3><span class="num">21</span> Errors you will meet</h3>
+    <p>Read the message. Each of these names its own cause once you know the vocabulary.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>message &rarr; cause</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>What you see</th><th>What it means</th></tr></thead>
+        <tbody>
+          <tr><td><code>Cannot read properties of null (reading 'textContent')</code></td><td>Your <code>querySelector</code> found nothing. Either the script ran before the HTML, or the selector is wrong — check for a missing <code>.</code> or <code>#</code>.</td></tr>
+          <tr><td><code>Cannot set properties of null</code></td><td>Same cause, on an assignment.</td></tr>
+          <tr><td><code>items.map is not a function</code></td><td><code>querySelectorAll</code> gives a NodeList. Spread it first: <code>[...items]</code>.</td></tr>
+          <tr><td><code>Failed to execute 'querySelector': not a valid selector</code></td><td>A typo in the selector string — often a stray quote or a missing bracket.</td></tr>
+          <tr><td>The handler runs once, then never again</td><td>Something replaced the elements with <code>innerHTML</code>, which throws away their listeners. Delegate instead.</td></tr>
+          <tr><td>Clicking does nothing at all</td><td>The listener was attached before the element existed, or you wrote <code>handleClick()</code> instead of <code>handleClick</code>.</td></tr>
+          <tr><td>The page reloads when you submit</td><td>Missing <code>event.preventDefault()</code> in the submit handler.</td></tr>
+          <tr><td>A number is being joined instead of added</td><td><code>input.value</code> is a string. Wrap it in <code>Number()</code>.</td></tr>
+          <tr><td>Your styling disappeared</td><td><code>el.className = '...'</code> replaced every class. Use <code>classList.add</code>.</td></tr>
+          <tr><td>Width or position is ignored</td><td>A length was set without units: <code>el.style.width = 200</code> does nothing.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e22">
+  <div class="entry-text">
+    <h3><span class="num">22</span> Quick reference</h3>
+    <p>Everything on this page, in the order you normally need it.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the whole page in one block</span></div>
+    <pre class="code" data-lang="js"><code>// FIND
+document.querySelector('.card')          // first, or null
+document.querySelectorAll('.card')       // NodeList
+el.closest('li')                         // nearest matching ancestor
+el.children                              // element children
+[...nodeList]                            // make it a real array
+
+// READ AND WRITE
+el.textContent = 'safe text'             // default choice
+el.innerHTML = '&lt;em&gt;your markup&lt;/em&gt;'    // never user input
+el.value                                 // form fields, live
+el.dataset.id                            // data-id, always a string
+el.getAttribute('href')
+
+// CLASSES AND STYLE
+el.classList.add('on')
+el.classList.toggle('on', condition)
+el.classList.contains('on')
+el.style.backgroundColor = '#eee'        // camelCase, units required
+getComputedStyle(el).color               // what is actually applied
+
+// MAKE AND MOVE
+const el = document.createElement('li')
+parent.append(el)                        // or prepend, before, after
+el.remove()
+el.cloneNode(true)                       // deep copy, no listeners
+document.createDocumentFragment()        // batch many inserts
+
+// EVENTS
+el.addEventListener('click', handler)    // no 'on', pass don't call
+event.target                             // what was hit
+event.currentTarget                      // what is listening
+event.preventDefault()                   // stop the default action
+list.addEventListener('click', (e) =&gt; {  // delegation
+  const btn = e.target.closest('.water')
+  if (!btn) return
+})</code></pre>
+  </div>
+</article>
+
+<p class="empty" hidden>No entry on this page mentions that. Try a shorter word, or clear the filter.</p>
+
+<footer class="foot">
+  <p><a href="./index.html">&larr; Back to Coding Hub</a></p>
+  <p>Pairs with the <a href="./html-walkthrough.html">HTML walkthrough</a> and <a href="./javascript-basics-reference.html">JavaScript basics</a>.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script src="./js/highlight.js"></script>
+<script src="./js/reference.js"></script>
+<script>
+/* ------------------------------------------------------------
+   Two playgrounds, both working on the same sample document.
+   The sample lives in a div on this page, and the `document`
+   handed to the scratchpad is a small stand-in whose queries
+   are scoped to that div — so a student's selector can never
+   reach the rest of the page, and nothing they run can break
+   the reference they are reading.
+------------------------------------------------------------- */
+(function () {
+  'use strict';
+
+  var SAMPLE = [
+    '<ul class="plant-list" id="list">',
+    '  <li class="plant card" data-id="1">',
+    '    <h3 class="name">Fern</h3>',
+    '    <span class="tag">kitchen</span>',
+    '    <button class="water">Water</button>',
+    '  </li>',
+    '  <li class="plant card thirsty" data-id="2">',
+    '    <h3 class="name">Monstera</h3>',
+    '    <span class="tag">office</span>',
+    '    <button class="water">Water</button>',
+    '  </li>',
+    '  <li class="plant card" data-id="3">',
+    '    <h3 class="name">Cactus</h3>',
+    '    <span class="tag">office</span>',
+    '    <button class="water" disabled>Water</button>',
+    '  </li>',
+    '</ul>'
+  ].join('\n');
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  /* Describe an element the way devtools would: li.plant.card#id */
+  function describe(el) {
+    if (!el) return String(el);
+    if (el.nodeType === 3) return 'text "' + el.textContent.trim() + '"';
+    var s = el.tagName.toLowerCase();
+    if (el.id) s += '#' + el.id;
+    var cls = (el.getAttribute('class') || '').trim();
+    if (cls) s += '.' + cls.split(/\s+/).join('.');
+    return s;
+  }
+
+  /* ---------- 1. Selector playground ---------- */
+
+  var selStage = document.getElementById('sel-stage');
+  var selIn = document.getElementById('sel-in');
+  var selOut = document.getElementById('sel-out');
+  selStage.innerHTML = SAMPLE;
+
+  function runSelector() {
+    var sel = selIn.value.trim();
+
+    selStage.querySelectorAll('[data-dom-hit]').forEach(function (el) {
+      el.removeAttribute('data-dom-hit');
+      el.removeAttribute('data-dom-first');
+    });
+
+    if (!sel) { selOut.textContent = 'Type a CSS selector above.'; return; }
+
+    var hits;
+    try {
+      hits = selStage.querySelectorAll(sel);
+    } catch (e) {
+      selOut.innerHTML = '<span class="err">Not a valid selector.</span>\n\n' +
+        'The browser threw: ' + esc(e.message) + '\n' +
+        'Usually a stray quote, or a missing bracket.';
+      return;
+    }
+
+    var lines = [];
+    lines.push('document.querySelectorAll(\'' + sel + '\')');
+    lines.push('');
+
+    if (!hits.length) {
+      lines.push('<span class="dim">NodeList [] — nothing matched.</span>');
+      lines.push('');
+      lines.push('querySelectorAll gives an empty list, not null.');
+      lines.push('querySelector would give you null here, and reading');
+      lines.push('a property off that is the error you see most often.');
+      selOut.innerHTML = lines.join('\n');
+      return;
+    }
+
+    hits.forEach(function (el, i) {
+      el.setAttribute('data-dom-hit', '');
+      if (i === 0) el.setAttribute('data-dom-first', '');
+    });
+
+    lines.push('<span class="ok">' + hits.length +
+      (hits.length === 1 ? ' element matched' : ' elements matched') + '</span>');
+    lines.push('');
+    hits.forEach(function (el, i) {
+      lines.push('  [' + i + ']  ' + esc(describe(el)) +
+        (i === 0 ? '   <span class="dim">&lt;- querySelector returns this one</span>' : ''));
+    });
+    selOut.innerHTML = lines.join('\n');
+  }
+
+  selIn.addEventListener('input', runSelector);
+  document.querySelectorAll('.chip[data-sel]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      selIn.value = b.getAttribute('data-sel');
+      runSelector();
+    });
+  });
+  runSelector();
+
+  /* ---------- 2. DOM scratchpad ---------- */
+
+  var runStage = document.getElementById('run-stage');
+  var runIn = document.getElementById('run-in');
+  var runOut = document.getElementById('run-out');
+
+  function resetStage() { runStage.innerHTML = SAMPLE; }
+  resetStage();
+
+  // A stand-in for `document`, scoped to the sample. Students write
+  // the same calls they would write for real; they just cannot reach
+  // past the sandbox.
+  var scoped = {
+    querySelector: function (s) { return runStage.querySelector(s); },
+    querySelectorAll: function (s) { return runStage.querySelectorAll(s); },
+    getElementById: function (id) {
+      return runStage.querySelector('#' + (window.CSS && CSS.escape ? CSS.escape(id) : id));
+    },
+    getElementsByClassName: function (c) { return runStage.getElementsByClassName(c); },
+    getElementsByTagName: function (t) { return runStage.getElementsByTagName(t); },
+    createElement: function (t) { return document.createElement(t); },
+    createTextNode: function (t) { return document.createTextNode(t); },
+    createDocumentFragment: function () { return document.createDocumentFragment(); },
+    body: runStage
+  };
+
+  /* Re-indent the sandbox markup so the output reads like source */
+  function prettyHTML(root) {
+    var out = [];
+    function walk(node, depth) {
+      var pad = '  '.repeat(depth);
+      node.childNodes.forEach(function (child) {
+        if (child.nodeType === 3) {
+          var text = child.textContent.trim();
+          if (text) out.push(pad + text);
+          return;
+        }
+        if (child.nodeType !== 1) return;
+        var tag = child.tagName.toLowerCase();
+        var attrs = Array.prototype.map.call(child.attributes, function (a) {
+          if (a.name.indexOf('data-dom-') === 0) return '';
+          return a.value === '' ? ' ' + a.name : ' ' + a.name + '="' + a.value + '"';
+        }).join('');
+        var kids = child.children.length;
+        var onlyText = !kids && child.textContent.trim();
+        if (onlyText) {
+          out.push(pad + '<' + tag + attrs + '>' + child.textContent.trim() + '</' + tag + '>');
+        } else if (!kids) {
+          out.push(pad + '<' + tag + attrs + '></' + tag + '>');
+        } else {
+          out.push(pad + '<' + tag + attrs + '>');
+          walk(child, depth + 1);
+          out.push(pad + '</' + tag + '>');
+        }
+      });
+    }
+    walk(root, 0);
+    return out.join('\n');
+  }
+
+  function runCode() {
+    var src = runIn.value.trim();
+    if (!src) { runOut.textContent = 'Type some code above and press Run.'; return; }
+
+    var before = runStage.innerHTML;
+    var logs = [];
+    function log() {
+      logs.push(Array.prototype.map.call(arguments, function (a) {
+        if (a && a.nodeType === 1) return describe(a);
+        if (a instanceof NodeList || a instanceof HTMLCollection) {
+          return 'NodeList(' + a.length + ') [ ' +
+            Array.prototype.map.call(a, describe).join(', ') + ' ]';
+        }
+        if (typeof a === 'string') return a;
+        try { return JSON.stringify(a); } catch (e) { return String(a); }
+      }).join(' '));
+    }
+
+    var lines = [];
+    var threw = false;
+    try {
+      // eslint-disable-next-line no-new-func
+      var fn = new Function('document', 'log', 'console', src);
+      fn(scoped, log, { log: log });
+    } catch (e) {
+      threw = true;
+      lines.push('<span class="err">' + esc(e.name + ': ' + e.message) + '</span>');
+      if (/of null/.test(e.message)) {
+        lines.push('');
+        lines.push('querySelector found nothing, so it returned null.');
+        lines.push('Check the selector — a missing . or # is the usual cause.');
+      }
+      if (/is not a function/.test(e.message) && /\.map|\.filter|\.reduce/.test(src)) {
+        lines.push('');
+        lines.push('querySelectorAll gives a NodeList, which has no map.');
+        lines.push('Spread it first: [...document.querySelectorAll(...)]');
+      }
+    }
+
+    if (logs.length) lines.push(logs.map(esc).join('\n'));
+    if (!threw && !logs.length) {
+      lines.push('<span class="dim">Ran with nothing logged. The markup below shows what changed.</span>');
+    }
+
+    lines.push('');
+    lines.push(runStage.innerHTML === before
+      ? '<span class="dim">The document is unchanged.</span>'
+      : '<span class="ok">The document changed:</span>');
+    lines.push('');
+    lines.push(esc(prettyHTML(runStage)) || '<span class="dim">(the sample is now empty)</span>');
+
+    runOut.innerHTML = lines.join('\n');
+  }
+
+  document.getElementById('run-go').addEventListener('click', runCode);
+  document.getElementById('run-reset').addEventListener('click', function () {
+    resetStage();
+    runOut.innerHTML = '<span class="dim">Document reset to the original sample.</span>';
+  });
+  runIn.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runCode(); }
+  });
+  document.querySelectorAll('.chip[data-run]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      runIn.value = b.getAttribute('data-run');
+      runCode();
+    });
+  });
+  runCode();
+})();
+</script>
+</body>
+</html>

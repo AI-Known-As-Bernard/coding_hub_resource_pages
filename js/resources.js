@@ -242,5 +242,14 @@ const RESOURCES = [
     tags: ["array", "map", "filter", "reduce", "loop", "operators", "truthy", "sort", "javascript"],
     time: "20 entries",
     isNew: true
+  },
+  {
+    title: "The DOM",
+    url: "dom-reference.html",
+    category: "reference",
+    desc: "Finding, changing and creating elements, plus events, with a live selector playground.",
+    tags: ["dom", "queryselector", "classlist", "dataset", "events", "listener", "delegation", "innerhtml"],
+    time: "22 entries",
+    isNew: true
   }
 ];
