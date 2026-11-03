@@ -1,13 +1,3 @@
-/* ============================================================
-   resources.js — THIS IS THE ONLY FILE YOU NEED TO EDIT
-   ============================================================
-   To add a resource page to the homepage:
-     1. Create your page (e.g. python/loops.html)
-     2. Add one entry to the RESOURCES list below
-     3. Save. That's it — the homepage rebuilds itself.
-   ============================================================ */
-
-
 /* ---- 1. Site text -----------------------------------------
    Change the class name, tagline, and footer here.            */
 
@@ -257,6 +247,15 @@ const RESOURCES = [
     category: "reference",
     desc: "Operators, arrays, array methods and loops, with a scratchpad that flags mutation.",
     tags: ["array", "map", "filter", "reduce", "loop", "operators", "truthy", "sort", "javascript"],
+    time: "20 entries",
+    isNew: true
+  },
+  {
+    title: "JS: API Walkthrough",
+    url: "secure-api-reference.html",
+    category: "web",
+    desc: "A walkthrough of building a secure API with Node.js, Express, JWT, and bcryptjs.",
+    tags: ["nodejs", "express", "jwt", "bcryptjs", "localstorage", "operators", "truthy", "sort", "javascript"],
     time: "20 entries",
     isNew: true
   }
