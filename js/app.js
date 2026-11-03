@@ -14,13 +14,45 @@
   var activeCategory = "all";
   var query = "";
 
+  /* ---- Guards ------------------------------------------------
+     index.html ships a plain list of links inside #results as a
+     backup. Everything below REPLACES that list, so if anything
+     this file depends on is missing we must bail out early and
+     leave the backup on screen -- a half-built page with no
+     navigation is worse than a plain list of links.             */
+
+  // resources.js missing or blocked: SITE / CATEGORIES / RESOURCES
+  // never got declared, so touching them would throw a
+  // ReferenceError here and stop the script dead.
+  if (typeof SITE === "undefined" ||
+      typeof CATEGORIES === "undefined" ||
+      typeof RESOURCES === "undefined") {
+    if (count) {
+      count.textContent =
+        "Could not load js/resources.js - showing the backup list below.";
+    }
+    return;
+  }
+
+  // Markup changed and an element this file drives has gone away.
+  if (!input || !chips || !results || !count) {
+    return;
+  }
+
   /* ---- Site text -------------------------------------------- */
 
-  document.getElementById("site-name").textContent = SITE.name;
-  document.title = SITE.name;
-  document.getElementById("site-tagline").textContent = SITE.tagline;
-  document.getElementById("site-footer").textContent = SITE.footer;
-  document.getElementById("site-updated").textContent = SITE.updated;
+  // Written through a helper so one missing element can't abort the
+  // whole script the way a direct .textContent on null would.
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el && value != null) el.textContent = value;
+  }
+
+  setText("site-name", SITE.name);
+  setText("site-tagline", SITE.tagline);
+  setText("site-footer", SITE.footer);
+  setText("site-updated", SITE.updated);
+  if (SITE.name) document.title = SITE.name;
 
   /* ---- Helpers ---------------------------------------------- */
 

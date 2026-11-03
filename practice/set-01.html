@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 1–4 problem set — Coding Hub</title>
+<meta name="description" content="Twelve problems on variables, conditions, and loops.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/reference_styles.css">
+<style>
+  :root{ --accent:#C2611A; --accent-soft:#FAEBDE; }
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the contents</a>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol"><a href="../index.html">Coding Hub</a> &nbsp;/&nbsp; Practice</p>
+  <h1>week 1&ndash;4 <span class="lit">problems</span></h1>
+  <p class="deck">Twelve problems on variables, conditions and loops. <strong>Write each one yourself before you open the answer — reading a solution teaches you almost nothing.</strong></p>
+
+  <div class="finder">
+    <label>
+      <span class="visually-hidden">Filter this page</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="filter" type="search" placeholder="loop, condition, average, FizzBuzz…" autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="clear">Clear</button>
+  </div>
+  <p class="hits" id="hits" role="status"></p>
+</header>
+
+<nav class="contents" id="start">
+  <h2>On this page</h2>
+  <a href="#e0"><span>00</span> Before you start</a>
+  <a href="#e1"><span>01</span> Greeting</a>
+  <a href="#e2"><span>02</span> Rectangle area</a>
+  <a href="#e3"><span>03</span> Seconds to minutes</a>
+  <a href="#e4"><span>04</span> Pass or fail</a>
+  <a href="#e5"><span>05</span> Odd or even</a>
+  <a href="#e6"><span>06</span> Leap year</a>
+  <a href="#e7"><span>07</span> Countdown</a>
+  <a href="#e8"><span>08</span> Times table</a>
+  <a href="#e9"><span>09</span> FizzBuzz</a>
+  <a href="#e10"><span>10</span> Average</a>
+  <a href="#e11"><span>11</span> Count the long words</a>
+  <a href="#e12"><span>12</span> Shopping total</a>
+</nav>
+
+<section class="part">
+  <h2>How to work through these</h2>
+  <p>Twelve problems, roughly in order of difficulty. Each has a starter file, the output expected, and a collapsible answer.</p>
+</section>
+
+<article class="entry entry-wide" id="e0">
+  <div class="entry-text">
+    <h3><span class="num">00</span> Before you start</h3>
+    <p>Make one file per problem, named <code>problem_01.py</code> and so on, and run each with <code>python problem_01.py</code>.</p>
+    <p>There is more than one correct answer to every problem here. If yours produces the right output and you can explain every line, it is right — even if it looks nothing like mine.</p>
+    <p class="warn">Open the answer only after you have something that runs, even if it runs wrongly. The struggle is the part that teaches.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>what each problem uses</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Problems</th><th>Topic</th></tr></thead>
+        <tbody><tr><td>1&ndash;3</td><td>Variables, input, type conversion</td></tr><tr><td>4&ndash;6</td><td>Conditions</td></tr><tr><td>7&ndash;9</td><td>Loops</td></tr><tr><td>10&ndash;12</td><td>Loops with lists, and putting it together</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Variables and input</h2>
+  <p>Problems 1 to 3.</p>
+</section>
+
+<article class="entry" id="e1">
+  <div class="entry-text">
+    <h3><span class="num">01</span> Greeting</h3>
+    <p>Ask for a name, then print a greeting using it. Use an f-string, not <code>+</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>problem_01.py</span></div>
+    <pre class="code" data-lang="py"><code>name = input("What is your name? ")
+
+# your code here
+</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>expected output</span></div>
+    <pre class="code" data-lang="none"><code>What is your name? Ada
+Hello, Ada! Nice to meet you.</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show one working answer</summary>
+      <pre class="code" data-lang="py"><code>name = input("What is your name? ")
+print(f"Hello, {name}! Nice to meet you.")</code></pre>
+    </details>
+  </div>
+</article>
+
+<article class="entry" id="e2">
+  <div class="entry-text">
+    <h3><span class="num">02</span> Rectangle area</h3>
+    <p>Ask for a width and a height, then print the area and the perimeter.</p>
+    <p class="tip"><strong>Stuck?</strong> <code>input()</code> gives you a string. You will need <code>int()</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>problem_02.py</span></div>
+    <pre class="code" data-lang="py"><code>width = input("Width? ")
+height = input("Height? ")
+
+# your code here
+</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>expected output</span></div>
+    <pre class="code" data-lang="none"><code>Width? 4
+Height? 6
+Area: 24
+Perimeter: 20</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show one working answer</summary>
+      <pre class="code" data-lang="py"><code>width = int(input("Width? "))
+height = int(input("Height? "))
+
+print(f"Area: {width * height}")
+print(f"Perimeter: {2 * (width + height)}")</code></pre>
+    </details>
+  </div>
+</article>
+
+<article class="entry" id="e3">
+  <div class="entry-text">
+    <h3><span class="num">03</span> Seconds to minutes</h3>
+    <p>Ask for a number of seconds and print it as whole minutes and leftover seconds. 150 seconds is 2 minutes and 30 seconds.</p>
+    <p class="tip"><strong>Stuck?</strong> <code>//</code> gives whole minutes, <code>%</code> gives the remainder.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>problem_03.py</span></div>
+    <pre class="code" data-lang="py"><code>total = int(input("Seconds? "))
+
+# your code here
+</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>expected output</span></div>
+    <pre class="code" data-lang="none"><code>Seconds? 150
+2 minutes and 30 seconds</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show one working answer</summary>
+      <pre class="code" data-lang="py"><code>total = int(input("Seconds? "))
+
+minutes = total // 60
+seconds = total % 60
+print(f"{minutes} minutes and {seconds} seconds")</code></pre>
+    </details>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Conditions</h2>
+  <p>Problems 4 to 6.</p>
+</section>
+
+<article class="entry" id="e4">
+  <div class="entry-text">
+    <h3><span class="num">04</span> Pass or fail</h3>
+    <p>Ask for a score out of 100 and print a grade: 70 or more is a pass, 50 to 69 is a near miss, under 50 is a fail.</p>
+    <p class="tip"><strong>Stuck?</strong> Use <code>elif</code>. Order matters — check the highest band first.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>problem_04.py</span></div>
+    <pre class="code" data-lang="py"><code>score = int(input("Score? "))
+
+# your code here
+</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>expected output</span></div>
+    <pre class="code" data-lang="none"><code>Score? 64
+Near miss</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show one working answer</summary>
+      <pre class="code" data-lang="py"><code>score = int(input("Score? "))
+
+if score &gt;= 70:
+    print("Pass")
+elif score &gt;= 50:
+    print("Near miss")
+else:
+    print("Fail")</code></pre>
+    </details>
+  </div>
+</article>
+
+<article class="entry" id="e5">
+  <div class="entry-text">
+    <h3><span class="num">05</span> Odd or even</h3>
+    <p>Ask for a whole number and say whether it is odd or even. Then handle zero as its own case, printing <code>Zero</code>.</p>
+    <p class="tip"><strong>Stuck?</strong> <code>n % 2 == 0</code> is the even test. Check for zero before that.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>problem_05.py</span></div>
+    <pre class="code" data-lang="py"><code>n = int(input("A number? "))
+
+# your code here
+</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>expected output</span></div>
+    <pre class="code" data-lang="none"><code>A number? 7
+Odd</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show one working answer</summary>
+      <pre class="code" data-lang="py"><code>n = int(input("A number? "))
+
+if n == 0:
+    print("Zero")
+elif n % 2 == 0:
+    print("Even")
+else:
+    print("Odd")</code></pre>
+    </details>
+  </div>
+</article>
+
+<article class="entry" id="e6">
+  <div class="entry-text">
+    <h3><span class="num">06</span> Leap year</h3>
+    <p>A year is a leap year if it divides by 4, except years dividing by 100, unless they also divide by 400. So 2024 yes, 1900 no, 2000 yes.</p>
+    <p class="tip"><strong>Stuck?</strong> You can do it with one condition using <code>and</code> and <code>or</code>, or with nested <code>if</code>s. Both are fine.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>problem_06.py</span></div>
+    <pre class="code" data-lang="py"><code>year = int(input("Year? "))
+
+# your code here
+</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>expected output</span></div>
+    <pre class="code" data-lang="none"><code>Year? 1900
+1900 is not a leap year</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show one working answer</summary>
+      <pre class="code" data-lang="py"><code>year = int(input("Year? "))
+
+is_leap = (year % 4 == 0 and year % 100 != 0) or year % 400 == 0
+
+if is_leap:
+    print(f"{year} is a leap year")
+else:
+    print(f"{year} is not a leap year")</code></pre>
+    </details>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Loops</h2>
+  <p>Problems 7 to 9.</p>
+</section>
+
+<article class="entry" id="e7">
+  <div class="entry-text">
+    <h3><span class="num">07</span> Countdown</h3>
+    <p>Print the numbers from 10 down to 1, one per line, then <code>Liftoff!</code>.</p>
+    <p class="tip"><strong>Stuck?</strong> <code>range</code> takes a third argument, the step. It can be negative.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>problem_07.py</span></div>
+    <pre class="code" data-lang="py"><code># your code here
+</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>expected output</span></div>
+    <pre class="code" data-lang="none"><code>10
+9
+8
+...
+1
+Liftoff!</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show one working answer</summary>
+      <pre class="code" data-lang="py"><code>for n in range(10, 0, -1):
+    print(n)
+
+print("Liftoff!")</code></pre>
+    </details>
+  </div>
+</article>
+
+<article class="entry" id="e8">
+  <div class="entry-text">
+    <h3><span class="num">08</span> Times table</h3>
+    <p>Ask for a number and print its times table from 1 to 12, as <code>3 x 1 = 3</code> on each line.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>problem_08.py</span></div>
+    <pre class="code" data-lang="py"><code>n = int(input("Which table? "))
+
+# your code here
+</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>expected output</span></div>
+    <pre class="code" data-lang="none"><code>Which table? 3
+3 x 1 = 3
+3 x 2 = 6
+...
+3 x 12 = 36</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show one working answer</summary>
+      <pre class="code" data-lang="py"><code>n = int(input("Which table? "))
+
+for i in range(1, 13):
+    print(f"{n} x {i} = {n * i}")</code></pre>
+    </details>
+  </div>
+</article>
+
+<article class="entry" id="e9">
+  <div class="entry-text">
+    <h3><span class="num">09</span> FizzBuzz</h3>
+    <p>Print the numbers 1 to 30. For multiples of 3 print <code>Fizz</code> instead, for multiples of 5 print <code>Buzz</code>, and for multiples of both print <code>FizzBuzz</code>.</p>
+    <p class="tip"><strong>Stuck?</strong> Check for both <em>first</em>. If you check 3 first, 15 never reaches the FizzBuzz case.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>problem_09.py</span></div>
+    <pre class="code" data-lang="py"><code>for n in range(1, 31):
+    # your code here
+    pass
+</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>expected output</span></div>
+    <pre class="code" data-lang="none"><code>1
+2
+Fizz
+4
+Buzz
+Fizz
+...
+14
+FizzBuzz</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show one working answer</summary>
+      <pre class="code" data-lang="py"><code>for n in range(1, 31):
+    if n % 3 == 0 and n % 5 == 0:
+        print("FizzBuzz")
+    elif n % 3 == 0:
+        print("Fizz")
+    elif n % 5 == 0:
+        print("Buzz")
+    else:
+        print(n)</code></pre>
+    </details>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Loops with lists</h2>
+  <p>Problems 10 to 12.</p>
+</section>
+
+<article class="entry" id="e10">
+  <div class="entry-text">
+    <h3><span class="num">10</span> Average</h3>
+    <p>Given the list of scores below, print the lowest, the highest and the average. Show the average to one decimal place.</p>
+    <p class="tip"><strong>Stuck?</strong> <code>min()</code>, <code>max()</code>, <code>sum()</code> and <code>len()</code> all take a list. For the formatting, <code>f"{x:.1f}"</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>problem_10.py</span></div>
+    <pre class="code" data-lang="py"><code>scores = [72, 55, 91, 68, 84, 47]
+
+# your code here
+</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>expected output</span></div>
+    <pre class="code" data-lang="none"><code>Lowest: 47
+Highest: 91
+Average: 69.5</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show one working answer</summary>
+      <pre class="code" data-lang="py"><code>scores = [72, 55, 91, 68, 84, 47]
+
+print(f"Lowest: {min(scores)}")
+print(f"Highest: {max(scores)}")
+print(f"Average: {sum(scores) / len(scores):.1f}")</code></pre>
+    </details>
+  </div>
+</article>
+
+<article class="entry" id="e11">
+  <div class="entry-text">
+    <h3><span class="num">11</span> Count the long words</h3>
+    <p>Given the list of plants below, count how many have names longer than five characters, and print those names.</p>
+    <p class="tip"><strong>Stuck?</strong> Start a counter at 0 before the loop, not inside it.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>problem_11.py</span></div>
+    <pre class="code" data-lang="py"><code>plants = ["fern", "monstera", "ivy", "philodendron", "cactus"]
+
+# your code here
+</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>expected output</span></div>
+    <pre class="code" data-lang="none"><code>monstera
+philodendron
+cactus
+3 plants have long names</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show one working answer</summary>
+      <pre class="code" data-lang="py"><code>plants = ["fern", "monstera", "ivy", "philodendron", "cactus"]
+
+count = 0
+for plant in plants:
+    if len(plant) &gt; 5:
+        print(plant)
+        count += 1
+
+print(f"{count} plants have long names")</code></pre>
+    </details>
+  </div>
+</article>
+
+<article class="entry" id="e12">
+  <div class="entry-text">
+    <h3><span class="num">12</span> Shopping total</h3>
+    <p>Keep asking for a price until the user types <code>done</code>. Then print how many items were entered and the total. Typing <code>done</code> straight away should print a total of 0, not crash.</p>
+    <p class="tip"><strong>Stuck?</strong> A <code>while True</code> loop with a <code>break</code> is the clearest shape. Check for <code>"done"</code> <em>before</em> converting to a number.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>problem_12.py</span></div>
+    <pre class="code" data-lang="py"><code>total = 0
+count = 0
+
+# your code here
+</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>expected output</span></div>
+    <pre class="code" data-lang="none"><code>Price (or done)? 4.50
+Price (or done)? 2.25
+Price (or done)? done
+2 items, total $6.75</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show one working answer</summary>
+      <pre class="code" data-lang="py"><code>total = 0
+count = 0
+
+while True:
+    answer = input("Price (or done)? ").strip().lower()
+    if answer == "done":
+        break
+    total += float(answer)
+    count += 1
+
+print(f"{count} items, total ${total:.2f}")</code></pre>
+    </details>
+  </div>
+</article>
+
+
+<p class="empty" hidden>Nothing on this page mentions that. Try a shorter word, or clear the filter.</p>
+
+<footer class="foot">
+  <p><a href="../index.html">&larr; Back to Coding Hub</a></p>
+  <p>Then try the <a href="./debugging.html">debugging drills</a>.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script src="../js/highlight.js"></script>
+<script src="../js/reference.js"></script>
+</body>
+</html>

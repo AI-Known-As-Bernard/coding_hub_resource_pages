@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terminal basics — Coding Hub</title>
+<meta name="description" content="Move between folders and run files without touching the mouse.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/reference_styles.css">
+<style>
+  :root{ --accent:#6D4AC4; --accent-soft:#ECE7F8; }
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the contents</a>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol"><a href="../index.html">Coding Hub</a> &nbsp;/&nbsp; Tools</p>
+  <h1>the <span class="lit">terminal</span></h1>
+  <p class="deck">Move between folders and run files without touching the mouse. <strong>Six commands cover almost everything you will do this year.</strong></p>
+
+  <div class="finder">
+    <label>
+      <span class="visually-hidden">Filter this page</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="filter" type="search" placeholder="cd, ls, pwd, path, tab…" autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="clear">Clear</button>
+  </div>
+  <p class="hits" id="hits" role="status"></p>
+</header>
+
+<nav class="contents" id="start">
+  <h2>On this page</h2>
+  <a href="#e1"><span>01</span> What the terminal is</a>
+  <a href="#e2"><span>02</span> The prompt, and where you are</a>
+  <a href="#e3"><span>03</span> cd</a>
+  <a href="#e4"><span>04</span> Reading a path</a>
+  <a href="#e5"><span>05</span> Files and folders</a>
+  <a href="#e6"><span>06</span> Running your programs</a>
+  <a href="#e7"><span>07</span> Keys worth knowing</a>
+  <a href="#e8"><span>08</span> Windows and the rest</a>
+  <a href="#e9"><span>09</span> Errors you will meet</a>
+  <a href="#e10"><span>10</span> Ten minutes of practice</a>
+</nav>
+
+<section class="part">
+  <h2>Getting started</h2>
+  <p>What it is and how to open one.</p>
+</section>
+
+<article class="entry" id="e1">
+  <div class="entry-text">
+    <h3><span class="num">01</span> What the terminal is</h3>
+    <p>A terminal types commands at your computer instead of clicking at it. Everything you do in a file manager — list a folder, move a file, open a program — has a typed equivalent, and the typed one can be repeated, scripted and shared.</p>
+    <p>You need it because most developer tools have no window: Python, Node, Git and npm are all commands, and the terminal is where you run them.</p>
+    <p class="tip">Open one inside VS Code with <kbd>Ctrl</kbd>+<kbd>`</kbd> — the backtick above Tab. It starts in whichever folder you have open, which saves most of the navigating below.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>what it is called</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>System</th><th>Program</th><th>Language</th></tr></thead>
+        <tbody><tr><td>Mac</td><td>Terminal, or the one in VS Code</td><td>zsh</td></tr><tr><td>Linux</td><td>Terminal</td><td>bash</td></tr><tr><td>Windows</td><td>PowerShell, or the one in VS Code</td><td>PowerShell</td></tr><tr><td>Windows (alternative)</td><td>Git Bash, installed with Git</td><td>bash — matches Mac and Linux</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e2">
+  <div class="entry-text">
+    <h3><span class="num">02</span> The prompt, and where you are</h3>
+    <p>The terminal is always <em>somewhere</em> — in one folder, called the working directory. Commands act on that folder unless you say otherwise.</p>
+    <p>This is the single idea that makes the terminal click. &ldquo;File not found&rdquo; almost always means the file exists but you are standing somewhere else.</p>
+    <p class="warn">When a command cannot find a file, run <code>pwd</code> and <code>ls</code> before anything else. Nine times out of ten the answer is there.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>Terminal</span></div>
+    <pre class="code" data-lang="bash"><code>pwd
+# /Users/ada/projects/plant-tracker      &lt;- Mac and Linux
+# C:\Users\ada\projects\plant-tracker    &lt;- Windows
+
+ls          # list this folder (Mac, Linux, Git Bash)
+dir         # the same, PowerShell and CMD
+ls -la      # long listing, including hidden files like .env</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Moving about</h2>
+  <p>One command, three forms.</p>
+</section>
+
+<article class="entry" id="e3">
+  <div class="entry-text">
+    <h3><span class="num">03</span> cd</h3>
+    <p><code>cd</code> changes directory. It takes a path, and the path can be relative to where you are or absolute from the root of the drive.</p>
+    <p class="tip"><strong>Press Tab.</strong> Type the first two or three letters of a folder name and press Tab — the terminal completes it. This is not a nicety: it stops almost every typo, and it only completes names that actually exist, so it also tells you when you are in the wrong place.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>Terminal</span></div>
+    <pre class="code" data-lang="bash"><code>cd plant-tracker      # into a folder that is here
+cd ..                 # up one level
+cd ../..              # up two
+cd ~                  # your home folder
+cd /                  # the root of the drive
+cd -                  # back to where you just were
+cd                    # on its own: home folder
+
+# A path with a space needs quotes
+cd "My Projects"</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e4">
+  <div class="entry-text">
+    <h3><span class="num">04</span> Reading a path</h3>
+    <p>Three symbols appear in paths constantly and each means one thing.</p>
+    <p>A path starting with <code>/</code> or a drive letter is absolute: it works from anywhere and nowhere else. A path starting with a name or a dot is relative to where you are standing.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>path symbols</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Symbol</th><th>Means</th><th>Example</th></tr></thead>
+        <tbody><tr><td><code>.</code></td><td>the folder I am in</td><td><code>./script.py</code></td></tr><tr><td><code>..</code></td><td>the folder above</td><td><code>../index.html</code></td></tr><tr><td><code>~</code></td><td>my home folder</td><td><code>~/Desktop</code></td></tr><tr><td><code>/</code></td><td>separates folders; alone at the start, the root</td><td><code>css/styles.css</code></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Doing things</h2>
+  <p>Create, move, delete, run.</p>
+</section>
+
+<article class="entry" id="e5">
+  <div class="entry-text">
+    <h3><span class="num">05</span> Files and folders</h3>
+    <p>You can do all of this in a file manager. Learn the commands anyway, because they are the version you can put in instructions for someone else.</p>
+    <p class="warn"><code>rm</code> does not use the recycle bin. There is no undo and no confirmation. Read the line twice before pressing Enter, especially if it contains <code>*</code> or <code>-r</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>Terminal</span></div>
+    <pre class="code" data-lang="bash"><code>mkdir my-project          # make a folder
+mkdir -p src/js           # make nested folders in one go
+
+touch index.html          # make an empty file (Mac, Linux, Git Bash)
+New-Item index.html       # the same in PowerShell
+
+cp styles.css backup.css  # copy
+mv old.html new.html      # rename, or move
+
+rm notes.txt              # delete a file. No undo.
+rm -r old-folder          # delete a folder and everything in it</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e6">
+  <div class="entry-text">
+    <h3><span class="num">06</span> Running your programs</h3>
+    <p>The command is the program's name, then the file. Both have to be findable: the program on your PATH, the file in the folder you are standing in.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>Terminal</span></div>
+    <pre class="code" data-lang="bash"><code>python hello.py           # run a Python file
+python3 hello.py          # on systems where 'python' is version 2
+
+node app.js               # run a JavaScript file
+npm install               # install a project's dependencies
+npm run dev               # run a script from package.json
+
+python --version          # check a program is installed
+node --version
+git --version</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Working faster</h2>
+  <p>The parts nobody tells you.</p>
+</section>
+
+<article class="entry" id="e7">
+  <div class="entry-text">
+    <h3><span class="num">07</span> Keys worth knowing</h3>
+    <p>These six save more time than any other thing on this page. The arrow keys alone will halve your typing.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>keys</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Key</th><th>Does</th></tr></thead>
+        <tbody><tr><td><kbd>Tab</kbd></td><td>Completes the name you are typing</td></tr><tr><td><kbd>&uarr;</kbd> <kbd>&darr;</kbd></td><td>Walks back through commands you already ran</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>C</kbd></td><td>Stops whatever is running. Use it on a hung program.</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>L</kbd></td><td>Clears the screen. <code>clear</code> does the same.</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>A</kbd> / <kbd>Ctrl</kbd>+<kbd>E</kbd></td><td>Jump to the start or end of the line</td></tr><tr><td><kbd>Ctrl</kbd>+<kbd>R</kbd></td><td>Search your command history — type part of an old command</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e8">
+  <div class="entry-text">
+    <h3><span class="num">08</span> Windows and the rest</h3>
+    <p>PowerShell understands many Unix names as aliases, so <code>ls</code> and <code>cd</code> work. The ones below are where they genuinely differ.</p>
+    <p class="tip">Installing Git for Windows gives you <strong>Git Bash</strong>, a terminal that uses the Mac and Linux commands. If you are following a tutorial written for a Mac, use Git Bash and the commands match.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>differences</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Mac / Linux</th><th>PowerShell</th></tr></thead>
+        <tbody><tr><td><code>ls -la</code></td><td><code>ls -Force</code></td></tr><tr><td><code>touch file.txt</code></td><td><code>New-Item file.txt</code></td></tr><tr><td><code>cat file.txt</code></td><td><code>Get-Content file.txt</code></td></tr><tr><td><code>rm -r folder</code></td><td><code>Remove-Item -Recurse folder</code></td></tr><tr><td><code>pwd</code></td><td><code>pwd</code> — the same</td></tr><tr><td><code>/</code> in paths</td><td><code>\</code>, though <code>/</code> usually works too</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e9">
+  <div class="entry-text">
+    <h3><span class="num">09</span> Errors you will meet</h3>
+    <p>Six messages cover nearly everything the terminal will say to you.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>message to cause</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>What you see</th><th>Means</th></tr></thead>
+        <tbody><tr><td><code>command not found</code></td><td>The program is not installed, or not on your PATH. Check with <code>--version</code>.</td></tr><tr><td><code>No such file or directory</code></td><td>You are in the wrong folder. Run <code>pwd</code> then <code>ls</code>.</td></tr><tr><td><code>Permission denied</code></td><td>The file is protected, or you are writing somewhere you may not.</td></tr><tr><td><code>cd: not a directory</code></td><td>You tried to <code>cd</code> into a file.</td></tr><tr><td>The prompt does not come back</td><td>The program is still running. <kbd>Ctrl</kbd>+<kbd>C</kbd> stops it.</td></tr><tr><td>A <code>&gt;</code> prompt you cannot escape</td><td>An unclosed quote. Press <kbd>Ctrl</kbd>+<kbd>C</kbd> and retype the line.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e10">
+  <div class="entry-text">
+    <h3><span class="num">10</span> Ten minutes of practice</h3>
+    <p>Do this once and the commands stop needing to be looked up.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>try it</span></div>
+    <div class="try">
+      <ul class="checklist">
+        <li><label><input type="checkbox"> <span>Open a terminal and run <code>pwd</code>. Where are you?</span></label></li>
+        <li><label><input type="checkbox"> <span><code>cd</code> to your Desktop and <code>ls</code> it</span></label></li>
+        <li><label><input type="checkbox"> <span>Make a folder called <code>terminal-practice</code> and <code>cd</code> into it</span></label></li>
+        <li><label><input type="checkbox"> <span>Create <code>hello.py</code> that prints something, and run it</span></label></li>
+        <li><label><input type="checkbox"> <span>Make a <code>src</code> folder and move the file into it</span></label></li>
+        <li><label><input type="checkbox"> <span>Go up a level with <code>cd ..</code>, then back down using Tab completion</span></label></li>
+        <li><label><input type="checkbox"> <span>Press <kbd>&uarr;</kbd> four times and watch your history</span></label></li>
+        <li><label><input type="checkbox"> <span>Delete the practice folder</span></label></li>
+      </ul>
+    </div>
+  </div>
+</article>
+
+
+<p class="empty" hidden>Nothing on this page mentions that. Try a shorter word, or clear the filter.</p>
+
+<footer class="foot">
+  <p><a href="../index.html">&larr; Back to Coding Hub</a></p>
+  <p>Next: <a href="./git.html">Git and GitHub</a>.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script src="../js/highlight.js"></script>
+<script src="../js/reference.js"></script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Words we use in class — Coding Hub</title>
+<meta name="description" content="Plain definitions for the terms that get thrown around.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/reference_styles.css">
+<style>
+  :root{ --accent:#4B5A6B; --accent-soft:#E8EBEE; }
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the contents</a>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol"><a href="../index.html">Coding Hub</a> &nbsp;/&nbsp; Reference</p>
+  <h1>words we <span class="lit">use</span></h1>
+  <p class="deck">Plain definitions for the terms that get thrown around in class and in error messages. <strong>Filter for a word rather than scrolling.</strong></p>
+
+  <div class="finder">
+    <label>
+      <span class="visually-hidden">Filter this page</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="filter" type="search" placeholder="argument, API, scope, DOM…" autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="clear">Clear</button>
+  </div>
+  <p class="hits" id="hits" role="status"></p>
+</header>
+
+<nav class="contents" id="start">
+  <h2>On this page</h2>
+  <a href="#e1"><span>01</span> The basics</a>
+  <a href="#e2"><span>02</span> More terms</a>
+  <a href="#e3"><span>03</span> Running and breaking</a>
+  <a href="#e4"><span>04</span> Front end</a>
+  <a href="#e5"><span>05</span> Back end</a>
+  <a href="#e6"><span>06</span> Editor, terminal, Git</a>
+  <a href="#e7"><span>07</span> Ours</a>
+</nav>
+
+<section class="part">
+  <h2>Writing code</h2>
+  <p>Words about the code itself.</p>
+</section>
+
+<article class="entry" id="e1">
+  <div class="entry-text">
+    <h3><span class="num">01</span> The basics</h3>
+    <p>The words that turn up in the first fortnight and then never stop.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>A to I</span></div>
+    <dl class="field-list" style="margin:1rem">
+      <dt>argument</dt>
+      <dd>A value you pass into a function when you call it. The name in the definition is the <em>parameter</em>. <code>greet("Ada")</code></dd>
+      <dt>boolean</dt>
+      <dd>A value that is either true or false. Named after George Boole.</dd>
+      <dt>comment</dt>
+      <dd>A note for humans that the language ignores. <code># like this</code></dd>
+      <dt>concatenate</dt>
+      <dd>Join two strings end to end. <code>"ab" + "cd"</code></dd>
+      <dt>condition</dt>
+      <dd>An expression that is true or false, used to decide what runs next.</dd>
+      <dt>expression</dt>
+      <dd>Anything that produces a value. <code>2 + 2</code> is an expression; <code>x = 4</code> is a statement.</dd>
+      <dt>function</dt>
+      <dd>A named block of code you can run on demand.</dd>
+      <dt>index</dt>
+      <dd>A position in a list or string. Counting starts at zero.</dd>
+      <dt>iterate</dt>
+      <dd>Go through a collection one item at a time. What a loop does.</dd>
+    </dl>
+  </div>
+</article>
+
+<article class="entry" id="e2">
+  <div class="entry-text">
+    <h3><span class="num">02</span> More terms</h3>
+    <p>The second half of the alphabet, same idea.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>L to Z</span></div>
+    <dl class="field-list" style="margin:1rem">
+      <dt>literal</dt>
+      <dd>A value written directly in the code. <code>42, "hello", True</code></dd>
+      <dt>method</dt>
+      <dd>A function that belongs to a value, called with a dot. <code>name.upper()</code></dd>
+      <dt>mutable</dt>
+      <dd>Able to be changed in place. Lists are mutable; strings are not.</dd>
+      <dt>parameter</dt>
+      <dd>The name in a function definition that receives an argument.</dd>
+      <dt>return</dt>
+      <dd>Hand a value back from a function to whatever called it. Not the same as printing it.</dd>
+      <dt>scope</dt>
+      <dd>Where a name exists. A variable made inside a function usually does not exist outside it.</dd>
+      <dt>statement</dt>
+      <dd>One instruction. Usually one line.</dd>
+      <dt>string</dt>
+      <dd>Text. Always in quotes.</dd>
+      <dt>syntax</dt>
+      <dd>The grammar of a language — where the colons and brackets go.</dd>
+      <dt>variable</dt>
+      <dd>A name pointing at a value.</dd>
+      <dt>whitespace</dt>
+      <dd>Spaces, tabs and newlines. Python uses them to mark blocks, so they matter.</dd>
+    </dl>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Running code</h2>
+  <p>Words about what happens when you press go.</p>
+</section>
+
+<article class="entry" id="e3">
+  <div class="entry-text">
+    <h3><span class="num">03</span> Running and breaking</h3>
+    <p>Most of these turn up in error messages, which is usually where you meet them first.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>terms</span></div>
+    <dl class="field-list" style="margin:1rem">
+      <dt>bug</dt>
+      <dd>A mistake in the code. From an actual moth found in a computer in 1947.</dd>
+      <dt>compile</dt>
+      <dd>Translate source code into something a machine runs, before running it. Python and JavaScript do not need this step.</dd>
+      <dt>debug</dt>
+      <dd>Find and fix a bug. The skill, not the accident.</dd>
+      <dt>exception</dt>
+      <dd>An error raised while the program runs, which stops it unless you catch it.</dd>
+      <dt>execute</dt>
+      <dd>Run.</dd>
+      <dt>interpreter</dt>
+      <dd>The program that reads your source and runs it. <code>python</code> is one.</dd>
+      <dt>runtime</dt>
+      <dd>While the program is running — as opposed to when you are writing it.</dd>
+      <dt>stack trace, traceback</dt>
+      <dd>The list of calls that led to an error. Read it bottom-up.</dd>
+      <dt>syntax error</dt>
+      <dd>Code the language cannot read at all. Nothing runs.</dd>
+    </dl>
+  </div>
+</article>
+
+<section class="part">
+  <h2>The web</h2>
+  <p>Words about pages and servers.</p>
+</section>
+
+<article class="entry" id="e4">
+  <div class="entry-text">
+    <h3><span class="num">04</span> Front end</h3>
+    <p>Everything that happens in the browser.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>terms</span></div>
+    <dl class="field-list" style="margin:1rem">
+      <dt>attribute</dt>
+      <dd>Extra information on an HTML tag. <code>href="/shop"</code></dd>
+      <dt>class</dt>
+      <dd>A label on an HTML element so CSS and JavaScript can find it. Different from a class in object-oriented programming.</dd>
+      <dt>CSS</dt>
+      <dd>Cascading Style Sheets. Decides how the page looks.</dd>
+      <dt>DOM</dt>
+      <dd>Document Object Model. The live tree of objects the browser builds from your HTML, and what JavaScript changes.</dd>
+      <dt>element</dt>
+      <dd>One thing in an HTML document: a paragraph, an image, a button.</dd>
+      <dt>event</dt>
+      <dd>Something that happens in the page — a click, a keystroke — that your code can respond to.</dd>
+      <dt>HTML</dt>
+      <dd>HyperText Markup Language. The structure and meaning of a page.</dd>
+      <dt>responsive</dt>
+      <dd>A layout that works at any screen width.</dd>
+      <dt>selector</dt>
+      <dd>A pattern that picks out elements. <code>.card h2</code></dd>
+      <dt>tag</dt>
+      <dd>The marker around an element. <code>&amp;lt;p&amp;gt; ... &amp;lt;/p&amp;gt;</code></dd>
+    </dl>
+  </div>
+</article>
+
+<article class="entry" id="e5">
+  <div class="entry-text">
+    <h3><span class="num">05</span> Back end</h3>
+    <p>Everything that happens on the server, and the words for how the two halves talk.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>terms</span></div>
+    <dl class="field-list" style="margin:1rem">
+      <dt>API</dt>
+      <dd>Application Programming Interface. A set of URLs another program can call to get or change data.</dd>
+      <dt>backend</dt>
+      <dd>The part that runs on a server: the database, the API, the logic users never see.</dd>
+      <dt>database</dt>
+      <dd>Organised storage that survives restarts.</dd>
+      <dt>endpoint</dt>
+      <dd>One URL of an API, with a method. <code>GET /api/v1/plants</code></dd>
+      <dt>JSON</dt>
+      <dd>A text format for structured data. The way APIs almost always send it.</dd>
+      <dt>middleware</dt>
+      <dd>A step every request passes through before reaching its handler.</dd>
+      <dt>request / response</dt>
+      <dd>A client asks, a server answers. The whole of HTTP.</dd>
+      <dt>route</dt>
+      <dd>A method and path mapped to the code that handles it.</dd>
+      <dt>server</dt>
+      <dd>A program that waits for requests and answers them. Also the computer it runs on.</dd>
+      <dt>status code</dt>
+      <dd>A number saying how a request went. 200 fine, 404 not found, 500 server broke.</dd>
+    </dl>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Tools</h2>
+  <p>Words about the things around the code.</p>
+</section>
+
+<article class="entry" id="e6">
+  <div class="entry-text">
+    <h3><span class="num">06</span> Editor, terminal, Git</h3>
+    <p>Words about the tools rather than the code.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>terms</span></div>
+    <dl class="field-list" style="margin:1rem">
+      <dt>branch</dt>
+      <dd>A separate line of commits in Git, so you can work without disturbing <code>main</code>.</dd>
+      <dt>commit</dt>
+      <dd>One saved snapshot in Git, with a message.</dd>
+      <dt>dependency</dt>
+      <dd>A package your project needs in order to run.</dd>
+      <dt>directory</dt>
+      <dd>A folder. The terminal's word for it.</dd>
+      <dt>environment variable</dt>
+      <dd>A setting passed to a program from outside it. Where secrets live.</dd>
+      <dt>IDE</dt>
+      <dd>Integrated Development Environment — an editor with extras. VS Code is close enough to one.</dd>
+      <dt>package</dt>
+      <dd>Someone else's code you install and use.</dd>
+      <dt>path</dt>
+      <dd>Where a file is. <code>css/styles.css</code></dd>
+      <dt>repository, repo</dt>
+      <dd>A folder Git is tracking.</dd>
+      <dt>terminal, shell, command line</dt>
+      <dd>Three names for typing commands at your computer.</dd>
+      <dt>version control</dt>
+      <dd>Keeping a history of changes so you can go back. Git is one.</dd>
+    </dl>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Class</h2>
+  <p>Words I use that are not standard.</p>
+</section>
+
+<article class="entry" id="e7">
+  <div class="entry-text">
+    <h3><span class="num">07</span> Ours</h3>
+    <p>[Add the terms specific to your class here — the names you use for assignments, stages, submission folders and so on.]</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>in this class</span></div>
+    <dl class="field-list" style="margin:1rem">
+      <dt>stage</dt>
+      <dd>One step of a staged project. Each stage builds on the one before and is graded on its own.</dd>
+      <dt>walkthrough</dt>
+      <dd>A page on this site you work through in order, building something.</dd>
+      <dt>reference</dt>
+      <dd>A page on this site you look things up in. Not meant to be read start to finish.</dd>
+      <dt>drill</dt>
+      <dd>A short exercise with one specific thing to find or fix.</dd>
+    </dl>
+  </div>
+</article>
+
+
+<p class="empty" hidden>Nothing on this page mentions that. Try a shorter word, or clear the filter.</p>
+
+<footer class="foot">
+  <p><a href="../index.html">&larr; Back to Coding Hub</a></p>
+  <p>Back to <a href="../index.html">Coding Hub</a>.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script src="../js/highlight.js"></script>
+<script src="../js/reference.js"></script>
+</body>
+</html>

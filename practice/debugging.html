@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Debugging drills — Coding Hub</title>
+<meta name="description" content="Broken programs to fix. The bug is always findable.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/reference_styles.css">
+<style>
+  :root{ --accent:#C2611A; --accent-soft:#FAEBDE; }
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the contents</a>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol"><a href="../index.html">Coding Hub</a> &nbsp;/&nbsp; Practice</p>
+  <h1>debugging <span class="lit">drills</span></h1>
+  <p class="deck">Eight broken programs. Each has exactly one bug. <strong>Find it by reading and tracing before you open the answer — that is the skill being practised.</strong></p>
+
+  <div class="finder">
+    <label>
+      <span class="visually-hidden">Filter this page</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="filter" type="search" placeholder="off by one, indentation, scope…" autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="clear">Clear</button>
+  </div>
+  <p class="hits" id="hits" role="status"></p>
+</header>
+
+<nav class="contents" id="start">
+  <h2>On this page</h2>
+  <a href="#e0"><span>00</span> The method</a>
+  <a href="#e1"><span>01</span> The age checker</a>
+  <a href="#e2"><span>02</span> The last item</a>
+  <a href="#e3"><span>03</span> The counter</a>
+  <a href="#e4"><span>04</span> The total</a>
+  <a href="#e5"><span>05</span> The grader</a>
+  <a href="#e6"><span>06</span> The average</a>
+  <a href="#e7"><span>07</span> The search</a>
+  <a href="#e8"><span>08</span> The doubler</a>
+</nav>
+
+<section class="part">
+  <h2>How to use these</h2>
+  <p>Copy each program into a file, run it, and read what happens before you change anything.</p>
+</section>
+
+<article class="entry entry-wide" id="e0">
+  <div class="entry-text">
+    <h3><span class="num">00</span> The method</h3>
+    <p>Every drill below has exactly one bug. Four of them crash and four produce a wrong answer without any error at all — those are the harder ones, and the more realistic.</p>
+    <p>Work in this order every time:</p>
+    <ul>
+      <li><strong>Run it.</strong> Read the error, or the wrong output, before touching anything.</li>
+      <li><strong>Predict.</strong> Say out loud what you think each line does.</li>
+      <li><strong>Trace.</strong> For a loop, write down the variables after each pass.</li>
+      <li><strong>Then change one thing</strong> and run again.</li>
+    </ul>
+    <p class="warn">Changing several things at once is how a one-bug program becomes a three-bug program. One change, one run.</p>
+  </div>
+</article>
+
+<section class="part">
+  <h2>These four crash</h2>
+  <p>Read the traceback; it names the line.</p>
+</section>
+
+<article class="entry" id="e1">
+  <div class="entry-text">
+    <h3><span class="num">01</span> The age checker</h3>
+    <p>Asks for an age and says whether the person can vote.</p>
+    <p><strong>What happens:</strong> <code>TypeError: '&gt;=' not supported between instances of 'str' and 'int'</code></p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>broken.py</span></div>
+    <pre class="code" data-lang="py"><code>age = input("How old are you? ")
+
+if age &gt;= 18:
+    print("You can vote")
+else:
+    print("Not yet")</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show the bug</summary>
+      <p style="font-family:var(--sans);font-size:var(--s0);padding:0 1rem"><code>input()</code> always returns a string, and a string cannot be compared with a number. Convert it.</p>
+      <pre class="code" data-lang="py"><code>age = int(input("How old are you? "))
+
+if age &gt;= 18:
+    print("You can vote")
+else:
+    print("Not yet")</code></pre>
+    </details>
+  </div>
+</article>
+
+<article class="entry" id="e2">
+  <div class="entry-text">
+    <h3><span class="num">02</span> The last item</h3>
+    <p>Prints every plant in the list, with its position.</p>
+    <p><strong>What happens:</strong> <code>IndexError: list index out of range</code>, after printing three correct lines.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>broken.py</span></div>
+    <pre class="code" data-lang="py"><code>plants = ["fern", "cactus", "ivy"]
+
+for i in range(len(plants) + 1):
+    print(i, plants[i])</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show the bug</summary>
+      <p style="font-family:var(--sans);font-size:var(--s0);padding:0 1rem"><code>range(len(plants))</code> already gives 0, 1, 2 — exactly the valid positions. The <code>+ 1</code> adds a fourth pass asking for <code>plants[3]</code>, which does not exist.</p>
+      <pre class="code" data-lang="py"><code>plants = ["fern", "cactus", "ivy"]
+
+for i in range(len(plants)):
+    print(i, plants[i])
+
+# Better still, when you need both:
+for i, plant in enumerate(plants):
+    print(i, plant)</code></pre>
+    </details>
+  </div>
+</article>
+
+<article class="entry" id="e3">
+  <div class="entry-text">
+    <h3><span class="num">03</span> The counter</h3>
+    <p>Counts how many numbers in the list are above 50.</p>
+    <p><strong>What happens:</strong> Prints <code>1</code> instead of <code>4</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>broken.py</span></div>
+    <pre class="code" data-lang="py"><code>scores = [72, 55, 91, 68]
+
+for score in scores:
+    count = 0
+    if score &gt; 50:
+        count += 1
+
+print(count)</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show the bug</summary>
+      <p style="font-family:var(--sans);font-size:var(--s0);padding:0 1rem"><code>count = 0</code> is inside the loop, so it resets on every pass. It belongs above the loop, where it runs once.</p>
+      <pre class="code" data-lang="py"><code>scores = [72, 55, 91, 68]
+
+count = 0
+for score in scores:
+    if score &gt; 50:
+        count += 1
+
+print(count)</code></pre>
+    </details>
+  </div>
+</article>
+
+<article class="entry" id="e4">
+  <div class="entry-text">
+    <h3><span class="num">04</span> The total</h3>
+    <p>Adds up a shopping list.</p>
+    <p><strong>What happens:</strong> Prints <code>$8.00</code> — the last price, not the sum.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>broken.py</span></div>
+    <pre class="code" data-lang="py"><code>prices = [4.50, 2.25, 8.00]
+total = 0
+
+for price in prices:
+    total = price
+
+print(f"Total: ${total:.2f}")</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show the bug</summary>
+      <p style="font-family:var(--sans);font-size:var(--s0);padding:0 1rem"><code>total = price</code> replaces the total each pass. To accumulate you need <code>total = total + price</code>, or its shorthand <code>total += price</code>.</p>
+      <pre class="code" data-lang="py"><code>prices = [4.50, 2.25, 8.00]
+total = 0
+
+for price in prices:
+    total += price
+
+print(f"Total: ${total:.2f}")</code></pre>
+    </details>
+  </div>
+</article>
+
+<section class="part">
+  <h2>These four run, and are wrong</h2>
+  <p>No error. Trace them.</p>
+</section>
+
+<article class="entry" id="e5">
+  <div class="entry-text">
+    <h3><span class="num">05</span> The grader</h3>
+    <p>Turns a score into a grade.</p>
+    <p><strong>What happens:</strong> Prints <code>Pass</code> for a score of 85, and would print <code>Pass</code> for 95 too.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>broken.py</span></div>
+    <pre class="code" data-lang="py"><code>score = 85
+
+if score &gt;= 50:
+    print("Pass")
+elif score &gt;= 70:
+    print("Merit")
+elif score &gt;= 90:
+    print("Distinction")</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show the bug</summary>
+      <p style="font-family:var(--sans);font-size:var(--s0);padding:0 1rem">The bands are checked lowest first, so everything 50 or above matches the first branch and the rest are never reached. Order the conditions from highest to lowest.</p>
+      <pre class="code" data-lang="py"><code>score = 85
+
+if score &gt;= 90:
+    print("Distinction")
+elif score &gt;= 70:
+    print("Merit")
+elif score &gt;= 50:
+    print("Pass")</code></pre>
+    </details>
+  </div>
+</article>
+
+<article class="entry" id="e6">
+  <div class="entry-text">
+    <h3><span class="num">06</span> The average</h3>
+    <p>Averages a list of numbers.</p>
+    <p><strong>What happens:</strong> Gives the right answer here, but gives a wrong one if you add a <code>print</code> inside the loop — and it does four divisions instead of one.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>broken.py</span></div>
+    <pre class="code" data-lang="py"><code>numbers = [4, 7, 2, 9]
+total = 0
+
+for n in numbers:
+    total += n
+    average = total / len(numbers)
+
+print(average)</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show the bug</summary>
+      <p style="font-family:var(--sans);font-size:var(--s0);padding:0 1rem">The division is inside the loop, so it is recalculated on every pass using a partial total. It happens to be correct only because the last pass uses the complete total. Move it out.</p>
+      <pre class="code" data-lang="py"><code>numbers = [4, 7, 2, 9]
+total = 0
+
+for n in numbers:
+    total += n
+
+average = total / len(numbers)
+print(average)</code></pre>
+    </details>
+  </div>
+</article>
+
+<article class="entry" id="e7">
+  <div class="entry-text">
+    <h3><span class="num">07</span> The search</h3>
+    <p>Reports whether a plant is in the list.</p>
+    <p><strong>What happens:</strong> Prints <code>Not found</code>, <code>Found it</code>, <code>Not found</code> — three lines for one question.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>broken.py</span></div>
+    <pre class="code" data-lang="py"><code>plants = ["fern", "cactus", "ivy"]
+wanted = "cactus"
+
+for plant in plants:
+    if plant == wanted:
+        print("Found it")
+    else:
+        print("Not found")</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show the bug</summary>
+      <p style="font-family:var(--sans);font-size:var(--s0);padding:0 1rem">The <code>else</code> runs on every pass that is not a match, so it reports on each item rather than on the search as a whole. Use a flag, or <code>break</code> with a <code>for...else</code>.</p>
+      <pre class="code" data-lang="py"><code>plants = ["fern", "cactus", "ivy"]
+wanted = "cactus"
+
+found = False
+for plant in plants:
+    if plant == wanted:
+        found = True
+        break
+
+if found:
+    print("Found it")
+else:
+    print("Not found")
+
+# Or simply:
+if wanted in plants:
+    print("Found it")</code></pre>
+    </details>
+  </div>
+</article>
+
+<article class="entry" id="e8">
+  <div class="entry-text">
+    <h3><span class="num">08</span> The doubler</h3>
+    <p>Doubles every number in a list.</p>
+    <p><strong>What happens:</strong> Prints <code>[1, 2, 3]</code>. Nothing was doubled.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>broken.py</span></div>
+    <pre class="code" data-lang="py"><code>def double_all(numbers):
+    for n in numbers:
+        n = n * 2
+
+numbers = [1, 2, 3]
+double_all(numbers)
+print(numbers)</code></pre>
+  </div>
+  <div class="panel">
+    <details class="deep-dive" style="margin:0;border:0;background:none">
+      <summary>Show the bug</summary>
+      <p style="font-family:var(--sans);font-size:var(--s0);padding:0 1rem"><code>n</code> is a copy of each value, so reassigning it changes only the copy. To change the list you must write back into it by position, or build and return a new list.</p>
+      <pre class="code" data-lang="py"><code>def double_all(numbers):
+    return [n * 2 for n in numbers]
+
+numbers = [1, 2, 3]
+numbers = double_all(numbers)
+print(numbers)          # [2, 4, 6]
+
+# Or change it in place by position:
+def double_in_place(numbers):
+    for i in range(len(numbers)):
+        numbers[i] = numbers[i] * 2</code></pre>
+    </details>
+  </div>
+</article>
+
+
+<p class="empty" hidden>Nothing on this page mentions that. Try a shorter word, or clear the filter.</p>
+
+<footer class="foot">
+  <p><a href="../index.html">&larr; Back to Coding Hub</a></p>
+  <p>Reference: <a href="../python/errors.html">Reading error messages</a>.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script src="../js/highlight.js"></script>
+<script src="../js/reference.js"></script>
+</body>
+</html>

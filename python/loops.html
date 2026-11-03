@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loops, step by step — Coding Hub</title>
+<meta name="description" content="for and while, with a trace of what happens on every pass.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/reference_styles.css">
+<style>
+  :root{ --accent:#1C7C6B; --accent-soft:#E2F0ED; }
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the contents</a>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol"><a href="../index.html">Coding Hub</a> &nbsp;/&nbsp; Python</p>
+  <h1>loops, <span class="lit">step by step</span></h1>
+  <p class="deck"><code>for</code> and <code>while</code>, with a trace of what happens on every pass. <strong>If a loop is behaving strangely, entry 4 is almost always the reason.</strong></p>
+
+  <div class="finder">
+    <label>
+      <span class="visually-hidden">Filter this page</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="filter" type="search" placeholder="range, while, break, enumerate…" autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="clear">Clear</button>
+  </div>
+  <p class="hits" id="hits" role="status"></p>
+</header>
+
+<nav class="contents" id="start">
+  <h2>On this page</h2>
+  <a href="#e1"><span>01</span> Looping over a collection</a>
+  <a href="#e2"><span>02</span> range</a>
+  <a href="#e3"><span>03</span> Tracing a loop</a>
+  <a href="#e4"><span>04</span> Indentation decides what repeats</a>
+  <a href="#e5"><span>05</span> while loops</a>
+  <a href="#e6"><span>06</span> for or while?</a>
+  <a href="#e7"><span>07</span> break and continue</a>
+  <a href="#e8"><span>08</span> enumerate and zip</a>
+  <a href="#e9"><span>09</span> Building a list in a loop</a>
+  <a href="#e10"><span>10</span> Loop mistakes to recognise</a>
+</nav>
+
+<section class="part">
+  <h2>for</h2>
+  <p>When you know what you are looping over.</p>
+</section>
+
+<article class="entry" id="e1">
+  <div class="entry-text">
+    <h3><span class="num">01</span> Looping over a collection</h3>
+    <p>A <code>for</code> loop walks through a collection and hands you one item at a time. The variable after <code>for</code> is a name <em>you</em> choose — it is given each item in turn.</p>
+    <p>The colon and the indentation are not style. The colon says &ldquo;a block follows&rdquo; and the indentation marks where the block ends.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>for_basics.py</span></div>
+    <pre class="code" data-lang="py"><code>plants = ["fern", "cactus", "ivy"]
+
+for plant in plants:
+    print(plant)
+
+# fern
+# cactus
+# ivy
+
+# Strings are collections of characters
+for letter in "abc":
+    print(letter)</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e2">
+  <div class="entry-text">
+    <h3><span class="num">02</span> range</h3>
+    <p><code>range</code> makes a sequence of numbers to count through. It takes up to three arguments, and the stop value is <strong>not included</strong>.</p>
+    <p class="tip"><code>range(5)</code> gives 0, 1, 2, 3, 4 — five numbers starting at zero. That off-by-one feels wrong for a week and then feels obvious, because it matches how list positions are numbered.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>range.py</span></div>
+    <pre class="code" data-lang="py"><code>range(5)           # 0 1 2 3 4        stop only
+range(2, 6)        # 2 3 4 5          start, stop
+range(0, 10, 2)    # 0 2 4 6 8        start, stop, step
+range(5, 0, -1)    # 5 4 3 2 1        counting down
+
+for i in range(3):
+    print(f"pass number {i}")
+
+# Walk a list by position when you need the index
+for i in range(len(plants)):
+    print(i, plants[i])</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e3">
+  <div class="entry-text">
+    <h3><span class="num">03</span> Tracing a loop</h3>
+    <p>When a loop misbehaves, stop reading it and trace it. Write down every variable at the end of each pass. Four lines of a table beats an hour of staring.</p>
+    <p>Here is the trace for a loop that totals a list.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>trace_me.py</span></div>
+    <pre class="code" data-lang="py"><code>prices = [4, 7, 2]
+total = 0
+
+for price in prices:
+    total = total + price
+
+print(total)   # 13</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>what happens on each pass</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Pass</th><th>price</th><th>total before</th><th>total after</th></tr></thead>
+        <tbody><tr><td>1</td><td>4</td><td>0</td><td>4</td></tr><tr><td>2</td><td>7</td><td>4</td><td>11</td></tr><tr><td>3</td><td>2</td><td>11</td><td>13</td></tr><tr><td>—</td><td>loop ends</td><td></td><td><strong>13</strong> is printed</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e4">
+  <div class="entry-text">
+    <h3><span class="num">04</span> Indentation decides what repeats</h3>
+    <p>The most common loop bug in Python is not a logic error. It is a line indented one level too far, or not far enough.</p>
+    <p class="warn">In the second version the <code>print</code> is outside the loop, so it runs once after everything. Same five lines, completely different program — and no error message.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>indentation.py</span></div>
+    <pre class="code" data-lang="py"><code># Prints after every pass
+total = 0
+for price in [4, 7, 2]:
+    total += price
+    print(total)          # 4, then 11, then 13
+
+# Prints once, at the end
+total = 0
+for price in [4, 7, 2]:
+    total += price
+print(total)              # 13</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>while</h2>
+  <p>When you do not know how many times.</p>
+</section>
+
+<article class="entry" id="e5">
+  <div class="entry-text">
+    <h3><span class="num">05</span> while loops</h3>
+    <p>A <code>while</code> loop repeats as long as its condition stays true. Use it when the number of passes depends on something that happens inside the loop.</p>
+    <p class="warn">Something in the body must eventually make the condition false. Forget that and the program hangs forever — press <kbd>Ctrl</kbd>+<kbd>C</kbd> in the terminal to stop it.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>while.py</span></div>
+    <pre class="code" data-lang="py"><code>count = 3
+
+while count &gt; 0:
+    print(count)
+    count -= 1        # without this line, it never stops
+
+print("Liftoff")
+
+# The usual real use: keep asking until the answer is valid
+answer = ""
+while answer not in ("yes", "no"):
+    answer = input("yes or no? ").lower().strip()</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e6">
+  <div class="entry-text">
+    <h3><span class="num">06</span> for or while?</h3>
+    <p>A short rule that covers nearly every case you will meet this year.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>choosing</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Situation</th><th>Use</th></tr></thead>
+        <tbody><tr><td>Every item in a list</td><td><code>for item in things</code></td></tr><tr><td>A fixed number of times</td><td><code>for i in range(n)</code></td></tr><tr><td>Until the user types something valid</td><td><code>while</code></td></tr><tr><td>Until a game ends</td><td><code>while</code></td></tr><tr><td>Reading until a file runs out</td><td><code>for line in file</code></td></tr><tr><td>You are tempted to write a counter by hand</td><td><code>for</code> with <code>range</code> — it does the counting</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Controlling the loop</h2>
+  <p>Three keywords and two helpers.</p>
+</section>
+
+<article class="entry" id="e7">
+  <div class="entry-text">
+    <h3><span class="num">07</span> break and continue</h3>
+    <p><code>break</code> leaves the loop immediately. <code>continue</code> skips the rest of this pass and starts the next one.</p>
+    <p class="tip"><code>break</code> only leaves the innermost loop. To escape two nested loops you need a flag variable, or — usually better — move the inner loop into a function and <code>return</code>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>break_continue.py</span></div>
+    <pre class="code" data-lang="py"><code># break - stop as soon as we find it
+for plant in plants:
+    if plant == "cactus":
+        print("found it")
+        break
+
+# continue - skip the ones we do not want
+for n in range(10):
+    if n % 2 == 1:
+        continue        # skip odd numbers
+    print(n)            # 0 2 4 6 8</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e8">
+  <div class="entry-text">
+    <h3><span class="num">08</span> enumerate and zip</h3>
+    <p>Two built-ins that remove the two most common reasons people fall back to <code>range(len(...))</code>.</p>
+    <p><code>enumerate</code> gives you the index and the item together. <code>zip</code> walks two lists side by side, stopping when the shorter one runs out.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>enumerate_zip.py</span></div>
+    <pre class="code" data-lang="py"><code>plants = ["fern", "cactus", "ivy"]
+
+# Index and item, without counting by hand
+for i, plant in enumerate(plants):
+    print(f"{i}: {plant}")
+
+# Start counting at 1 instead
+for i, plant in enumerate(plants, start=1):
+    print(f"{i}. {plant}")
+
+# Two lists together
+rooms = ["kitchen", "office", "hall"]
+for plant, room in zip(plants, rooms):
+    print(f"The {plant} lives in the {room}")</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e9">
+  <div class="entry-text">
+    <h3><span class="num">09</span> Building a list in a loop</h3>
+    <p>The pattern behind most useful loops: start with an empty list, append on each pass.</p>
+    <p>Once that shape is familiar, a comprehension says the same thing on one line. Use a comprehension when it fits on one readable line and a loop when it does not.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>building.py</span></div>
+    <pre class="code" data-lang="py"><code># The long form
+lengths = []
+for plant in plants:
+    lengths.append(len(plant))
+
+# The same thing as a comprehension
+lengths = [len(plant) for plant in plants]
+
+# With a filter on the end
+short = [p for p in plants if len(p) &lt; 5]
+
+# Counting, the common one
+thirsty = 0
+for plant in plants:
+    if needs_water(plant):
+        thirsty += 1</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e10">
+  <div class="entry-text">
+    <h3><span class="num">10</span> Loop mistakes to recognise</h3>
+    <p>Each of these produces a wrong answer rather than an error, which is what makes them worth memorising.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>symptom to cause</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>What you see</th><th>Cause</th></tr></thead>
+        <tbody><tr><td>The total is always the last value</td><td><code>total = price</code> instead of <code>total += price</code></td></tr><tr><td>The total resets every pass</td><td><code>total = 0</code> is inside the loop</td></tr><tr><td>Only the last item is printed</td><td>The <code>print</code> is outside the loop</td></tr><tr><td>It runs one time too few</td><td><code>range(1, n)</code> where you wanted <code>range(1, n + 1)</code></td></tr><tr><td><code>IndexError</code> on the last pass</td><td><code>plants[i + 1]</code> with no check for the end</td></tr><tr><td>It never stops</td><td>A <code>while</code> whose condition never becomes false</td></tr><tr><td>Items get skipped</td><td>You removed items from the list while looping over it</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+
+<p class="empty" hidden>Nothing on this page mentions that. Try a shorter word, or clear the filter.</p>
+
+<footer class="foot">
+  <p><a href="../index.html">&larr; Back to Coding Hub</a></p>
+  <p>Next: <a href="./functions.html">Functions</a>.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script src="../js/highlight.js"></script>
+<script src="../js/reference.js"></script>
+</body>
+</html>
