@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Set up your editor — Coding Hub</title>
+<meta name="description" content="Install VS Code, pick a theme, and turn on the settings we use in class.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/reference_styles.css">
+<style>
+  :root{ --accent:#2F6FED; --accent-soft:#E4ECFD; }
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the contents</a>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol"><a href="../index.html">Coding Hub</a> &nbsp;/&nbsp; Start here</p>
+  <h1>set up your <span class="lit">editor</span></h1>
+  <p class="deck">Install it once, configure it once, and stop fighting your tools for the rest of the year. <strong>Work through this in order the first time.</strong></p>
+
+  <div class="finder">
+    <label>
+      <span class="visually-hidden">Filter this page</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="filter" type="search" placeholder="theme, font size, extension, autosave…" autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="clear">Clear</button>
+  </div>
+  <p class="hits" id="hits" role="status"></p>
+</header>
+
+<nav class="contents" id="start">
+  <h2>On this page</h2>
+  <a href="#e1"><span>01</span> Download and install</a>
+  <a href="#e2"><span>02</span> Open a folder, not a file</a>
+  <a href="#e3"><span>03</span> The settings we use</a>
+  <a href="#e4"><span>04</span> Settings as a file</a>
+  <a href="#e5"><span>05</span> Pick a theme</a>
+  <a href="#e6"><span>06</span> Extensions worth having</a>
+  <a href="#e7"><span>07</span> Prove the setup works</a>
+  <a href="#e8"><span>08</span> When something is wrong</a>
+</nav>
+
+<section class="part">
+  <h2>Installing</h2>
+  <p>Ten minutes, once.</p>
+</section>
+
+<article class="entry" id="e1">
+  <div class="entry-text">
+    <h3><span class="num">01</span> Download and install</h3>
+    <p>VS Code is free, and it is the same program on Windows, Mac and Linux. Get it from <a href="https://code.visualstudio.com" target="_blank" rel="noopener">code.visualstudio.com</a> — the site detects your operating system and offers the right build.</p>
+    <p>Accept the defaults during installation, with one exception on Windows: tick <strong>Add to PATH</strong> if you are offered it. That is what lets you open a folder from the terminal later.</p>
+    <p class="warn">Download it from that address and nowhere else. Search results for &ldquo;vs code download&rdquo; carry paid-ad impostors that bundle other software.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>which build</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>System</th><th>What you want</th></tr></thead>
+        <tbody><tr><td>Windows</td><td><strong>User Installer</strong>, 64-bit. Installs without admin rights.</td></tr><tr><td>Mac</td><td>The <code>.zip</code>. Unzip it, then drag the app into Applications.</td></tr><tr><td>Linux</td><td>The <code>.deb</code> or <code>.rpm</code> for your distribution.</td></tr><tr><td>Chromebook</td><td>VS Code needs Linux turned on. Ask me before you start.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e2">
+  <div class="entry-text">
+    <h3><span class="num">02</span> Open a folder, not a file</h3>
+    <p>This is the habit that separates a smooth year from a frustrating one. VS Code works on a <strong>folder</strong> — it calls it a workspace. Open the folder your project lives in, and the sidebar becomes your project.</p>
+    <p>Open a single loose file instead and half the features have nothing to work with: no file tree, no project-wide search, and the terminal starts in the wrong place.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the habit</span></div>
+    <pre class="code" data-lang="none"><code>File &gt; Open Folder...      &lt;- do this
+File &gt; Open File...        &lt;- not this
+
+Your folder should look like:
+
+  my-project/
+  |- index.html
+  |- style.css
+  +- script.js</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Settings</h2>
+  <p>The ones that actually matter. Everything else is taste.</p>
+</section>
+
+<article class="entry" id="e3">
+  <div class="entry-text">
+    <h3><span class="num">03</span> The settings we use</h3>
+    <p>Open settings with <kbd>Ctrl</kbd>+<kbd>,</kbd> (<kbd>&#8984;</kbd>+<kbd>,</kbd> on a Mac) and search for each name in the table.</p>
+    <p>Auto Save is the one to turn on first. Nearly every &ldquo;my change did not appear&rdquo; problem is an unsaved file, and the dot in the tab is easy to miss.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>search for each name</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Setting</th><th>Set it to</th><th>Why</th></tr></thead>
+        <tbody><tr><td>Auto Save</td><td><code>afterDelay</code></td><td>Saves a second after you stop typing</td></tr><tr><td>Font Size</td><td><code>15</code> or more</td><td>You will be reading this all year</td></tr><tr><td>Tab Size</td><td><code>2</code></td><td>What we use for HTML, CSS and JavaScript</td></tr><tr><td>Insert Spaces</td><td><span class='flag flag-no'>on</span></td><td>Spaces, not tab characters</td></tr><tr><td>Word Wrap</td><td><code>on</code></td><td>Stops long lines running off the screen</td></tr><tr><td>Render Whitespace</td><td><code>boundary</code></td><td>Shows stray spaces that break indentation</td></tr><tr><td>Bracket Pair Colorization</td><td><span class='flag flag-no'>on</span></td><td>Matching brackets share a colour</td></tr><tr><td>Format On Save</td><td><span class='flag flag-no'>on</span></td><td>Tidies indentation every time you save</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e4">
+  <div class="entry-text">
+    <h3><span class="num">04</span> Settings as a file</h3>
+    <p>Every setting is really a line in a JSON file, and pasting the file is faster than clicking through eight searches.</p>
+    <p>Open the command palette with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>, type <em>settings json</em>, and choose <strong>Preferences: Open User Settings (JSON)</strong>. Paste this inside the outer braces.</p>
+    <p class="tip">If the file already has entries, add a comma after the last one before pasting.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>settings.json</span></div>
+    <pre class="code" data-lang="json"><code>{
+  "files.autoSave": "afterDelay",
+  "editor.fontSize": 15,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.wordWrap": "on",
+  "editor.renderWhitespace": "boundary",
+  "editor.formatOnSave": true,
+  "editor.bracketPairColorization.enabled": true,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true
+}</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e5">
+  <div class="entry-text">
+    <h3><span class="num">05</span> Pick a theme</h3>
+    <p>Themes are personal and they are not just decoration: a theme with poor contrast makes you miss typos. Try a few and keep the one where strings, numbers and comments are obviously different colours.</p>
+    <p>Press <kbd>Ctrl</kbd>+<kbd>K</kbd> then <kbd>Ctrl</kbd>+<kbd>T</kbd> to flick through them with the arrow keys — the editor previews each one as you move.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>built in, nothing to install</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Theme</th><th>Good for</th></tr></thead>
+        <tbody><tr><td>Dark Modern</td><td>The default. A safe, high-contrast dark theme.</td></tr><tr><td>Light Modern</td><td>Bright rooms, and projecting to a screen.</td></tr><tr><td>Solarized Light</td><td>Long sessions; low contrast, easy on the eyes.</td></tr><tr><td>Quiet Light</td><td>Light theme with strong syntax colours.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e6">
+  <div class="entry-text">
+    <h3><span class="num">06</span> Extensions worth having</h3>
+    <p>Open the extensions panel with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd> and search by name. Install these four and stop there — every extension slows startup, and a long list is mostly things you installed once and forgot.</p>
+    <p class="tip">Check the publisher before you install. Popular extensions have look-alikes with almost the same name and a few hundred downloads.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>install these</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Extension</th><th>Publisher</th><th>What it does</th></tr></thead>
+        <tbody><tr><td>Live Server</td><td>Ritwick Dey</td><td>Right-click an HTML file, Open with Live Server. The page reloads as you save.</td></tr><tr><td>Prettier</td><td>Prettier</td><td>Formats your code on save so indentation is never the problem</td></tr><tr><td>Error Lens</td><td>Alexander</td><td>Puts the error message on the line itself instead of hiding it in a panel</td></tr><tr><td>Python</td><td>Microsoft</td><td>Running and debugging Python, plus error checking as you type</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Checking it worked</h2>
+  <p>Two minutes.</p>
+</section>
+
+<article class="entry" id="e7">
+  <div class="entry-text">
+    <h3><span class="num">07</span> Prove the setup works</h3>
+    <p>Do not wait until an assignment is due to discover something did not install. Run through this now.</p>
+    <p>The integrated terminal opens with <kbd>Ctrl</kbd>+<kbd>`</kbd> — the backtick key, above Tab on most keyboards. It starts in whatever folder you have open, which is the other reason to open folders rather than files.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>checklist</span></div>
+    <div class="try">
+      <ul class="checklist">
+        <li><label><input type="checkbox"> <span>VS Code opens and you can see the sidebar</span></label></li>
+        <li><label><input type="checkbox"> <span>You opened a <strong>folder</strong> and the file tree lists its files</span></label></li>
+        <li><label><input type="checkbox"> <span>Typing in a file and pausing saves it — the dot in the tab disappears</span></label></li>
+        <li><label><input type="checkbox"> <span><kbd>Ctrl</kbd>+<kbd>`</kbd> opens a terminal at the bottom</span></label></li>
+        <li><label><input type="checkbox"> <span>Right-clicking an HTML file offers <em>Open with Live Server</em></span></label></li>
+        <li><label><input type="checkbox"> <span>A deliberate typo gets a red underline</span></label></li>
+      </ul>
+    </div>
+  </div>
+</article>
+
+<article class="entry" id="e8">
+  <div class="entry-text">
+    <h3><span class="num">08</span> When something is wrong</h3>
+    <p>Four problems account for most of what goes wrong in the first week.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>symptom to fix</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>What you see</th><th>Fix</th></tr></thead>
+        <tbody><tr><td>The sidebar says &ldquo;no folder opened&rdquo;</td><td>File &gt; Open Folder, and pick your project folder</td></tr><tr><td>Live Server does not appear on right-click</td><td>The extension installed but the window needs reloading: command palette, <em>Developer: Reload Window</em></td></tr><tr><td>Your edits do not show in the browser</td><td>The file is unsaved, or the browser cached it. Save, then hard-reload with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd></td></tr><tr><td><code>code</code> is not recognised in the terminal</td><td>VS Code is not on your PATH. Command palette, <em>Shell Command: Install 'code' command in PATH</em></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+
+<p class="empty" hidden>Nothing on this page mentions that. Try a shorter word, or clear the filter.</p>
+
+<footer class="foot">
+  <p><a href="../index.html">&larr; Back to Coding Hub</a></p>
+  <p>Next: <a href="./first-program.html">Your first program</a>.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script src="../js/highlight.js"></script>
+<script src="../js/reference.js"></script>
+</body>
+</html>

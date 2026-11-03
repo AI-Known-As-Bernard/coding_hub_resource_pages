@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Functions — Coding Hub</title>
+<meta name="description" content="Writing your own, passing arguments, and returning a result.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/reference_styles.css">
+<style>
+  :root{ --accent:#1C7C6B; --accent-soft:#E2F0ED; }
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the contents</a>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol"><a href="../index.html">Coding Hub</a> &nbsp;/&nbsp; Python</p>
+  <h1><span class="lit">functions</span></h1>
+  <p class="deck">Writing your own, passing arguments, and returning a result. <strong>Entry 4 is the one that catches everybody: printing and returning are not the same thing.</strong></p>
+
+  <div class="finder">
+    <label>
+      <span class="visually-hidden">Filter this page</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="filter" type="search" placeholder="def, return, argument, default…" autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="clear">Clear</button>
+  </div>
+  <p class="hits" id="hits" role="status"></p>
+</header>
+
+<nav class="contents" id="start">
+  <h2>On this page</h2>
+  <a href="#e1"><span>01</span> def</a>
+  <a href="#e2"><span>02</span> Arguments</a>
+  <a href="#e3"><span>03</span> Default values</a>
+  <a href="#e4"><span>04</span> return is not print</a>
+  <a href="#e5"><span>05</span> Returning more than one value</a>
+  <a href="#e6"><span>06</span> Local and global</a>
+  <a href="#e7"><span>07</span> Mutable arguments</a>
+  <a href="#e8"><span>08</span> Docstrings</a>
+  <a href="#e9"><span>09</span> One function, one job</a>
+  <a href="#e10"><span>10</span> Function mistakes to recognise</a>
+</nav>
+
+<section class="part">
+  <h2>Writing one</h2>
+  <p>Four parts, always in the same order.</p>
+</section>
+
+<article class="entry" id="e1">
+  <div class="entry-text">
+    <h3><span class="num">01</span> def</h3>
+    <p>A function is a named block of code you can run whenever you want. Defining one does not run it — you define it once and <em>call</em> it as often as you like.</p>
+    <p>The name follows the same rule as variables: <code>snake_case</code>, and it should be a verb, because a function does something.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>first_function.py</span></div>
+    <pre class="code" data-lang="py"><code># Define it
+def greet():
+    print("Hello!")
+
+# Nothing has printed yet. Now call it:
+greet()        # Hello!
+greet()        # Hello!
+
+# The brackets are what calls it
+greet          # &lt;function greet at 0x...&gt;  - the function itself
+greet()        # Hello!                     - running it</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e2">
+  <div class="entry-text">
+    <h3><span class="num">02</span> Arguments</h3>
+    <p>A parameter is the name in the definition; an argument is the value you pass in. People use both words loosely and it rarely matters.</p>
+    <p class="tip">Order matters when you pass by position. Pass by name instead and order stops mattering, which makes a call with several arguments far easier to read.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>arguments.py</span></div>
+    <pre class="code" data-lang="py"><code>def greet(name):
+    print(f"Hello, {name}!")
+
+greet("Ada")           # Hello, Ada!
+greet()                # TypeError: missing 1 required positional argument
+
+# Several
+def describe(name, room, days):
+    print(f"{name} lives in the {room}, watered every {days} days")
+
+describe("fern", "kitchen", 7)                    # by position
+describe(name="fern", room="kitchen", days=7)     # by name, clearer
+describe(days=7, name="fern", room="kitchen")     # by name, any order</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e3">
+  <div class="entry-text">
+    <h3><span class="num">03</span> Default values</h3>
+    <p>Give a parameter a default and it becomes optional. Parameters with defaults must come after those without.</p>
+    <p class="warn">Never use a list or a dictionary as a default. It is created <em>once</em>, when the function is defined, and every call shares the same one — so items pile up between calls. Use <code>None</code> and build the list inside.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>defaults.py</span></div>
+    <pre class="code" data-lang="py"><code>def greet(name, greeting="Hello"):
+    print(f"{greeting}, {name}!")
+
+greet("Ada")                  # Hello, Ada!
+greet("Ada", "Welcome")       # Welcome, Ada!
+
+# The mutable default trap
+def add_plant(name, plants=[]):      # WRONG
+    plants.append(name)
+    return plants
+
+add_plant("fern")      # ["fern"]
+add_plant("cactus")    # ["fern", "cactus"]  - the same list!
+
+def add_plant(name, plants=None):    # RIGHT
+    if plants is None:
+        plants = []
+    plants.append(name)
+    return plants</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Giving a value back</h2>
+  <p>The entry that matters most.</p>
+</section>
+
+<article class="entry" id="e4">
+  <div class="entry-text">
+    <h3><span class="num">04</span> return is not print</h3>
+    <p><code>print</code> shows something to a human. <code>return</code> hands a value back to the code that called the function. They look similar in the terminal and are completely different.</p>
+    <p class="warn">A function with no <code>return</code> gives back <code>None</code>. So a function that prints and does not return looks right when you run it, and then gives you <code>None</code> the moment you try to use the answer.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>return_vs_print.py</span></div>
+    <pre class="code" data-lang="py"><code>def double_print(n):
+    print(n * 2)              # shows it
+
+def double_return(n):
+    return n * 2              # hands it back
+
+# In the terminal these look identical
+double_print(5)               # 10
+print(double_return(5))       # 10
+
+# But only one can be used
+total = double_print(5) + 1   # TypeError: NoneType + int
+total = double_return(5) + 1  # 11
+
+# return also EXITS the function immediately
+def check(n):
+    if n &lt; 0:
+        return "negative"     # stops here
+    return "positive or zero"</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e5">
+  <div class="entry-text">
+    <h3><span class="num">05</span> Returning more than one value</h3>
+    <p>Separate values with commas and Python packs them into a tuple. Unpack them on the other side with the same number of names.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>multiple_returns.py</span></div>
+    <pre class="code" data-lang="py"><code>def stats(numbers):
+    return min(numbers), max(numbers), sum(numbers) / len(numbers)
+
+low, high, mean = stats([4, 7, 2, 9])
+print(low, high, mean)        # 2 9 5.5
+
+# Or keep the tuple whole
+result = stats([4, 7, 2, 9])
+result[0]                     # 2
+
+# Returning a dictionary is clearer once there are more than three
+def stats(numbers):
+    return {
+        "low": min(numbers),
+        "high": max(numbers),
+        "mean": sum(numbers) / len(numbers)
+    }</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Scope</h2>
+  <p>Where a name exists.</p>
+</section>
+
+<article class="entry" id="e6">
+  <div class="entry-text">
+    <h3><span class="num">06</span> Local and global</h3>
+    <p>A variable made inside a function exists only inside it. That is a feature: two functions can both use <code>total</code> without interfering.</p>
+    <p>A function can <em>read</em> a variable from outside, but assigning to that name makes a new local one instead of changing the outer value.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>scope.py</span></div>
+    <pre class="code" data-lang="py"><code>def count():
+    n = 5                 # local to count()
+    print(n)
+
+count()                   # 5
+print(n)                  # NameError: name 'n' is not defined
+
+total = 0
+
+def add():
+    print(total)          # reading the outer one: fine
+
+def broken():
+    total = total + 1     # UnboundLocalError
+
+def fixed(current):
+    return current + 1    # pass it in, hand it back
+
+total = fixed(total)</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e7">
+  <div class="entry-text">
+    <h3><span class="num">07</span> Mutable arguments</h3>
+    <p>Passing a list does not copy it. The function gets the same list, so changing it inside changes it outside too.</p>
+    <p class="tip">Numbers, strings and booleans cannot be changed in place, so they are never affected this way. Lists, dictionaries and sets can be.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>mutable_args.py</span></div>
+    <pre class="code" data-lang="py"><code>def add_item(items):
+    items.append("new")        # changes the caller's list
+
+plants = ["fern"]
+add_item(plants)
+print(plants)                  # ["fern", "new"]
+
+# Copy first if you do not want that
+def add_item_safely(items):
+    items = items[:]           # or list(items)
+    items.append("new")
+    return items
+
+# A number is never affected
+def bump(n):
+    n = n + 1
+
+count = 5
+bump(count)
+print(count)                   # still 5</code></pre>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Writing them well</h2>
+  <p>Habits that make the difference.</p>
+</section>
+
+<article class="entry" id="e8">
+  <div class="entry-text">
+    <h3><span class="num">08</span> Docstrings</h3>
+    <p>A string on the first line of a function documents it. <code>help(name)</code> prints it, and editors show it when you hover over a call.</p>
+    <p>Write what it does and what it gives back, not how it works — the code already says how.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>docstrings.py</span></div>
+    <pre class="code" data-lang="py"><code>def days_until_watering(last_watered, interval):
+    """How many days until this plant needs water.
+
+    Returns a negative number if it is already overdue.
+    """
+    return interval - days_since(last_watered)
+
+help(days_until_watering)</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e9">
+  <div class="entry-text">
+    <h3><span class="num">09</span> One function, one job</h3>
+    <p>The test: can you name it in a few words without using &ldquo;and&rdquo;? If not, it is doing two things and should be two functions.</p>
+    <p>Small functions are easier to name, easier to test, and reusable. A 60-line function with four jobs is used exactly once, by you, today.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>one_job.py</span></div>
+    <pre class="code" data-lang="py"><code># Doing three things
+def process():
+    data = open("plants.txt").read()
+    rows = [line.split(",") for line in data.split("\n")]
+    for row in rows:
+        print(f"{row[0]}: {row[1]}")
+
+# Three things, three functions
+def read_file(path):
+    return open(path).read()
+
+def parse_rows(text):
+    return [line.split(",") for line in text.split("\n")]
+
+def show(rows):
+    for row in rows:
+        print(f"{row[0]}: {row[1]}")
+
+show(parse_rows(read_file("plants.txt")))</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e10">
+  <div class="entry-text">
+    <h3><span class="num">10</span> Function mistakes to recognise</h3>
+    <p>Six of these produce a wrong answer rather than a crash, which is what makes them worth learning to spot by eye.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>symptom to cause</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>What you see</th><th>Cause</th></tr></thead>
+        <tbody><tr><td><code>None</code> where you expected a value</td><td>The function prints instead of returning</td></tr><tr><td><code>TypeError: missing 1 required positional argument</code></td><td>Called with too few arguments</td></tr><tr><td>Nothing happens at all</td><td>You wrote <code>greet</code> instead of <code>greet()</code></td></tr><tr><td><code>UnboundLocalError</code></td><td>Assigning to an outer variable inside a function</td></tr><tr><td>A list keeps growing between calls</td><td>A mutable default argument — entry 3</td></tr><tr><td><code>NameError</code> on a local</td><td>Used outside the function it was made in</td></tr><tr><td>Only the first branch ever runs</td><td><code>return</code> exits immediately; code after it is dead</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+
+<p class="empty" hidden>Nothing on this page mentions that. Try a shorter word, or clear the filter.</p>
+
+<footer class="foot">
+  <p><a href="../index.html">&larr; Back to Coding Hub</a></p>
+  <p>Back to <a href="../index.html">Coding Hub</a>.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script src="../js/highlight.js"></script>
+<script src="../js/reference.js"></script>
+</body>
+</html>

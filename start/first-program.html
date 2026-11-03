@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your first program — Coding Hub</title>
+<meta name="description" content="Write, save, and run a file from scratch without guessing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/reference_styles.css">
+<style>
+  :root{ --accent:#2F6FED; --accent-soft:#E4ECFD; }
+</style>
+</head>
+<body>
+<a class="skip" href="#start">Skip to the contents</a>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="vol"><a href="../index.html">Coding Hub</a> &nbsp;/&nbsp; Start here</p>
+  <h1>your first <span class="lit">program</span></h1>
+  <p class="deck">Write a file, save it, run it, and understand every step. <strong>Do it in both languages — the ideas are identical and the differences are worth seeing.</strong></p>
+
+  <div class="finder">
+    <label>
+      <span class="visually-hidden">Filter this page</span>
+      <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <line x1="13" y1="13" x2="17.5" y2="17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <input id="filter" type="search" placeholder="print, run, save, terminal…" autocomplete="off" spellcheck="false">
+    </label>
+    <button type="button" class="clear">Clear</button>
+  </div>
+  <p class="hits" id="hits" role="status"></p>
+</header>
+
+<nav class="contents" id="start">
+  <h2>On this page</h2>
+  <a href="#e1"><span>01</span> Write, save, run</a>
+  <a href="#e2"><span>02</span> Hello in Python</a>
+  <a href="#e3"><span>03</span> Running it</a>
+  <a href="#e4"><span>04</span> What can go wrong</a>
+  <a href="#e5"><span>05</span> Hello in JavaScript</a>
+  <a href="#e6"><span>06</span> Running it</a>
+  <a href="#e7"><span>07</span> The two side by side</a>
+  <a href="#e8"><span>08</span> Now change something</a>
+</nav>
+
+<section class="part">
+  <h2>The three steps</h2>
+  <p>Every program you ever write follows them.</p>
+</section>
+
+<article class="entry" id="e1">
+  <div class="entry-text">
+    <h3><span class="num">01</span> Write, save, run</h3>
+    <p>Programming has a loop at the centre of it, and it never changes however complicated the project gets.</p>
+    <ul>
+      <li><strong>Write</strong> instructions into a plain text file.</li>
+      <li><strong>Save</strong> it, with the extension that says which language it is.</li>
+      <li><strong>Run</strong> it, and read what comes back — including the errors.</li>
+    </ul>
+    <p>The extension is not decoration. <code>.py</code> tells your computer to hand the file to Python; <code>.js</code> hands it to Node. Save a Python file as <code>.txt</code> and nothing will run it.</p>
+    <p class="warn">Word processors are not text editors. A file saved from Word carries invisible formatting that no language can read. Use VS Code.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>the file extension decides</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Extension</th><th>Run it with</th><th>Runs where</th></tr></thead>
+        <tbody><tr><td><code>.py</code></td><td><code>python hello.py</code></td><td>Your terminal</td></tr><tr><td><code>.js</code></td><td><code>node hello.js</code></td><td>Your terminal</td></tr><tr><td><code>.html</code></td><td>Open it in a browser</td><td>The browser</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<section class="part">
+  <h2>Python</h2>
+  <p>The shorter of the two.</p>
+</section>
+
+<article class="entry" id="e2">
+  <div class="entry-text">
+    <h3><span class="num">02</span> Hello in Python</h3>
+    <p>Make a folder, open it in VS Code, and create a file called <code>hello.py</code>. Type this in — do not paste it. Typing it is how your fingers learn the punctuation.</p>
+    <p><code>print</code> is a function. The brackets hold what you want to show, and the quotes mark where the text starts and stops.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>hello.py</span></div>
+    <pre class="code" data-lang="py"><code># Everything after a # is a comment. Python ignores it.
+print("Hello, world!")
+
+name = input("What is your name? ")
+print("Nice to meet you,", name)</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e3">
+  <div class="entry-text">
+    <h3><span class="num">03</span> Running it</h3>
+    <p>Open the terminal in VS Code with <kbd>Ctrl</kbd>+<kbd>`</kbd>. It starts in your project folder, which is why opening the folder mattered.</p>
+    <p>Type the command and press Enter. The output appears directly underneath.</p>
+    <p class="tip">On some systems the command is <code>python3</code> rather than <code>python</code>. Try <code>python --version</code> first: if it reports a version starting with 3, you are set.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>Terminal</span></div>
+    <pre class="code" data-lang="bash"><code>python hello.py</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e4">
+  <div class="entry-text">
+    <h3><span class="num">04</span> What can go wrong</h3>
+    <p>Four errors, and each one names its own cause once you can read it.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>first-run errors</span></div>
+    <div class="scroll-x">
+      <table>
+        <thead><tr><th>Message</th><th>Means</th></tr></thead>
+        <tbody><tr><td><code>can't open file 'hello.py'</code></td><td>The terminal is in a different folder from the file. Check with <code>ls</code> (or <code>dir</code>).</td></tr><tr><td><code>SyntaxError: unterminated string literal</code></td><td>A quote is missing its partner.</td></tr><tr><td><code>NameError: name 'print' is not defined</code></td><td>A typo — <code>Print</code> or <code>pint</code>. Python is case-sensitive.</td></tr><tr><td><code>python: command not found</code></td><td>Python is not installed, or not on your PATH.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</article>
+
+<section class="part">
+  <h2>JavaScript</h2>
+  <p>Same three steps, different runner.</p>
+</section>
+
+<article class="entry" id="e5">
+  <div class="entry-text">
+    <h3><span class="num">05</span> Hello in JavaScript</h3>
+    <p>Create <code>hello.js</code> in the same folder. The shape is the same: a function that prints, and some text in quotes.</p>
+    <p>The differences you can see straight away are that the printing function is called <code>console.log</code>, comments start with <code>//</code>, and lines may end with a semicolon.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>hello.js</span></div>
+    <pre class="code" data-lang="js"><code>// Everything after // is a comment. JavaScript ignores it.
+console.log("Hello, world!")
+
+const name = "Ada"
+console.log("Nice to meet you,", name)</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e6">
+  <div class="entry-text">
+    <h3><span class="num">06</span> Running it</h3>
+    <p>Node is the program that runs JavaScript outside a browser. Same terminal, same shape of command.</p>
+    <p>JavaScript also runs <em>inside</em> a web page, which is the other way you will meet it. There, <code>console.log</code> prints to the browser's console rather than your terminal — open it with <kbd>F12</kbd>.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>Terminal</span></div>
+    <pre class="code" data-lang="bash"><code>node hello.js</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e7">
+  <div class="entry-text">
+    <h3><span class="num">07</span> The two side by side</h3>
+    <p>The same program in both languages. Nearly everything that looks different here is punctuation, not meaning.</p>
+    <p class="tip">Notice what Python does not need: no braces, no semicolons, no keyword to make a variable. Indentation does the job the braces do in JavaScript — which is why indentation is not optional in Python.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>hello.py</span></div>
+    <pre class="code" data-lang="py"><code>name = "Ada"
+age = 36
+
+if age &gt;= 18:
+    print(name, "is an adult")
+else:
+    print(name, "is a minor")</code></pre>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>hello.js</span></div>
+    <pre class="code" data-lang="js"><code>const name = "Ada"
+const age = 36
+
+if (age &gt;= 18) {
+  console.log(name, "is an adult")
+} else {
+  console.log(name, "is a minor")
+}</code></pre>
+  </div>
+</article>
+
+<article class="entry" id="e8">
+  <div class="entry-text">
+    <h3><span class="num">08</span> Now change something</h3>
+    <p>Reading a working program teaches you very little. Breaking one teaches you a lot. Try each of these and read what comes back before you fix it.</p>
+    <p>The goal is not to avoid errors. It is to stop being surprised by them.</p>
+  </div>
+  <div class="panel">
+    <div class="pane-label"><span>five things to try</span></div>
+    <div class="try">
+      <ul class="checklist">
+        <li><label><input type="checkbox"> <span>Delete a closing quote and run it. Read the error.</span></label></li>
+        <li><label><input type="checkbox"> <span>Spell <code>print</code> as <code>Print</code>. Read the error.</span></label></li>
+        <li><label><input type="checkbox"> <span>In Python, remove the indentation under the <code>if</code>. Read the error.</span></label></li>
+        <li><label><input type="checkbox"> <span>Ask for the user&rsquo;s age and print it back to them.</span></label></li>
+        <li><label><input type="checkbox"> <span>Print three lines instead of one.</span></label></li>
+      </ul>
+    </div>
+  </div>
+</article>
+
+
+<p class="empty" hidden>Nothing on this page mentions that. Try a shorter word, or clear the filter.</p>
+
+<footer class="foot">
+  <p><a href="../index.html">&larr; Back to Coding Hub</a></p>
+  <p>Next: <a href="../python/variables.html">Variables and types</a>.</p>
+</footer>
+
+</div><!-- /wrap -->
+
+<script src="../js/highlight.js"></script>
+<script src="../js/reference.js"></script>
+</body>
+</html>
